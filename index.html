@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NetVibe Media - בניית אתרים ב-₪250 לחודש</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700&family=Heebo:wght@500;700;800;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #0f172a;
+            --bg-light: #f8fafc;
+            --text-dark: #1e293b;
+            --text-light: #64748b;
+            --white: #ffffff;
+            --font-main: 'Assistant', sans-serif;
+            --font-heading: 'Heebo', sans-serif;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-main);
+            color: var(--text-dark);
+            background-color: var(--white);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, .logo {
+            font-family: var(--font-heading);
+            font-weight: 800;
+            color: var(--secondary);
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+            transition: var(--transition);
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 14px 32px;
+            background-color: var(--primary);
+            color: var(--white);
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.25);
+        }
+
+        .btn:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.35);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--secondary);
+            border: 2px solid #e2e8f0;
+            box-shadow: none;
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--secondary);
+            color: var(--white);
+            border-color: var(--secondary);
+            box-shadow: 0 4px 14px rgba(15, 23, 42, 0.15);
+        }
+
+        header {
+            background-color: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 20px 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.6rem;
+            color: var(--primary);
+            letter-spacing: -0.5px;
+        }
+
+        nav ul {
+            display: flex;
+            gap: 25px;
+            list-style: none;
+            align-items: center;
+        }
+
+        nav a {
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        nav a:hover {
+            color: var(--primary);
+        }
+
+        .hero {
+            padding: 200px 0 100px;
+            background: radial-gradient(circle at top right, rgba(37, 99, 235, 0.05), transparent 40%);
+            text-align: center;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .hero h1 {
+            font-size: 3.8rem;
+            line-height: 1.15;
+            margin-bottom: 24px;
+            letter-spacing: -1px;
+        }
+
+        .hero h1 span {
+            color: var(--primary);
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            color: var(--text-light);
+            max-width: 720px;
+            margin: 0 auto 40px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .system-info {
+            padding: 60px 0;
+            background-color: var(--white);
+            border-top: 1px solid #f1f5f9;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .info-card {
+            background-color: var(--bg-light);
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        .info-card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+        }
+
+        .info-card p {
+            color: var(--text-light);
+            font-size: 1.05rem;
+        }
+
+        .pricing {
+            padding: 100px 0;
+            background-color: var(--bg-light);
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.8rem;
+            margin-bottom: 12px;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: var(--text-light);
+            font-size: 1.15rem;
+            margin-bottom: 60px;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .price-card {
+            background-color: var(--white);
+            padding: 45px 35px;
+            border-radius: 16px;
+            border: 2px solid #e2e8f0;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .price-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 30px rgba(0,0,0,0.06);
+            border-color: var(--primary);
+        }
+
+        .price-card.featured {
+            border-color: var(--primary);
+            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.1);
+        }
+
+        .card-tag {
+            position: absolute;
+            top: -14px;
+            right: 25px;
+            background: var(--primary);
+            color: var(--white);
+            padding: 4px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+
+        .card-name {
+            font-size: 1.6rem;
+            margin-bottom: 15px;
+        }
+
+        .card-price {
+            font-family: var(--font-heading);
+            font-size: 3.2rem;
+            font-weight: 900;
+            margin-bottom: 25px;
+        }
+
+        .card-price span {
+            font-size: 1.1rem;
+            font-weight: 400;
+            color: var(--text-light);
+        }
+
+        .card-features {
+            list-style: none;
+            margin-bottom: 35px;
+            flex-grow: 1;
+        }
+
+        .card-features li {
+            margin-bottom: 14px;
+            padding-right: 28px;
+            position: relative;
+            font-size: 1.05rem;
+        }
+
+        .card-features li::before {
+            content: "✓";
+            position: absolute;
+            right: 0;
+            color: var(--primary);
+            font-weight: 800;
+        }
+
+        .apply-section {
+            padding: 100px 0;
+            text-align: center;
+            background-color: var(--white);
+        }
+
+        .apply-box {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 50px;
+            background-color: var(--bg-light);
+            border-radius: 16px;
+            border: 1px dashed #cbd5e1;
+        }
+
+        .apply-box h2 {
+            font-size: 2.2rem;
+            margin-bottom: 15px;
+        }
+
+        .apply-box p {
+            color: var(--text-light);
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+        }
+
+        footer {
+            padding: 40px 0;
+            background-color: var(--secondary);
+            color: #94a3b8;
+            text-align: center;
+            font-size: 0.95rem;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.5rem; }
+            .header-content { flex-direction: column; gap: 15px; }
+            .hero-buttons { flex-direction: column; }
+            .btn { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">NetVibe Media</div>
+                <nav>
+                    <ul>
+                        <li><a href="#hero">ראשי</a></li>
+                        <li><a href="#pricing">חבילות</a></li>
+                        <li><a href="new-site.html">בניית אתר חדש</a></li>
+                        <li><a href="site-edit.html">בקשת שינויים</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <section id="hero" class="hero">
+        <div class="container">
+            <h1>אתר מקצועי לעסק שלך,<br>ב-<span>₪250 לחודש</span> בלבד.</h1>
+            <p>0 ש"ח עלות הקמה. NetVibe Media דואגת לאחסון, לדומיין ולתחזוקה השוטפת – כדי שאתה תוכל להתמקד בעסק שלך.</p>
+            <div class="hero-buttons">
+                <a href="new-site.html" class="btn">להגשת בקשה להקמת אתר</a>
+                <a href="site-edit.html" class="btn btn-secondary">לקוחות קיימים: בקשת שינויים</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="system-info">
+        <div class="container">
+            <div class="info-card">
+                <h3>שירות דיגיטלי מהיר ומסודר ⚡</h3>
+                <p>כל הפניות ב-NetVibe Media מנוהלות דרך מערכת הטפסים הדיגיטלית. בקשות להקמת אתר מועברות דרך טופס הקמה dedicated, ובקשות עדכון מטופלות בטופס התמיכה תוך 1–4 ימי עסקים.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="pricing" class="pricing">
+        <div class="container">
+            <h2 class="section-title">חבילות הכל כולל</h2>
+            <p class="section-subtitle">בלי אותיות קטנות. כל מה שהאתר שלך צריך בחבילה אחת</p>
+            
+            <div class="pricing-grid">
+                <div class="price-card featured">
+                    <div class="card-tag">הכי פופולרי</div>
+                    <div class="card-name">Standard</div>
+                    <div class="card-price">₪250 <span>/ לחודש</span></div>
+                    <ul class="card-features">
+                        <li>הקמת אתר תדמית (3-5 עמודים)</li>
+                        <li>אחסון מהיר, אתר מאובטח וגיבויים</li>
+                        <li>3 סבבי שינויים בחודש</li>
+                        <li>חיבור לוואטסאפ וגוגל מפות</li>
+                    </ul>
+                    <a href="new-site.html" class="btn">הגש בקשה להקמה</a>
+                </div>
+
+                <div class="price-card">
+                    <div class="card-name">Premium</div>
+                    <div class="card-price">₪450 <span>/ לחודש</span></div>
+                    <ul class="card-features">
+                        <li>כל מה שכלול ב-Standard</li>
+                        <li>הקמת אתר נרחב (עד 8 עמודים)</li>
+                        <li>עד 5 סבבי עדכונים ושינויים בחודש</li>
+                        <li>אופטימיזציית מהירות גבוהה (כיווץ תמונות, מטמון מתקדם וטעינה מהירה)</li>
+                        <li>אופטימיזציה בסיסית למנועי חיפוש (SEO)</li>
+                        <li>תמיכה טכנית מועדפת ברמת VIP</li>
+                    </ul>
+                    <a href="new-site.html" class="btn btn-secondary">הגש בקשה להקמה</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="apply-section">
+        <div class="container">
+            <div class="apply-box">
+                <h2>מוכן להתחיל?</h2>
+                <p>מלא את טופס הבקשה המפורט להקמת אתר, ונחזור אליך עם תצוגה מקדימה מותאמת לעסק שלך.</p>
+                <a href="new-site.html" class="btn">מעבר לטופס הקמת אתר</a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 NetVibe Media. כל הזכויות שמורות. הפניות מנוהלות דרך המערכת הדיגיטלית בלבד.</p>
+        </div>
+    </footer>
+
+</body>
+</html>
