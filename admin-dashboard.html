@@ -36,7 +36,7 @@
         .user-avatar { width: 36px; height: 36px; border-radius: 50%; }
         .logout-btn { background: #ef4444; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-family: var(--font-heading); font-weight: 600; }
 
-        .tabs-nav { background: var(--card-bg); border-bottom: 1px solid var(--border); padding: 0 30px; display: flex; gap: 10px; }
+        .tabs-nav { background: var(--card-bg); border-bottom: 1px solid var(--border); padding: 0 30px; display: flex; gap: 10px; flex-wrap: wrap; }
         .tab-btn { background: none; border: none; padding: 16px 20px; font-family: var(--font-heading); font-size: 1rem; font-weight: 700; color: #64748b; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.2s; display: flex; align-items: center; gap: 8px; }
         .tab-btn:hover { color: var(--primary); }
         .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
@@ -122,6 +122,7 @@
             <button class="tab-btn" data-tab="tab-clients">👥 לקוחות ופרויקטים <span class="tab-count" id="count-clients">0</span></button>
             <button class="tab-btn" data-tab="tab-billing">💳 גבייה ותשלומים <span class="tab-count" id="count-unpaid">0</span></button>
             <button class="tab-btn" data-tab="tab-requests">📩 פניות פתוחות <span class="tab-count" id="count-requests">0</span></button>
+            <button class="tab-btn" data-tab="tab-leads">📞 לקוחות לפנייה <span class="tab-count" id="count-leads">0</span></button>
         </nav>
 
         <div class="main-content">
@@ -249,6 +250,45 @@
                             </tr>
                         </thead>
                         <tbody id="requests-table"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- TAB 5: LEADS TO CONTACT -->
+            <div class="tab-page" id="tab-leads">
+                <div class="section-header">
+                    <h2>לקוחות לפנייה (Outreach & Leads)</h2>
+                </div>
+
+                <form class="add-client-form" id="add-lead-form">
+                    <div>
+                        <label style="font-size: 0.85rem;">שם העסק</label>
+                        <input type="text" id="leadName" placeholder="שם העסק" required>
+                    </div>
+                    <div>
+                        <label style="font-size: 0.85rem;">מספר טלפון</label>
+                        <input type="tel" id="leadPhone" placeholder="050-0000000" required>
+                    </div>
+                    <div>
+                        <label style="font-size: 0.85rem;">הערה / סטטוס לפנייה</label>
+                        <input type="text" id="leadNote" placeholder="לדוגמה: להציע שדרוג אתר">
+                    </div>
+                    <div></div>
+                    <div></div>
+                    <button type="submit" class="btn-add" id="btn-submit-lead">+ הוסף ליד</button>
+                </form>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>שם העסק</th>
+                                <th>מספר טלפון</th>
+                                <th>הערות</th>
+                                <th>פעולות</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leads-table"></tbody>
                     </table>
                 </div>
             </div>
@@ -514,6 +554,63 @@
 
                 document.getElementById('count-requests').innerText = pendingCount;
             });
+
+            // Realtime Sync: Leads / Prospects
+            onSnapshot(collection(db, "leads"), (snapshot) => {
+                const tbody = document.getElementById('leads-table');
+                tbody.innerHTML = '';
+                let leadsCount = 0;
+
+                snapshot.forEach((docSnap) => {
+                    leadsCount++;
+                    const data = docSnap.data();
+                    const id = docSnap.id;
+
+                    const row = document.createElement('tr');
+                    
+                    const l1 = createTd(`<strong>${data.businessName || '-'}</strong>`);
+                    const l2 = createTd(`<strong>${data.phone || '-'}</strong>`);
+                    const l3 = createTd(`${data.note || '-'}`);
+
+                    const lActionsDiv = document.createElement('div');
+                    lActionsDiv.className = 'btn-group';
+
+                    if (data.phone) {
+                        const cleanPhone = data.phone.replace(/[^0-9+]/g, '');
+                        const formattedWa = cleanPhone.startsWith('0') ? '972' + cleanPhone.slice(1) : cleanPhone;
+                        
+                        const waBtn = document.createElement('a');
+                        waBtn.className = 'action-btn btn-approve';
+                        waBtn.href = `https://wa.me/${formattedWa}`;
+                        waBtn.target = '_blank';
+                        waBtn.textContent = '💬 WhatsApp';
+                        lActionsDiv.appendChild(waBtn);
+
+                        const callBtn = document.createElement('a');
+                        callBtn.className = 'action-btn btn-email';
+                        callBtn.href = `tel:${data.phone}`;
+                        callBtn.textContent = '📞 חיוג';
+                        lActionsDiv.appendChild(callBtn);
+                    }
+
+                    const delLeadBtn = document.createElement('button');
+                    delLeadBtn.className = 'action-btn btn-delete';
+                    delLeadBtn.textContent = 'מחק';
+                    delLeadBtn.onclick = () => deleteLead(id);
+                    lActionsDiv.appendChild(delLeadBtn);
+
+                    const l4 = createTd(lActionsDiv);
+
+                    row.appendChild(l1);
+                    row.appendChild(l2);
+                    row.appendChild(l3);
+                    row.appendChild(l4);
+
+                    tbody.appendChild(row);
+                });
+
+                document.getElementById('count-leads').innerText = leadsCount;
+            });
         }
 
         // Add Client
@@ -542,6 +639,27 @@
             }
         });
 
+        // Add Lead
+        document.getElementById('add-lead-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const submitBtn = document.getElementById('btn-submit-lead');
+            submitBtn.disabled = true;
+
+            try {
+                await addDoc(collection(db, "leads"), {
+                    businessName: document.getElementById('leadName').value,
+                    phone: document.getElementById('leadPhone').value,
+                    note: document.getElementById('leadNote').value,
+                    createdAt: serverTimestamp()
+                });
+                e.target.reset();
+            } catch (err) {
+                alert("שגיאה בהוספת ליד: " + err.message);
+            } finally {
+                submitBtn.disabled = false;
+            }
+        });
+
         // Global Action Helpers
         window.updateProjectStatus = async (id, status) => {
             await updateDoc(doc(db, "clients", id), { projectStatus: status });
@@ -562,6 +680,10 @@
 
         window.deleteRequest = async (id) => {
             if (confirm("האם למחוק פנייה זו?")) await deleteDoc(doc(db, "requests", id));
+        };
+
+        window.deleteLead = async (id) => {
+            if (confirm("האם למחוק ליד זה?")) await deleteDoc(doc(db, "leads", id));
         };
 
         window.approveToClient = async (reqId, businessName, email, plan) => {
