@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NetVibeMedia - Admin Panel</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Rubik', 'sans-serif'] },
+                    colors: {
+                        dark: { 900: '#0B0F19', 800: '#111827', 700: '#1F2937' },
+                        brand: { cyan: '#00F2FE', purple: '#9D4EDD', pink: '#F72585' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #0B0F19; color: #F3F4F6; font-family: 'Rubik', sans-serif; }
+        .glass-card { background: rgba(17, 24, 39, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .text-glow { text-shadow: 0 0 15px rgba(0, 242, 254, 0.5); }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Auth View -->
+    <div id="auth-screen" class="min-h-screen flex items-center justify-center p-4">
+        <div class="glass-card p-8 rounded-2xl max-w-md w-full text-center shadow-2xl">
+            <div class="w-16 h-16 bg-gradient-to-tr from-brand-cyan to-brand-purple rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+                <i class="fas fa-user-shield text-2xl text-white"></i>
+            </div>
+            <h1 class="text-2xl font-bold mb-2">NetVibeMedia Admin</h1>
+            <p class="text-gray-400 text-sm mb-6">כניסה מורשית למנהל בלבד</p>
+            <button id="google-login-btn" onclick="loginWithGoogle()" class="w-full bg-gradient-to-r from-brand-cyan to-brand-purple hover:opacity-90 text-slate-900 font-bold py-3 px-6 rounded-xl transition-all flex items-center justify-center gap-3">
+                <i class="fab fa-google text-lg"></i>
+                התחבר עם Google
+            </button>
+            <div id="auth-error" class="text-red-400 text-sm mt-4 hidden"></div>
+        </div>
+    </div>
+
+    <!-- Main Admin View -->
+    <div id="admin-view" class="hidden min-h-screen flex flex-col">
+        <!-- Header -->
+        <header class="glass-card sticky top-0 z-50 border-b border-gray-800 px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-gradient-to-tr from-brand-cyan to-brand-purple rounded-xl flex items-center justify-center text-slate-900 font-bold text-xl">
+                    N
+                </div>
+                <div>
+                    <h2 class="font-bold text-lg leading-none">פאנל ניהול - NetVibeMedia</h2>
+                    <span class="text-xs text-brand-cyan">אזור מנהל מערכת</span>
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <span id="admin-email" class="text-xs text-gray-400 hidden md:inline"></span>
+                <button onclick="logout()" class="text-gray-400 hover:text-white text-sm bg-gray-800 px-3 py-1.5 rounded-lg border border-gray-700 transition">
+                    התנתק <i class="fas fa-sign-out-alt mr-1"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Content -->
+        <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+            
+            <!-- Clients List Sidebar -->
+            <div class="lg:col-span-4 space-y-4">
+                <div class="glass-card p-5 rounded-2xl">
+                    <h3 class="font-bold text-lg mb-4 flex items-center justify-between">
+                        <span><i class="fas fa-users text-brand-cyan ml-2"></i>לקוחות במערכת</span>
+                        <span id="client-count" class="text-xs bg-brand-cyan/20 text-brand-cyan px-2 py-1 rounded-full">0</span>
+                    </h3>
+                    <div id="clients-list" class="space-y-2 max-h-[600px] overflow-y-auto pr-1">
+                        <div class="text-center py-8 text-gray-500 text-sm">טוען לקוחות...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Client Management Panel -->
+            <div class="lg:col-span-8 space-y-6">
+                
+                <!-- Placeholder when no client selected -->
+                <div id="no-client-selected" class="glass-card p-12 rounded-2xl text-center flex flex-col items-center justify-center min-h-[400px]">
+                    <i class="fas fa-user-cursor text-5xl text-gray-600 mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2">בחר לקוח מהרשימה</h3>
+                    <p class="text-gray-400 text-sm max-w-md">בחר לקוח מהרשימה בצד ימין כדי להגדיר את האתר שלו, לצפות בשינויים מבוקשים ולהפיק קוד HTML מעודכן.</p>
+                </div>
+
+                <!-- Selected Client Workspace -->
+                <div id="client-workspace" class="hidden space-y-6">
+                    
+                    <!-- Client Header Info -->
+                    <div class="glass-card p-6 rounded-2xl border-l-4 border-brand-cyan flex flex-wrap justify-between items-center gap-4">
+                        <div>
+                            <h2 id="selected-client-name" class="text-xl font-bold"></h2>
+                            <p id="selected-client-email" class="text-sm text-gray-400"></p>
+                            <span id="selected-client-id" class="text-xs text-gray-500 font-mono"></span>
+                        </div>
+                        <div class="flex gap-2">
+                            <span id="edits-badge" class="bg-gray-800 text-xs px-3 py-1.5 rounded-lg border border-gray-700">
+                                שינויים החודש: <strong id="edits-count-val" class="text-brand-cyan">0</strong>
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Site Config Section -->
+                    <div class="glass-card p-6 rounded-2xl space-y-4">
+                        <h3 class="font-bold text-lg flex items-center gap-2">
+                            <i class="fas fa-globe text-brand-cyan"></i> הגדרות אתר הלקוח
+                        </h3>
+                        
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">כתובת ה-URL של האתר (למשל: https://example.com)</label>
+                            <input type="url" id="site-url-input" placeholder="https://example.com" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-brand-cyan">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">קוד HTML מלא של האתר</label>
+                            <textarea id="site-html-input" rows="8" placeholder="<!DOCTYPE html>..." class="w-full bg-gray-900 border border-gray-700 rounded-xl p-3 text-xs font-mono text-gray-200 focus:outline-none focus:border-brand-cyan dir-ltr"></textarea>
+                        </div>
+
+                        <button onclick="saveSiteConfig()" class="bg-brand-cyan hover:bg-cyan-400 text-slate-900 font-bold px-5 py-2.5 rounded-xl text-sm transition flex items-center gap-2">
+                            <i class="fas fa-save"></i> שמור הגדרות אתר ללקוח
+                        </button>
+                    </div>
+
+                    <!-- Pending Edits Section -->
+                    <div class="glass-card p-6 rounded-2xl space-y-4">
+                        <h3 class="font-bold text-lg flex items-center justify-between">
+                            <span class="flex items-center gap-2"><i class="fas fa-tasks text-brand-purple"></i> בקשות שינוי להמתנה</span>
+                            <span id="pending-count" class="text-xs bg-brand-purple/20 text-brand-purple px-2 py-0.5 rounded-full">0</span>
+                        </h3>
+
+                        <div id="pending-edits-container" class="space-y-4">
+                            <p class="text-gray-500 text-sm text-center py-4">אין בקשות שינוי ממתינות ללקוח זה.</p>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Modal: View Updated HTML Code -->
+    <div id="html-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md hidden z-50 flex items-center justify-center p-4">
+        <div class="glass-card max-w-3xl w-full p-6 rounded-2xl space-y-4 flex flex-col max-h-[90vh]">
+            <div class="flex justify-between items-center border-b border-gray-800 pb-3">
+                <h3 class="font-bold text-lg text-brand-cyan"><i class="fas fa-code ml-2"></i>קוד HTML מעודכן מוכן להעלייה</h3>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-white"><i class="fas fa-times text-lg"></i></button>
+            </div>
+            <p class="text-xs text-gray-400">העתק את הקוד המעודכן המכיל את השינויים שאושרו והדבק אותו בקובץ האתר הראשי שלך:</p>
+            <textarea id="modal-html-code" readonly class="flex-1 w-full bg-gray-900 border border-gray-700 rounded-xl p-3 text-xs font-mono text-cyan-300 dir-ltr min-h-[300px]"></textarea>
+            <div class="flex justify-end gap-3 pt-2">
+                <button onclick="copyModalCode()" class="bg-brand-cyan text-slate-900 font-bold px-4 py-2 rounded-xl text-sm flex items-center gap-2">
+                    <i class="fas fa-copy"></i> העתק קוד
+                </button>
+                <button onclick="closeModal()" class="bg-gray-800 text-gray-300 px-4 py-2 rounded-xl text-sm">סגור</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Firebase Config
+        const firebaseConfig = {
+            apiKey: "AIzaSyBYrdNSkWx8gUzkTyIMuIEKWMFfyU4ZuNs",
+            authDomain: "netvibe-media.firebaseapp.com",
+            projectId: "netvibe-media",
+            storageBucket: "netvibe-media.firebasestorage.app",
+            messagingSenderId: "345459958522",
+            appId: "1:345459958522:web:5a7c1ee5517d8e60499f43",
+            measurementId: "G-VQL10G9K24"
+        };
+
+        const AUTHORIZED_ADMIN_UID = "Y1KvSU1aTPZHETiiIyk0evbgJIq2";
+        const AUTHORIZED_ADMIN_EMAIL = "noamn1047@gmail.com";
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        let currentAdmin = null;
+        let selectedClientId = null;
+        let clientsData = [];
+
+        // Auth state listener
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                if (user.email === AUTHORIZED_ADMIN_EMAIL || user.uid === AUTHORIZED_ADMIN_UID) {
+                    currentAdmin = user;
+                    document.getElementById('auth-screen').classList.add('hidden');
+                    document.getElementById('admin-view').classList.remove('hidden');
+                    document.getElementById('admin-email').innerText = user.email;
+                    loadClients();
+                } else {
+                    showAuthError("גישה נדחתה. חשבון זה אינו מורשה כמנהל מערכת.");
+                    auth.signOut();
+                }
+            } else {
+                document.getElementById('auth-screen').classList.remove('hidden');
+                document.getElementById('admin-view').classList.add('hidden');
+            }
+        });
+
+        function loginWithGoogle() {
+            const provider = new firebase.auth.GoogleAuthProvider();
+            auth.signInWithPopup(provider).catch(err => showAuthError(err.message));
+        }
+
+        function logout() {
+            auth.signOut();
+        }
+
+        function showAuthError(msg) {
+            const errDiv = document.getElementById('auth-error');
+            errDiv.innerText = msg;
+            errDiv.classList.remove('hidden');
+        }
+
+        // Load all registered clients
+        function loadClients() {
+            db.collection('users').onSnapshot(snapshot => {
+                clientsData = [];
+                const listEl = document.getElementById('clients-list');
+                listEl.innerHTML = '';
+
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    data.id = doc.id;
+                    clientsData.push(data);
+                });
+
+                document.getElementById('client-count').innerText = clientsData.length;
+
+                if (clientsData.length === 0) {
+                    listEl.innerHTML = `<div class="text-center py-6 text-gray-500 text-sm">אין לקוחות רשומים עדיין.</div>`;
+                    return;
+                }
+
+                clientsData.forEach(client => {
+                    const item = document.createElement('div');
+                    item.className = `p-3 rounded-xl border transition cursor-pointer flex items-center justify-between ${selectedClientId === client.id ? 'bg-brand-cyan/10 border-brand-cyan' : 'bg-gray-800/50 border-gray-800 hover:border-gray-700'}`;
+                    item.onclick = () => selectClient(client.id);
+                    item.innerHTML = `
+                        <div class="overflow-hidden">
+                            <div class="font-bold text-sm text-white truncate">${client.displayName || client.email || 'לקוח'}</div>
+                            <div class="text-xs text-gray-400 truncate">${client.email}</div>
+                        </div>
+                        <i class="fas fa-chevron-left text-xs text-gray-500"></i>
+                    `;
+                    listEl.appendChild(item);
+                });
+            });
+        }
+
+        // Select client to view and edit details
+        function selectClient(clientId) {
+            selectedClientId = clientId;
+            const client = clientsData.find(c => c.id === clientId);
+            if (!client) return;
+
+            document.getElementById('no-client-selected').classList.add('hidden');
+            document.getElementById('client-workspace').classList.remove('hidden');
+
+            document.getElementById('selected-client-name').innerText = client.displayName || 'לקוח ללא שם';
+            document.getElementById('selected-client-email').innerText = client.email;
+            document.getElementById('selected-client-id').innerText = `ID: ${client.id}`;
+            document.getElementById('edits-count-val').innerText = client.editsThisMonth || 0;
+
+            document.getElementById('site-url-input').value = client.siteUrl || '';
+            document.getElementById('site-html-input').value = client.siteHtml || '';
+
+            loadPendingEdits(clientId);
+            loadClients(); // Refresh list active state
+        }
+
+        // Save URL & HTML Config to user's document
+        function saveSiteConfig() {
+            if (!selectedClientId) return;
+
+            const url = document.getElementById('site-url-input').value.trim();
+            const html = document.getElementById('site-html-input').value.trim();
+
+            db.collection('users').doc(selectedClientId).set({
+                siteUrl: url,
+                siteHtml: html,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            }, { merge: true }).then(() => {
+                alert("הגדרות האתר נשמרו בהצלחה!");
+            }).catch(err => {
+                alert("שגיאה בשמירה: " + err.message);
+            });
+        }
+
+        // Load Pending Edit Requests for selected client
+        function loadPendingEdits(clientId) {
+            db.collection('users').doc(clientId).collection('editRequests')
+                .orderBy('createdAt', 'desc')
+                .onSnapshot(snapshot => {
+                    const container = document.getElementById('pending-edits-container');
+                    container.innerHTML = '';
+                    
+                    let pendingCount = 0;
+
+                    if (snapshot.empty) {
+                        container.innerHTML = `<p class="text-gray-500 text-sm text-center py-4">אין בקשות שינוי ללקוח זה.</p>`;
+                        document.getElementById('pending-count').innerText = 0;
+                        return;
+                    }
+
+                    snapshot.forEach(doc => {
+                        const edit = doc.data();
+                        edit.id = doc.id;
+
+                        if (edit.status === 'pending') pendingCount++;
+
+                        const dateStr = edit.createdAt ? new Date(edit.createdAt.toDate()).toLocaleString('he-IL') : 'נשלח כעת';
+
+                        const card = document.createElement('div');
+                        card.className = `p-4 rounded-xl border ${edit.status === 'pending' ? 'bg-gray-800/80 border-brand-purple/50' : 'bg-gray-900/50 border-gray-800 opacity-60'}`;
+                        card.innerHTML = `
+                            <div class="flex justify-between items-start mb-2">
+                                <span class="text-xs text-gray-400"><i class="far fa-clock ml-1"></i>${dateStr}</span>
+                                <span class="text-xs px-2 py-0.5 rounded-full ${edit.status === 'pending' ? 'bg-amber-500/20 text-amber-300' : 'bg-green-500/20 text-green-300'}">
+                                    ${edit.status === 'pending' ? 'ממתין לאישור' : 'אושר'}
+                                </span>
+                            </div>
+                            <div class="space-y-2 text-xs font-mono my-3 bg-gray-950 p-3 rounded-lg border border-gray-800">
+                                <div><strong class="text-red-400">טקסט מקורי:</strong> ${escapeHtml(edit.originalText || '')}</div>
+                                <div><strong class="text-green-400">טקסט חדש:</strong> ${escapeHtml(edit.newText || '')}</div>
+                            </div>
+                            ${edit.status === 'pending' ? `
+                                <div class="flex gap-2">
+                                    <button onclick="approveEdit('${edit.id}', \`${escapeQuotes(edit.originalText)}\`, \`${escapeQuotes(edit.newText)}\`)" class="bg-green-500 hover:bg-green-600 text-slate-900 font-bold px-3 py-1.5 rounded-lg text-xs transition flex items-center gap-1">
+                                        <i class="fas fa-check"></i> אישר והפק HTML
+                                    </button>
+                                </div>
+                            ` : ''}
+                        `;
+                        container.appendChild(card);
+                    });
+
+                    document.getElementById('pending-count').innerText = pendingCount;
+                });
+        }
+
+        // Approve edit and generate new HTML
+        function approveEdit(editId, originalText, newText) {
+            if (!selectedClientId) return;
+
+            let currentHtml = document.getElementById('site-html-input').value;
+
+            if (!currentHtml) {
+                alert("אנא הזן תחילה קוד HTML בסיסי בסקציית ההגדרות למעלה.");
+                return;
+            }
+
+            // Replace text in HTML
+            let updatedHtml = currentHtml;
+            if (originalText && updatedHtml.includes(originalText)) {
+                updatedHtml = updatedHtml.replace(originalText, newText);
+            } else {
+                alert("אזהרה: הטקסט המקורי לא נמצא באופן מדויק בקוד ה-HTML. נעשה עדכון סטטוס בלבד.");
+            }
+
+            // Update DB
+            const batch = db.batch();
+            const editRef = db.collection('users').doc(selectedClientId).collection('editRequests').doc(editId);
+            const userRef = db.collection('users').doc(selectedClientId);
+
+            batch.update(editRef, { status: 'approved', approvedAt: firebase.firestore.FieldValue.serverTimestamp() });
+            batch.update(userRef, { 
+                siteHtml: updatedHtml,
+                editsThisMonth: firebase.firestore.FieldValue.increment(1)
+            });
+
+            batch.commit().then(() => {
+                document.getElementById('site-html-input').value = updatedHtml;
+                showModal(updatedHtml);
+            }).catch(err => {
+                alert("שגיאה בעדכון: " + err.message);
+            });
+        }
+
+        function showModal(htmlCode) {
+            document.getElementById('modal-html-code').value = htmlCode;
+            document.getElementById('html-modal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('html-modal').classList.add('hidden');
+        }
+
+        function copyModalCode() {
+            const textarea = document.getElementById('modal-html-code');
+            textarea.select();
+            document.execCommand('copy');
+            alert("הקוד הועתק ללוח!");
+        }
+
+        function escapeHtml(str) {
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+
+        function escapeQuotes(str) {
+            return (str || '').replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\$/g, '\\$');
+        }
+    </script>
+</body>
+</html>

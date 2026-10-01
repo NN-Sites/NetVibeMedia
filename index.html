@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NetVibeMedia | אתר מושלם לעסק ב-0 ₪ הקמה</title>
+    
+    <!-- Google Fonts - Rubik -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Rubik', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            purple: '#8B5CF6',
+                            cyan: '#06B6D4',
+                            pink: '#EC4899',
+                            dark: '#0B0F19',
+                            card: '#111827',
+                            cardHover: '#1F2937'
+                        }
+                    },
+                    boxShadow: {
+                        'neon-cyan': '0 0 25px rgba(6, 182, 212, 0.4)',
+                        'neon-purple': '0 0 25px rgba(139, 92, 246, 0.4)',
+                        'neon-pink': '0 0 25px rgba(236, 72, 153, 0.4)',
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            background-color: #080C14;
+            color: #F3F4F6;
+            font-family: 'Rubik', sans-serif;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Mouse Following Light Glow */
+        #cursor-glow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(6, 182, 212, 0.18) 0%, rgba(139, 92, 246, 0.1) 40%, rgba(0, 0, 0, 0) 70%);
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            z-index: 9999;
+            transition: transform 0.08s ease-out, opacity 0.3s ease;
+            mix-blend-mode: screen;
+        }
+
+        .glass-card {
+            background: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .glass-nav {
+            background: rgba(8, 12, 20, 0.85);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, #06B6D4 0%, #8B5CF6 50%, #EC4899 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .gradient-border {
+            position: relative;
+            border-radius: 1rem;
+            background: linear-gradient(135deg, #06B6D4, #8B5CF6, #EC4899);
+            padding: 1px;
+        }
+
+        .gradient-border-inner {
+            background: #0D1322;
+            border-radius: calc(1rem - 1px);
+        }
+
+        /* FAQ Accordion Transition Animation */
+        .faq-answer {
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease, padding 0.3s ease;
+        }
+
+        .faq-answer.open {
+            max-height: 300px;
+            opacity: 1;
+            padding-top: 0.5rem;
+            padding-bottom: 1.5rem;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #080C14;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1F2937;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #8B5CF6;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-brand-purple selection:text-white">
+
+    <!-- Mouse Light Glow Element -->
+    <div id="cursor-glow"></div>
+
+    <header class="fixed top-0 left-0 right-0 z-50 glass-nav transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                
+                <!-- Logo -->
+                <a href="#" class="flex items-center gap-3 group">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-cyan via-brand-purple to-brand-pink flex items-center justify-center text-white font-black text-xl shadow-neon-purple group-hover:scale-105 transition-transform">
+                        N
+                    </div>
+                    <span class="text-2xl font-bold tracking-wider text-white">
+                        NetVibe<span class="text-gradient">Media</span>
+                    </span>
+                </a>
+
+                <!-- Desktop Navigation Links -->
+                <nav class="hidden md:flex items-center gap-8 font-medium text-gray-300">
+                    <a href="#hero" class="hover:text-brand-cyan transition-colors">ראשי</a>
+                    <a href="#why-us" class="hover:text-brand-cyan transition-colors">למה אנחנו?</a>
+                    <a href="#package" class="hover:text-brand-cyan transition-colors">החבילה ב-500 ₪</a>
+                    <a href="#management" class="hover:text-brand-cyan transition-colors">ניהול האתר</a>
+                    <a href="#calculator" class="hover:text-brand-cyan transition-colors">מחשבון חיסכון</a>
+                    <a href="#faq" class="hover:text-brand-cyan transition-colors">שאלות נפוצות</a>
+                </nav>
+
+                <!-- Action Button -->
+                <div class="hidden lg:flex items-center gap-4">
+                    <a href="#contact" class="px-6 py-2.5 rounded-full bg-gradient-to-r from-brand-cyan to-brand-purple text-white font-semibold hover:shadow-neon-cyan hover:scale-105 transition-all text-sm">
+                        התחל עכשיו ב-0 ₪
+                    </a>
+                </div>
+
+                <!-- Mobile Hamburger Button -->
+                <div class="md:hidden">
+                    <button id="mobile-menu-btn" class="text-gray-300 hover:text-white focus:outline-none p-2">
+                        <i class="fa-solid fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Dropdown -->
+        <div id="mobile-menu" class="hidden md:hidden glass-card border-b border-gray-800 px-4 pt-2 pb-6 space-y-3 text-center">
+            <a href="#hero" class="block py-2 text-gray-300 hover:text-brand-cyan">ראשי</a>
+            <a href="#why-us" class="block py-2 text-gray-300 hover:text-brand-cyan">למה אנחנו?</a>
+            <a href="#package" class="block py-2 text-brand-cyan font-bold">החבילה ב-500 ₪</a>
+            <a href="#management" class="block py-2 text-gray-300 hover:text-brand-cyan">ניהול האתר</a>
+            <a href="#calculator" class="block py-2 text-gray-300 hover:text-brand-cyan">מחשבון חיסכון</a>
+            <a href="#faq" class="block py-2 text-gray-300 hover:text-brand-cyan">שאלות נפוצות</a>
+            <a href="#contact" class="block w-full mt-4 py-3 rounded-xl bg-gradient-to-r from-brand-cyan to-brand-purple text-white font-bold">
+                התחל עכשיו ב-0 ₪ הקמה
+            </a>
+        </div>
+    </header>
+
+    <section id="hero" class="relative pt-32 pb-20 md:pt-44 md:pb-32 overflow-hidden">
+        <!-- Background Ambient Glows -->
+        <div class="absolute top-1/4 right-10 w-96 h-96 bg-brand-cyan/20 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute top-1/3 left-10 w-96 h-96 bg-brand-purple/20 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                
+                <!-- Hero Text Content -->
+                <div class="lg:col-span-7 text-center lg:text-right space-y-6">
+                    
+                    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-card border border-brand-cyan/30 text-brand-cyan text-sm font-semibold mb-2">
+                        <span class="w-2 h-2 rounded-full bg-brand-cyan animate-ping"></span>
+                        מהפכת הדיגיטל לעסקים בישראל
+                    </div>
+
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black leading-tight tracking-tight">
+                        האתר המושלם לעסק שלך <br>
+                        <span class="text-gradient">ב-0 ₪ דמי הקמה!</span>
+                    </h1>
+
+                    <p class="text-lg sm:text-xl text-gray-300 max-w-2xl font-light leading-relaxed">
+                        במקום לשלם כ-20,000 ₪ מראש על פיתוח – אנחנו מאפשרים לך לקבל אתר פרימיום, מעוצב, מותאם ומוכן באוויר ב-0 ₪ הקמה ורק 
+                        <strong class="text-white font-semibold underline decoration-brand-cyan">500 ₪ בחודש</strong> עבור הכל!
+                    </p>
+
+                    <!-- Key Bullet Badges -->
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-2 text-sm text-gray-200">
+                        <div class="flex items-center gap-2 justify-center lg:justify-start">
+                            <i class="fa-solid fa-circle-check text-brand-cyan"></i>
+                            <span>עיצוב ייחודי וחדשני</span>
+                        </div>
+                        <div class="flex items-center gap-2 justify-center lg:justify-start">
+                            <i class="fa-solid fa-circle-check text-brand-cyan"></i>
+                            <span>דומיין + אחסון ענן</span>
+                        </div>
+                        <div class="flex items-center gap-2 justify-center lg:justify-start">
+                            <i class="fa-solid fa-circle-check text-brand-cyan"></i>
+                            <span>ממשק עריכה עצמאי</span>
+                        </div>
+                    </div>
+
+                    <!-- Call to Action Buttons -->
+                    <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-4">
+                        <a href="#contact" class="w-full sm:w-auto px-8 py-4 rounded-2xl bg-gradient-to-r from-brand-cyan via-brand-purple to-brand-pink text-white font-bold text-lg shadow-neon-purple hover:scale-105 transition-all text-center">
+                            להקמת האתר ב-0 ₪
+                            <i class="fa-solid fa-arrow-left mr-2"></i>
+                        </a>
+                        <a href="#package" class="w-full sm:w-auto px-8 py-4 rounded-2xl glass-card text-white font-semibold hover:bg-gray-800 transition-all text-center border border-gray-700">
+                            פירוט החבילה
+                        </a>
+                    </div>
+
+                </div>
+
+                <!-- Hero Visual Showcase -->
+                <div class="lg:col-span-5 relative">
+                    <div class="relative mx-auto max-w-md lg:max-w-none">
+                        
+                        <!-- Glow behind mockup -->
+                        <div class="absolute -inset-1 bg-gradient-to-r from-brand-cyan to-brand-pink rounded-3xl blur-2xl opacity-50"></div>
+
+                        <!-- Card Showcase Container -->
+                        <div class="relative glass-card rounded-3xl p-6 border border-gray-700/50 shadow-2xl space-y-6">
+                            
+                            <!-- Showcase Image -->
+                            <div class="relative rounded-2xl overflow-hidden group">
+                                <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1000&auto=format&fit=crop" alt="פיתוח אתרים מודרני" class="w-full h-72 object-cover group-hover:scale-105 transition-transform duration-500">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent flex items-end p-6">
+                                    <div>
+                                        <span class="text-xs text-brand-cyan font-bold tracking-widest uppercase block mb-1">פיתוח ועיצוב מתקדם</span>
+                                        <h3 class="text-xl font-bold text-white">נוכחות דיגיטלית שלוקחת את העסק קדימה</h3>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Floating Offer Badge -->
+                            <div class="bg-gradient-to-r from-brand-purple to-brand-pink p-5 rounded-2xl text-center shadow-lg">
+                                <div class="text-xs text-white/80 uppercase font-semibold">הצעה בלעדית</div>
+                                <div class="text-3xl font-black text-white">0 ₪ הקמה</div>
+                                <div class="text-sm font-medium text-white/90">500 ₪ בלבד לחודש | כולל אחסון ותחזוקה</div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <section id="why-us" class="py-20 relative bg-brand-dark/50 border-y border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
+                <h2 class="text-3xl sm:text-4xl font-bold">
+                    למה לבחור ב-<span class="text-gradient">NetVibeMedia</span>?
+                </h2>
+                <p class="text-gray-400 text-lg">
+                    פתרון מקצה לקצה שפותר אותך מכל הכאבי ראש הטכנולוגיים והעלויות הגבוהות מראש.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                
+                <!-- Feature 1 -->
+                <div class="glass-card p-8 rounded-2xl border border-gray-800 hover:border-brand-cyan/50 transition-all hover:-translate-y-2 group">
+                    <div class="w-16 h-16 rounded-2xl bg-brand-cyan/10 border border-brand-cyan/30 flex items-center justify-center text-brand-cyan text-2xl mb-6 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-piggy-bank"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-3">חיסכון ענק במזומן</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        במקום להשקיע עשרות אלפי שקלים מראש עוד לפני שהכנסת שקל, אנחנו בונים ומעלים את האתר ב-0 ₪.
+                    </p>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="glass-card p-8 rounded-2xl border border-gray-800 hover:border-brand-purple/50 transition-all hover:-translate-y-2 group">
+                    <div class="w-16 h-16 rounded-2xl bg-brand-purple/10 border border-brand-purple/30 flex items-center justify-center text-brand-purple text-2xl mb-6 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-cubes"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-3">הכל תחת קורת גג אחת</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        דומיין, אחסון, אבטחה, עיצוב ותחזוקה - הכל כלול בחבילה אחת פשוטה ושקופה ללא ספקים נפרדים.
+                    </p>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="glass-card p-8 rounded-2xl border border-gray-800 hover:border-brand-pink/50 transition-all hover:-translate-y-2 group">
+                    <div class="w-16 h-16 rounded-2xl bg-brand-pink/10 border border-brand-pink/30 flex items-center justify-center text-brand-pink text-2xl mb-6 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-headset"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-3">שקט נפשי ותמיכה שוטפת</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        האתר שלך מנוהל ומתוחזק באופן שוטף. יש בעיה? צריכים שינוי? אנחנו כאן בשבילכם לאורך כל הדרך.
+                    </p>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <section id="package" class="py-24 relative overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            
+            <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
+                <span class="text-brand-pink font-bold text-sm tracking-wider uppercase">החבילה המנצחת לעסק</span>
+                <h2 class="text-3xl sm:text-5xl font-black">
+                    כל מה שהאתר שלך צריך ב-<span class="text-gradient">500 ₪ בלבד</span>
+                </h2>
+            </div>
+
+            <!-- Pricing Card -->
+            <div class="max-w-3xl mx-auto">
+                <div class="gradient-border shadow-neon-purple hover:shadow-neon-cyan transition-shadow duration-500">
+                    <div class="gradient-border-inner p-8 sm:p-12 relative overflow-hidden">
+                        
+                        <div class="text-center pb-8 border-b border-gray-800 space-y-4">
+                            <h3 class="text-2xl font-bold text-white">אתר תדמית / מכירות פרימיום</h3>
+                            
+                            <div class="flex items-center justify-center gap-4 my-6">
+                                <div class="text-center">
+                                    <span class="text-gray-400 text-sm block">עלות הקמה</span>
+                                    <span class="text-3xl font-black text-brand-cyan">0 ₪</span>
+                                </div>
+                                <div class="text-4xl font-light text-gray-600">+</div>
+                                <div class="text-center">
+                                    <span class="text-gray-400 text-sm block">תשלום חודשי</span>
+                                    <span class="text-4xl sm:text-5xl font-black text-white">500 ₪</span>
+                                    <span class="text-xs text-gray-400 block">/ חודש בלבד</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Included Features -->
+                        <div class="py-8 grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+                            
+                            <div class="flex items-start gap-3">
+                                <div class="w-6 h-6 rounded-full bg-brand-cyan/20 text-brand-cyan flex items-center justify-center shrink-0 mt-0.5">
+                                    <i class="fa-solid fa-check text-xs"></i>
+                                </div>
+                                <div>
+                                    <strong class="text-white block">אתר מעוצב ומותאם אישית</strong>
+                                    <span class="text-gray-400">עיצוב יוקרתי ומודרני המותאם בדיוק למותג שלך</span>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start gap-3">
+                                <div class="w-6 h-6 rounded-full bg-brand-cyan/20 text-brand-cyan flex items-center justify-center shrink-0 mt-0.5">
+                                    <i class="fa-solid fa-check text-xs"></i>
+                                </div>
+                                <div>
+                                    <strong class="text-white block">דומיין אישי כלול</strong>
+                                    <span class="text-gray-400">רישום וחידוש דומיין בחינם</span>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start gap-3">
+                                <div class="w-6 h-6 rounded-full bg-brand-cyan/20 text-brand-cyan flex items-center justify-center shrink-0 mt-0.5">
+                                    <i class="fa-solid fa-check text-xs"></i>
+                                </div>
+                                <div>
+                                    <strong class="text-white block">אחסון ענן מהיר ומאובטח</strong>
+                                    <span class="text-gray-400">שרתים מהירים במיוחד כולל תעודת אבטחה SSL</span>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start gap-3">
+                                <div class="w-6 h-6 rounded-full bg-brand-cyan/20 text-brand-cyan flex items-center justify-center shrink-0 mt-0.5">
+                                    <i class="fa-solid fa-check text-xs"></i>
+                                </div>
+                                <div>
+                                    <strong class="text-white block">מנהל תוכן וממשק עריכה</strong>
+                                    <span class="text-gray-400">מערכת קלה לשינוי טקסטים ותמונות באופן עצמאי</span>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start gap-3">
+                                <div class="w-6 h-6 rounded-full bg-brand-cyan/20 text-brand-cyan flex items-center justify-center shrink-0 mt-0.5">
+                                    <i class="fa-solid fa-check text-xs"></i>
+                                </div>
+                                <div>
+                                    <strong class="text-white block">תחזוקה ואבטחה מלאה</strong>
+                                    <span class="text-gray-400">גיבויים יומיים, הגנה מפני פריצות ועדכונים</span>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start gap-3">
+                                <div class="w-6 h-6 rounded-full bg-brand-cyan/20 text-brand-cyan flex items-center justify-center shrink-0 mt-0.5">
+                                    <i class="fa-solid fa-check text-xs"></i>
+                                </div>
+                                <div>
+                                    <strong class="text-white block">התאמה מלאה לניידים ולגוגל</strong>
+                                    <span class="text-gray-400">רספונסיביות מלאה לניידים וקידום במנועי חיפוש</span>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="pt-4 text-center">
+                            <a href="#contact" class="block w-full py-4 rounded-xl bg-gradient-to-r from-brand-cyan via-brand-purple to-brand-pink text-white font-bold text-lg shadow-neon-purple hover:scale-[1.02] transition-transform">
+                                רוצה להתחיל עכשיו!
+                            </a>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <section id="management" class="py-20 relative bg-brand-dark/40 border-y border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="text-center max-w-4xl mx-auto mb-16 space-y-4">
+                <span class="px-4 py-1.5 rounded-full bg-brand-purple/20 text-brand-purple text-xs font-bold border border-brand-purple/30">עריכה עצמאית ופשוטה</span>
+                <h2 class="text-3xl sm:text-5xl font-extrabold">
+                    ממשק ניהול נוח – <span class="text-gradient">שליטה מלאה באתר שלך</span>
+                </h2>
+                <p class="text-gray-300 text-lg leading-relaxed pt-2">
+                    אצלנו האתר שייך לכם לגמרי. אתם מקבלים ממשק ניהול נוח, ידידותי ונגיש בעברית, המאפשר לכם לעדכן את האתר בכל רגע נתון במידת הצורך – בקלות, במהירות וללא צורך בשום ידע טכני או קוד.
+                </p>
+            </div>
+
+            <!-- Full Width Responsive Grid Features -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                
+                <div class="glass-card p-8 rounded-3xl border border-gray-800 hover:border-brand-cyan/40 transition-all">
+                    <div class="w-14 h-14 rounded-2xl bg-brand-cyan/10 text-brand-cyan flex items-center justify-center text-2xl mb-6">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-white mb-3">עריכת טקסטים ותמונות בקליק</h3>
+                    <p class="text-gray-400 text-base leading-relaxed">
+                        רוצים לעדכן מחיר? להחליף תמונה ראשית? לשנות תיאור של שירות? לוחצים על האלמנט, מעדכנים ושומרים – בדיוק כמו לערוך קובץ במסמך פשוט.
+                    </p>
+                </div>
+
+                <div class="glass-card p-8 rounded-3xl border border-gray-800 hover:border-brand-purple/40 transition-all">
+                    <div class="w-14 h-14 rounded-2xl bg-brand-purple/10 text-brand-purple flex items-center justify-center text-2xl mb-6">
+                        <i class="fa-solid fa-folder-plus"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-white mb-3">הוספת תכנים ומוצרים</h3>
+                    <p class="text-gray-400 text-base leading-relaxed">
+                        מערכת גמישה המאפשרת להעלות מוצרים חדשים, מאמרים, פוסטים בבלוג ותמונות נוספות לגלריה באופן מיידי ובכל כמות שתרצו.
+                    </p>
+                </div>
+
+                <div class="glass-card p-8 rounded-3xl border border-gray-800 hover:border-brand-pink/40 transition-all">
+                    <div class="w-14 h-14 rounded-2xl bg-brand-pink/10 text-brand-pink flex items-center justify-center text-2xl mb-6">
+                        <i class="fa-solid fa-mobile-screen-button"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-white mb-3">זמינות מלאה מהסמארטפון</h3>
+                    <p class="text-gray-400 text-base leading-relaxed">
+                        ממשק הניהול מותאם באופן מלא לעבודה מהטלפון הנייד. תוכלו לבצע שינויים ולנהל את האתר מכל מקום, גם כשהייתם מחוץ למשרד.
+                    </p>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <section id="calculator" class="py-20 relative border-b border-gray-800">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="text-center mb-12 space-y-3">
+                <span class="text-brand-cyan font-bold text-sm">מחשבון חיסכון</span>
+                <h2 class="text-3xl font-bold">כמה עולה אתר בחברות אחרות?</h2>
+                <p class="text-gray-400 text-sm">השוו את המודל של NetVibeMedia מול הקמה מסורתית בשוק</p>
+            </div>
+
+            <div class="glass-card rounded-3xl p-6 sm:p-10 border border-gray-700">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                    
+                    <!-- Traditional Method: ~20K NIS -->
+                    <div class="space-y-4 p-6 rounded-2xl bg-gray-900/60 border border-red-500/20">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-bold text-red-400 text-lg">בנייה מסורתית בשוק</h3>
+                            <i class="fa-solid fa-xmark text-red-500 text-xl"></i>
+                        </div>
+                        <ul class="space-y-3 text-sm text-gray-300">
+                            <li class="flex justify-between"><span>עלות הקמה ועיצוב:</span> <strong class="text-white">~ 20,000 ₪</strong></li>
+                            <li class="flex justify-between"><span>אחסון + דומיין לשנה:</span> <strong class="text-white">₪1,500</strong></li>
+                            <li class="flex justify-between"><span>תחזוקה ועדכונים:</span> <strong class="text-white">₪350/שעה</strong></li>
+                            <li class="flex justify-between border-t border-gray-800 pt-3 font-bold text-red-400 text-base">
+                                <span>סה"כ השקעה ראשונית:</span>
+                                <span>20,000 ₪ +</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- NetVibeMedia Method -->
+                    <div class="space-y-4 p-6 rounded-2xl bg-gradient-to-b from-brand-purple/20 to-brand-cyan/20 border border-brand-cyan/40 relative">
+                        <div class="absolute -top-3 right-4 bg-brand-cyan text-black font-bold text-xs px-3 py-1 rounded-full">
+                            הבחירה המשתלמת
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-bold text-brand-cyan text-lg">NetVibeMedia</h3>
+                            <i class="fa-solid fa-check text-brand-cyan text-xl"></i>
+                        </div>
+                        <ul class="space-y-3 text-sm text-gray-200">
+                            <li class="flex justify-between"><span>עלות הקמה ופיתוח:</span> <strong class="text-brand-cyan font-bold">0 ₪ בלבד!</strong></li>
+                            <li class="flex justify-between"><span>אחסון + דומיין:</span> <strong class="text-white">כלול בחבילה</strong></li>
+                            <li class="flex justify-between"><span>תחזוקה ועדכונים:</span> <strong class="text-white">כלול בחבילה</strong></li>
+                            <li class="flex justify-between border-t border-gray-700 pt-3 font-bold text-brand-cyan text-base">
+                                <span>תשלום חודשי קבוע:</span>
+                                <span>500 ₪ / חודש</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                </div>
+
+                <div class="mt-8 text-center bg-brand-cyan/10 border border-brand-cyan/30 rounded-xl p-4">
+                    <p class="text-sm text-brand-cyan font-bold">
+                        💡 אתם חוסכים כ-20,000 ₪ בעלויות ההקמה ונהנים מאתר מעולה עם שקט נפשי מלא!
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <section id="faq" class="py-20 relative">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="text-center mb-16 space-y-3">
+                <span class="text-brand-pink font-bold text-sm">שאלות ותשובות</span>
+                <h2 class="text-3xl sm:text-4xl font-bold">תשובות לכל השאלות</h2>
+            </div>
+
+            <!-- Accordion List -->
+            <div class="space-y-4" id="faq-accordion">
+                
+                <!-- FAQ Item 1 -->
+                <div class="glass-card rounded-2xl border border-gray-800 overflow-hidden transition-all">
+                    <button class="faq-btn w-full p-6 text-right flex items-center justify-between font-bold text-lg text-white hover:text-brand-cyan transition-colors">
+                        <span>האם באמת אין שום עלות הקמה?</span>
+                        <i class="fa-solid fa-chevron-down text-brand-cyan transition-transform duration-300"></i>
+                    </button>
+                    <div class="faq-answer px-6 text-gray-400 text-sm leading-relaxed">
+                        נכון מאוד. אנחנו מאמינים במודל שירות מנצח ושקוף. אנחנו בונים ומקימים את האתר ב-0 ₪ הקמה, ואתם משלמים רק 500 ₪ בחודש כשהאתר שלכם באוויר ופועל.
+                    </div>
+                </div>
+
+                <!-- FAQ Item 2 -->
+                <div class="glass-card rounded-2xl border border-gray-800 overflow-hidden transition-all">
+                    <button class="faq-btn w-full p-6 text-right flex items-center justify-between font-bold text-lg text-white hover:text-brand-cyan transition-colors">
+                        <span>מה קורה אם אבקש לבטל את השירות?</span>
+                        <i class="fa-solid fa-chevron-down text-brand-cyan transition-transform duration-300"></i>
+                    </button>
+                    <div class="faq-answer px-6 text-gray-400 text-sm leading-relaxed">
+                        אין אצלנו כבילה או חוזים דרקוניים. ניתן לבטל את המנוי בכל עת בהודעה מראש, בצורה פשוטה וללא קנסות.
+                    </div>
+                </div>
+
+                <!-- FAQ Item 3 -->
+                <div class="glass-card rounded-2xl border border-gray-800 overflow-hidden transition-all">
+                    <button class="faq-btn w-full p-6 text-right flex items-center justify-between font-bold text-lg text-white hover:text-brand-cyan transition-colors">
+                        <span>תוכמה זמן האתר שלי יהיה באוויר?</span>
+                        <i class="fa-solid fa-chevron-down text-brand-cyan transition-transform duration-300"></i>
+                    </button>
+                    <div class="faq-answer px-6 text-gray-400 text-sm leading-relaxed">
+                        במרבית המקרים, לאחר קבלת החומרים והדרישות הבסיסיות, האתר מעוצב, מבוצע ומוכן באוויר תוך 5-7 ימי עסקים בלבד.
+                    </div>
+                </div>
+
+                <!-- FAQ Item 4 -->
+                <div class="glass-card rounded-2xl border border-gray-800 overflow-hidden transition-all">
+                    <button class="faq-btn w-full p-6 text-right flex items-center justify-between font-bold text-lg text-white hover:text-brand-cyan transition-colors">
+                        <span>האם אוכל לעדכן את האתר בעצמי?</span>
+                        <i class="fa-solid fa-chevron-down text-brand-cyan transition-transform duration-300"></i>
+                    </button>
+                    <div class="faq-answer px-6 text-gray-400 text-sm leading-relaxed">
+                        כן! תקבלו גישה למערכת ניהול פשוטה מאוד בעברית, שדרכה תוכלו לעדכן טקסטים, תמונות ותכנים בצורה עצמאית וקלה בכל זמן.
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <section id="contact" class="py-24 relative bg-brand-dark/80 border-t border-gray-800">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="text-center mb-12 space-y-4">
+                <span class="text-brand-cyan font-bold text-sm">יצירת קשר</span>
+                <h2 class="text-3xl sm:text-5xl font-black">משאירים פרטים – והאתר בדרך אליכם</h2>
+                <p class="text-gray-300">השאירו פרטים ונחזור אליכם לתיאום שיחת היכרות קצרה ב-0 ₪ הקמה</p>
+            </div>
+
+            <div class="glass-card p-8 sm:p-12 rounded-3xl border border-gray-700 relative">
+                <form id="lead-form" class="space-y-6">
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div>
+                            <label class="text-sm font-medium text-gray-300 mb-2 block">שם מלא *</label>
+                            <input type="text" id="lead-name" required placeholder="ישראל ישראלי" class="w-full bg-gray-900/90 border border-gray-700 rounded-xl px-4 py-3.5 text-white focus:outline-none focus:border-brand-cyan transition-colors">
+                        </div>
+                        <div>
+                            <label class="text-sm font-medium text-gray-300 mb-2 block">אימייל *</label>
+                            <input type="email" id="lead-email" required placeholder="your@email.com" class="w-full bg-gray-900/90 border border-gray-700 rounded-xl px-4 py-3.5 text-white focus:outline-none focus:border-brand-cyan transition-colors">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="text-sm font-medium text-gray-300 mb-2 block">שם העסק / תחום עיסוק</label>
+                        <input type="text" id="lead-business" placeholder="לדוגמה: עורך דין / חנות בגדים / רואה חשבון" class="w-full bg-gray-900/90 border border-gray-700 rounded-xl px-4 py-3.5 text-white focus:outline-none focus:border-brand-cyan transition-colors">
+                    </div>
+
+                    <div>
+                        <label class="text-sm font-medium text-gray-300 mb-2 block">הודעה / הערות</label>
+                        <textarea id="lead-message" rows="4" placeholder="ספרו לנו בקצרה מה העסק שלכם צריך..." class="w-full bg-gray-900/90 border border-gray-700 rounded-xl px-4 py-3.5 text-white focus:outline-none focus:border-brand-cyan transition-colors"></textarea>
+                    </div>
+
+                    <button type="submit" id="submit-btn" class="w-full py-4 rounded-xl bg-gradient-to-r from-brand-cyan via-brand-purple to-brand-pink text-white font-bold text-lg shadow-neon-purple hover:scale-[1.01] transition-transform flex items-center justify-center gap-2">
+                        <span>שליחת פרטים להקמת אתר ב-0 ₪</span>
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+
+                    <!-- Form Status Indicator -->
+                    <div id="form-status" class="hidden text-center p-4 rounded-xl text-sm font-bold"></div>
+
+                </form>
+            </div>
+
+        </div>
+    </section>
+
+    <footer class="bg-black py-10 border-t border-gray-900 text-sm text-gray-400">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-right">
+                
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-brand-cyan to-brand-pink flex items-center justify-center text-white font-bold text-sm">
+                        N
+                    </div>
+                    <span class="text-lg font-bold text-white">NetVibeMedia</span>
+                </div>
+
+                <div>
+                    © <span id="year"></span> NetVibeMedia. כל הזכויות שמורות. בניית אתרים ב-0 ₪ הקמה.
+                </div>
+
+            </div>
+        </div>
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Provided Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBYrdNSkWx8gUzkTyIMuIEKWMFfyU4ZuNs",
+            authDomain: "netvibe-media.firebaseapp.com",
+            projectId: "netvibe-media",
+            storageBucket: "netvibe-media.firebasestorage.app",
+            messagingSenderId: "345459958522",
+            appId: "1:345459958522:web:5a7c1ee5517d8e60499f43",
+            measurementId: "G-VQL10G9K24"
+        };
+
+        // Initialize Firebase & Firestore
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Form submission handling to Firestore
+        const leadForm = document.getElementById('lead-form');
+        const formStatus = document.getElementById('form-status');
+        const submitBtn = document.getElementById('submit-btn');
+
+        leadForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span>שולח...</span><i class="fa-solid fa-spinner animate-spin"></i>';
+
+            const name = document.getElementById('lead-name').value;
+            const email = document.getElementById('lead-email').value;
+            const business = document.getElementById('lead-business').value;
+            const message = document.getElementById('lead-message').value;
+
+            try {
+                // Add lead document to 'leads' collection
+                await addDoc(collection(db, "leads"), {
+                    name: name,
+                    email: email,
+                    business: business,
+                    message: message,
+                    createdAt: serverTimestamp()
+                });
+
+                formStatus.className = "text-center p-4 rounded-xl text-sm font-bold bg-green-500/20 text-green-400 border border-green-500/40";
+                formStatus.textContent = "הפרטים נשלחו בהצלחה! נציג NetVibeMedia יחזור אליך בהקדם.";
+                formStatus.classList.remove('hidden');
+
+                leadForm.reset();
+            } catch (error) {
+                console.error("Error adding lead: ", error);
+                formStatus.className = "text-center p-4 rounded-xl text-sm font-bold bg-red-500/20 text-red-400 border border-red-500/40";
+                formStatus.textContent = "אירעה שגיאה בשליחת הפרטים. אנא נסה שנית.";
+                formStatus.classList.remove('hidden');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<span>שליחת פרטים להקמת אתר ב-0 ₪</span><i class="fa-solid fa-paper-plane"></i>';
+            }
+        });
+    </script>
+
+    <script>
+        // Set dynamic year in footer
+        document.getElementById('year').textContent = new Date().getFullYear();
+
+        // Mouse Follower Glow Movement
+        const cursorGlow = document.getElementById('cursor-glow');
+        window.addEventListener('mousemove', (e) => {
+            cursorGlow.style.left = e.clientX + 'px';
+            cursorGlow.style.top = e.clientY + 'px';
+        });
+
+        // Mobile Menu Toggle logic
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Smooth FAQ Accordion Toggle
+        const faqBtns = document.querySelectorAll('.faq-btn');
+        faqBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const answer = btn.nextElementSibling;
+                const icon = btn.querySelector('i');
+                const isOpen = answer.classList.contains('open');
+
+                // Close all answers
+                document.querySelectorAll('.faq-answer').forEach(ans => ans.classList.remove('open'));
+                document.querySelectorAll('.faq-btn i').forEach(ic => ic.classList.remove('rotate-180'));
+
+                // Toggle selected
+                if (!isOpen) {
+                    answer.classList.add('open');
+                    icon.classList.add('rotate-180');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

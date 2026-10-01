@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NetVibeMedia - אזור אישי ללקוח</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Rubik', 'sans-serif'] },
+                    colors: {
+                        dark: { 900: '#0B0F19', 800: '#111827', 700: '#1F2937' },
+                        brand: { cyan: '#00F2FE', purple: '#9D4EDD', pink: '#F72585' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #0B0F19; color: #F3F4F6; font-family: 'Rubik', sans-serif; }
+        .glass-card { background: rgba(17, 24, 39, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Auth View -->
+    <div id="auth-screen" class="min-h-screen flex items-center justify-center p-4">
+        <div class="glass-card p-8 rounded-2xl max-w-md w-full text-center shadow-2xl space-y-6">
+            <div class="w-16 h-16 bg-gradient-to-tr from-brand-cyan to-brand-purple rounded-2xl flex items-center justify-center mx-auto shadow-lg">
+                <i class="fas fa-user-circle text-3xl text-white"></i>
+            </div>
+            <div>
+                <h1 class="text-2xl font-bold mb-1">NetVibeMedia Client Portal</h1>
+                <p class="text-gray-400 text-sm">התחבר לחשבונך כדי לצפות באתר ולבצע שינויים</p>
+            </div>
+            <button onclick="loginWithGoogle()" class="w-full bg-gradient-to-r from-brand-cyan to-brand-purple hover:opacity-90 text-slate-900 font-bold py-3 px-6 rounded-xl transition-all flex items-center justify-center gap-3">
+                <i class="fab fa-google text-lg"></i>
+                התחברות מהירה עם Google
+            </button>
+            <div id="auth-error" class="text-red-400 text-sm hidden"></div>
+        </div>
+    </div>
+
+    <!-- Client Dashboard View -->
+    <div id="dashboard-view" class="hidden min-h-screen flex flex-col">
+        <!-- Header -->
+        <header class="glass-card sticky top-0 z-50 border-b border-gray-800 px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-gradient-to-tr from-brand-cyan to-brand-purple rounded-xl flex items-center justify-center text-slate-900 font-bold text-xl">
+                    N
+                </div>
+                <div>
+                    <h2 class="font-bold text-lg leading-none">NetVibeMedia</h2>
+                    <span class="text-xs text-brand-cyan">אזור אישי לניהול האתר</span>
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="text-left hidden sm:block">
+                    <div id="user-name" class="font-semibold text-sm"></div>
+                    <div id="user-email" class="text-xs text-gray-400"></div>
+                </div>
+                <button onclick="logout()" class="text-gray-400 hover:text-white text-sm bg-gray-800 px-3 py-1.5 rounded-lg border border-gray-700 transition">
+                    התנתק <i class="fas fa-sign-out-alt mr-1"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Workspace -->
+        <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 space-y-6">
+            
+            <!-- Top Status Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="glass-card p-5 rounded-2xl flex items-center justify-between">
+                    <div>
+                        <div class="text-xs text-gray-400 mb-1">סטטוס האתר שלך</div>
+                        <div id="site-status" class="font-bold text-green-400 flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 bg-green-400 rounded-full animate-pulse"></span> באוויר
+                        </div>
+                    </div>
+                    <a id="visit-site-btn" href="#" target="_blank" class="text-xs bg-gray-800 hover:bg-gray-700 text-brand-cyan px-3 py-2 rounded-xl border border-gray-700 transition flex items-center gap-1">
+                        לצפייה בחי <i class="fas fa-external-link-alt"></i>
+                    </a>
+                </div>
+
+                <div class="glass-card p-5 rounded-2xl flex items-center justify-between">
+                    <div>
+                        <div class="text-xs text-gray-400 mb-1">שינויים שבוצעו החודש</div>
+                        <div class="text-2xl font-bold"><span id="edits-count" class="text-brand-cyan">0</span> / 3</div>
+                    </div>
+                    <i class="fas fa-edit text-2xl text-brand-cyan opacity-80"></i>
+                </div>
+
+                <div class="glass-card p-5 rounded-2xl flex items-center justify-between">
+                    <div>
+                        <div class="text-xs text-gray-400 mb-1">תוספת תשלום לחודש זה</div>
+                        <div class="text-2xl font-bold"><span id="extra-charge" class="text-brand-pink">0</span> ₪</div>
+                    </div>
+                    <i class="fas fa-shekel-sign text-2xl text-brand-pink opacity-80"></i>
+                </div>
+            </div>
+
+            <!-- Edit Warning / Extra Info Banner -->
+            <div id="extra-fee-notice" class="hidden glass-card p-4 rounded-xl border-amber-500/30 bg-amber-500/10 text-amber-300 text-xs flex items-center gap-3">
+                <i class="fas fa-exclamation-triangle text-lg"></i>
+                <div>
+                    <strong>שימו לב:</strong> ניצלתם את 3 השינויים הכלולים בחבילה החודשית. כל שינוי נוסף יחויב ב-10 ₪ בחשבונית הקרובה.
+                </div>
+            </div>
+
+            <!-- Main Editor View Container -->
+            <div class="glass-card p-6 rounded-2xl space-y-4">
+                <div class="flex flex-wrap justify-between items-center gap-4 border-b border-gray-800 pb-4">
+                    <div>
+                        <h3 class="font-bold text-lg flex items-center gap-2">
+                            <i class="fas fa-mouse-pointer text-brand-cyan"></i> עריכה חזותית בלחיצה כפולה (Double Click)
+                        </h3>
+                        <p class="text-xs text-gray-400">לחץ דאבל קליק על כל טקסט באתר כדי לערוך אותו באופן ישיר, ולאחר מכן לחץ על "שלח לבדיקה".</p>
+                    </div>
+                    <button onclick="submitPendingEdits()" id="submit-edits-btn" class="bg-brand-cyan hover:bg-cyan-400 text-slate-900 font-bold px-5 py-2.5 rounded-xl text-sm transition flex items-center gap-2 shadow-lg opacity-50 cursor-not-allowed" disabled>
+                        <i class="fas fa-paper-plane"></i> שלח לבדיקה (<span id="staged-count">0</span>)
+                    </button>
+                </div>
+
+                <!-- Live Editor Canvas (Iframe Preview Container) -->
+                <div class="relative w-full h-[650px] bg-gray-950 rounded-xl overflow-hidden border border-gray-800">
+                    <iframe id="site-frame" class="w-full h-full border-none"></iframe>
+                    <div id="no-html-overlay" class="absolute inset-0 bg-gray-900/90 flex flex-col items-center justify-center text-center p-6 space-y-3">
+                        <i class="fas fa-laptop-code text-4xl text-gray-600"></i>
+                        <h4 class="text-lg font-bold">האתר שלכם עדיין בהקמה או לא שויך</h4>
+                        <p class="text-xs text-gray-400 max-w-sm">צוות NetVibeMedia מעלה כעת את קוד האתר שלכם. תראו את התצוגה המקדימה כאן מיד עם סיום ההגדרה.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Request History -->
+            <div class="glass-card p-6 rounded-2xl space-y-4">
+                <h3 class="font-bold text-lg flex items-center gap-2">
+                    <i class="fas fa-history text-brand-purple"></i> היסטוריית בקשות שינוי
+                </h3>
+                <div id="history-container" class="space-y-3">
+                    <p class="text-gray-500 text-xs text-center py-4">טרם נשלחו בקשות שינוי.</p>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        // Firebase Config
+        const firebaseConfig = {
+            apiKey: "AIzaSyBYrdNSkWx8gUzkTyIMuIEKWMFfyU4ZuNs",
+            authDomain: "netvibe-media.firebaseapp.com",
+            projectId: "netvibe-media",
+            storageBucket: "netvibe-media.firebasestorage.app",
+            messagingSenderId: "345459958522",
+            appId: "1:345459958522:web:5a7c1ee5517d8e60499f43",
+            measurementId: "G-VQL10G9K24"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        let currentUser = null;
+        let stagedEdits = []; // Staged pending changes from double clicks
+
+        // Auth Listener
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                currentUser = user;
+                document.getElementById('auth-screen').classList.add('hidden');
+                document.getElementById('dashboard-view').classList.remove('hidden');
+                document.getElementById('user-name').innerText = user.displayName || 'לקוח';
+                document.getElementById('user-email').innerText = user.email;
+
+                ensureUserExists(user);
+                listenToUserData(user.uid);
+                listenToHistory(user.uid);
+            } else {
+                document.getElementById('auth-screen').classList.remove('hidden');
+                document.getElementById('dashboard-view').classList.add('hidden');
+            }
+        });
+
+        function loginWithGoogle() {
+            const provider = new firebase.auth.GoogleAuthProvider();
+            auth.signInWithPopup(provider).catch(err => {
+                const errDiv = document.getElementById('auth-error');
+                errDiv.innerText = err.message;
+                errDiv.classList.remove('hidden');
+            });
+        }
+
+        function logout() {
+            auth.signOut();
+        }
+
+        // Ensure User Record Exists in Firestore
+        function ensureUserExists(user) {
+            const ref = db.collection('users').doc(user.uid);
+            ref.get().then(doc => {
+                if (!doc.exists) {
+                    ref.set({
+                        email: user.email,
+                        displayName: user.displayName,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        editsThisMonth: 0,
+                        siteUrl: '',
+                        siteHtml: ''
+                    });
+                }
+            });
+        }
+
+        // Listen to User's Assigned Site & Stats
+        function listenToUserData(uid) {
+            db.collection('users').doc(uid).onSnapshot(doc => {
+                if (!doc.exists) return;
+                const data = doc.data();
+
+                const editsUsed = data.editsThisMonth || 0;
+                document.getElementById('edits-count').innerText = editsUsed;
+
+                if (editsUsed >= 3) {
+                    const extraCharges = (editsUsed - 3) * 10;
+                    document.getElementById('extra-charge').innerText = extraCharges;
+                    document.getElementById('extra-fee-notice').classList.remove('hidden');
+                } else {
+                    document.getElementById('extra-charge').innerText = 0;
+                    document.getElementById('extra-fee-notice').classList.add('hidden');
+                }
+
+                if (data.siteUrl) {
+                    document.getElementById('visit-site-btn').href = data.siteUrl;
+                }
+
+                if (data.siteHtml) {
+                    document.getElementById('no-html-overlay').classList.add('hidden');
+                    renderEditableIframe(data.siteHtml);
+                } else {
+                    document.getElementById('no-html-overlay').classList.remove('hidden');
+                }
+            });
+        }
+
+        // Inject HTML code into iframe and enable Double-Click inline editing
+        function renderEditableIframe(htmlCode) {
+            const frame = document.getElementById('site-frame');
+            const doc = frame.contentDocument || frame.contentWindow.document;
+            doc.open();
+            doc.write(htmlCode);
+            doc.close();
+
+            // Inject inline edit styling into iframe
+            const style = doc.createElement('style');
+            style.innerHTML = `
+                .netvibe-editable-hover { outline: 2px dashed #00F2FE !important; cursor: pointer !important; }
+                .netvibe-editing { outline: 2px solid #F72585 !important; background: rgba(247, 37, 133, 0.1) !important; }
+            `;
+            doc.head.appendChild(style);
+
+            // Add Double-Click Listener on frame body
+            doc.body.addEventListener('dblclick', function(e) {
+                e.preventDefault();
+                let target = e.target;
+
+                // Ignore clicks on images/scripts/inputs
+                if (['IMG', 'INPUT', 'TEXTAREA', 'BUTTON', 'SCRIPT'].includes(target.tagName)) return;
+
+                const originalText = target.innerText.trim();
+                if (!originalText) return;
+
+                const newText = prompt("הזן את הטקסט החדש למיקום זה:", originalText);
+                if (newText !== null && newText.trim() !== "" && newText !== originalText) {
+                    target.innerText = newText;
+                    target.classList.add('netvibe-editing');
+
+                    stagedEdits.push({
+                        originalText: originalText,
+                        newText: newText
+                    });
+
+                    updateStagedButton();
+                }
+            });
+
+            // Hover effect
+            doc.body.addEventListener('mouseover', function(e) {
+                if (!['BODY', 'HTML', 'SCRIPT'].includes(e.target.tagName)) {
+                    e.target.classList.add('netvibe-editable-hover');
+                }
+            });
+            doc.body.addEventListener('mouseout', function(e) {
+                e.target.classList.remove('netvibe-editable-hover');
+            });
+        }
+
+        function updateStagedButton() {
+            const btn = document.getElementById('submit-edits-btn');
+            const countSpan = document.getElementById('staged-count');
+            countSpan.innerText = stagedEdits.length;
+
+            if (stagedEdits.length > 0) {
+                btn.disabled = false;
+                btn.classList.remove('opacity-50', 'cursor-not-allowed');
+            } else {
+                btn.disabled = true;
+                btn.classList.add('opacity-50', 'cursor-not-allowed');
+            }
+        }
+
+        // Submit staged edits to Firestore for admin review
+        function submitPendingEdits() {
+            if (!currentUser || stagedEdits.length === 0) return;
+
+            const batch = db.batch();
+            const editsRef = db.collection('users').doc(currentUser.uid).collection('editRequests');
+
+            stagedEdits.forEach(edit => {
+                const newDoc = editsRef.doc();
+                batch.set(newDoc, {
+                    originalText: edit.originalText,
+                    newText: edit.newText,
+                    status: 'pending',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+            });
+
+            batch.commit().then(() => {
+                alert("הבקשות נשלחו בהצלחה לבדיקת האדמין!");
+                stagedEdits = [];
+                updateStagedButton();
+            }).catch(err => {
+                alert("שגיאה בשליחת הבקשה: " + err.message);
+            });
+        }
+
+        // Listen to User's Change Requests History
+        function listenToHistory(uid) {
+            db.collection('users').doc(uid).collection('editRequests')
+                .orderBy('createdAt', 'desc')
+                .onSnapshot(snapshot => {
+                    const container = document.getElementById('history-container');
+                    container.innerHTML = '';
+
+                    if (snapshot.empty) {
+                        container.innerHTML = `<p class="text-gray-500 text-xs text-center py-4">טרם נשלחו בקשות שינוי.</p>`;
+                        return;
+                    }
+
+                    snapshot.forEach(doc => {
+                        const edit = doc.data();
+                        const dateStr = edit.createdAt ? new Date(edit.createdAt.toDate()).toLocaleString('he-IL') : 'נשלח כעת';
+
+                        const card = document.createElement('div');
+                        card.className = "p-3 rounded-xl border border-gray-800 bg-gray-900/60 flex flex-wrap justify-between items-center text-xs gap-2";
+                        card.innerHTML = `
+                            <div>
+                                <div class="text-gray-400 mb-1"><i class="far fa-clock ml-1"></i>${dateStr}</div>
+                                <div><span class="text-red-400 font-mono">${escapeHtml(edit.originalText || '')}</span> &larr; <span class="text-green-400 font-mono">${escapeHtml(edit.newText || '')}</span></div>
+                            </div>
+                            <div>
+                                <span class="px-2 py-1 rounded-full ${edit.status === 'pending' ? 'bg-amber-500/20 text-amber-300' : 'bg-green-500/20 text-green-300'}">
+                                    ${edit.status === 'pending' ? 'ממתין לאישור' : 'אושר ועודכן'}
+                                </span>
+                            </div>
+                        `;
+                        container.appendChild(card);
+                    });
+                });
+        }
+
+        function escapeHtml(str) {
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+    </script>
+</body>
+</html>
