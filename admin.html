@@ -21,7 +21,7 @@
                     fontFamily: { sans: ['Rubik', 'sans-serif'] },
                     colors: {
                         dark: { 900: '#0B0F19', 800: '#111827', 700: '#1F2937' },
-                        brand: { cyan: '#00F2FE', purple: '#9D4EDD', pink: '#F72585' }
+                        brand: { cyan: '#00F2FE', purple: '#9D4EDD', pink: '#F72585', green: '#10B981' }
                     }
                 }
             }
@@ -42,7 +42,7 @@
                 <i class="fas fa-user-shield text-2xl text-white"></i>
             </div>
             <h1 class="text-2xl font-bold mb-2">NetVibeMedia Admin</h1>
-            <p class="text-gray-400 text-sm mb-6">כניסה מורשית למנהל בלבד</p>
+            <p class="text-gray-400 text-sm mb-6">כניסה מורשים בלבד</p>
             <button id="google-login-btn" onclick="loginWithGoogle()" class="w-full bg-gradient-to-r from-brand-cyan to-brand-purple hover:opacity-90 text-slate-900 font-bold py-3 px-6 rounded-xl transition-all flex items-center justify-center gap-3">
                 <i class="fab fa-google text-lg"></i>
                 התחבר עם Google
@@ -72,6 +72,38 @@
             </div>
         </header>
 
+        <!-- Revenue Dashboard Banner -->
+        <section class="max-w-7xl w-full mx-auto px-4 pt-6 md:px-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Total Projected Income Card -->
+                <div class="glass-card p-5 rounded-2xl flex items-center justify-between border-r-4 border-brand-green">
+                    <div>
+                        <span class="text-xs text-gray-400 uppercase tracking-wider block mb-1">הכנסה חודשית צפויה</span>
+                        <div class="flex items-baseline gap-2">
+                            <span id="total-revenue-val" class="text-3xl font-black text-emerald-400">₪0</span>
+                            <span class="text-xs text-gray-400">/ לחודש</span>
+                        </div>
+                    </div>
+                    <div class="w-12 h-12 bg-emerald-500/10 rounded-xl flex items-center justify-center text-emerald-400 text-xl">
+                        <i class="fas fa-shekel-sign"></i>
+                    </div>
+                </div>
+
+                <!-- Billing Countdown Card -->
+                <div class="glass-card p-5 rounded-2xl flex items-center justify-between border-r-4 border-brand-purple">
+                    <div>
+                        <span class="text-xs text-gray-400 uppercase tracking-wider block mb-1">זמן נותר לחיוב החודשי הקרוב (1 בחודש)</span>
+                        <div id="billing-countdown" class="text-2xl font-bold font-mono text-brand-purple">
+                            00d 00h 00m 00s
+                        </div>
+                    </div>
+                    <div class="w-12 h-12 bg-brand-purple/10 rounded-xl flex items-center justify-center text-brand-purple text-xl">
+                        <i class="fas fa-hourglass-half"></i>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- Content -->
         <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
             
@@ -95,7 +127,7 @@
                 <div id="no-client-selected" class="glass-card p-12 rounded-2xl text-center flex flex-col items-center justify-center min-h-[400px]">
                     <i class="fas fa-user-cursor text-5xl text-gray-600 mb-4"></i>
                     <h3 class="text-xl font-bold mb-2">בחר לקוח מהרשימה</h3>
-                    <p class="text-gray-400 text-sm max-w-md">בחר לקוח מהרשימה בצד ימין כדי להגדיר את האתר שלו, לצפות בשינויים מבוקשים ולהפיק קוד HTML מעודכן.</p>
+                    <p class="text-gray-400 text-sm max-w-md">בחר לקוח מהרשימה בצד ימין כדי להגדיר את האתר שלו, לערוך תשלום חודשי, לצפות בשינויים מבוקשים ולהפיק קוד HTML מעודכן.</p>
                 </div>
 
                 <!-- Selected Client Workspace -->
@@ -112,6 +144,22 @@
                             <span id="edits-badge" class="bg-gray-800 text-xs px-3 py-1.5 rounded-lg border border-gray-700">
                                 שינויים החודש: <strong id="edits-count-val" class="text-brand-cyan">0</strong>
                             </span>
+                        </div>
+                    </div>
+
+                    <!-- Payment & Subscription Config Section -->
+                    <div class="glass-card p-6 rounded-2xl space-y-4 border-l-4 border-emerald-500">
+                        <h3 class="font-bold text-lg flex items-center gap-2 text-emerald-400">
+                            <i class="fas fa-file-invoice-dollar"></i> הגדרת תשלום חודשי ללקוח
+                        </h3>
+                        <div class="flex flex-col sm:flex-row items-end gap-3">
+                            <div class="flex-1 w-full">
+                                <label class="block text-xs text-gray-400 mb-1">סכום חיוב חודשי (ב-₪)</label>
+                                <input type="number" id="monthly-price-input" placeholder="0" min="0" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+                            </div>
+                            <button onclick="saveMonthlyPrice()" class="w-full sm:w-auto bg-emerald-500 hover:bg-emerald-600 text-slate-900 font-bold px-5 py-2 rounded-xl text-sm transition flex items-center justify-center gap-2 whitespace-nowrap">
+                                <i class="fas fa-check"></i> עדכן מחיר
+                            </button>
                         </div>
                     </div>
 
@@ -149,9 +197,7 @@
                     </div>
 
                 </div>
-
             </div>
-
         </main>
     </div>
 
@@ -205,6 +251,7 @@
                     document.getElementById('admin-view').classList.remove('hidden');
                     document.getElementById('admin-email').innerText = user.email;
                     loadClients();
+                    startBillingCountdown();
                 } else {
                     showAuthError("גישה נדחתה. חשבון זה אינו מורשה כמנהל מערכת.");
                     auth.signOut();
@@ -230,10 +277,11 @@
             errDiv.classList.remove('hidden');
         }
 
-        // Load all registered clients
+        // Load all registered clients & update revenue gauge
         function loadClients() {
             db.collection('users').onSnapshot(snapshot => {
                 clientsData = [];
+                let totalRevenue = 0;
                 const listEl = document.getElementById('clients-list');
                 listEl.innerHTML = '';
 
@@ -241,9 +289,13 @@
                     const data = doc.data();
                     data.id = doc.id;
                     clientsData.push(data);
+                    
+                    const monthlyPrice = Number(data.monthlyPrice) || 0;
+                    totalRevenue += monthlyPrice;
                 });
 
                 document.getElementById('client-count').innerText = clientsData.length;
+                document.getElementById('total-revenue-val').innerText = `₪${totalRevenue.toLocaleString()}`;
 
                 if (clientsData.length === 0) {
                     listEl.innerHTML = `<div class="text-center py-6 text-gray-500 text-sm">אין לקוחות רשומים עדיין.</div>`;
@@ -252,6 +304,7 @@
 
                 clientsData.forEach(client => {
                     const item = document.createElement('div');
+                    const price = client.monthlyPrice ? `₪${client.monthlyPrice}` : 'לא הוגדר';
                     item.className = `p-3 rounded-xl border transition cursor-pointer flex items-center justify-between ${selectedClientId === client.id ? 'bg-brand-cyan/10 border-brand-cyan' : 'bg-gray-800/50 border-gray-800 hover:border-gray-700'}`;
                     item.onclick = () => selectClient(client.id);
                     item.innerHTML = `
@@ -259,7 +312,10 @@
                             <div class="font-bold text-sm text-white truncate">${client.displayName || client.email || 'לקוח'}</div>
                             <div class="text-xs text-gray-400 truncate">${client.email}</div>
                         </div>
-                        <i class="fas fa-chevron-left text-xs text-gray-500"></i>
+                        <div class="text-left">
+                            <span class="text-xs text-emerald-400 font-bold block">${price}</span>
+                            <i class="fas fa-chevron-left text-xs text-gray-500"></i>
+                        </div>
                     `;
                     listEl.appendChild(item);
                 });
@@ -280,11 +336,27 @@
             document.getElementById('selected-client-id').innerText = `ID: ${client.id}`;
             document.getElementById('edits-count-val').innerText = client.editsThisMonth || 0;
 
+            document.getElementById('monthly-price-input').value = client.monthlyPrice || '';
             document.getElementById('site-url-input').value = client.siteUrl || '';
             document.getElementById('site-html-input').value = client.siteHtml || '';
 
             loadPendingEdits(clientId);
-            loadClients(); // Refresh list active state
+            loadClients(); // Refresh active UI state
+        }
+
+        // Save Monthly Price for Client
+        function saveMonthlyPrice() {
+            if (!selectedClientId) return;
+            const price = Number(document.getElementById('monthly-price-input').value) || 0;
+
+            db.collection('users').doc(selectedClientId).set({
+                monthlyPrice: price,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            }, { merge: true }).then(() => {
+                alert("הסכום החודשי עודכן בהצלחה!");
+            }).catch(err => {
+                alert("שגיאה בעדכון המחיר: " + err.message);
+            });
         }
 
         // Save URL & HTML Config to user's document
@@ -417,6 +489,31 @@
 
         function escapeQuotes(str) {
             return (str || '').replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\$/g, '\\$');
+        }
+
+        // Countdown timer to the 1st of next month
+        function startBillingCountdown() {
+            function updateTimer() {
+                const now = new Date();
+                let nextBilling = new Date(now.getFullYear(), now.getMonth() + 1, 1, 0, 0, 0);
+                const diff = nextBilling - now;
+
+                if (diff <= 0) {
+                    document.getElementById('billing-countdown').innerText = "00d 00h 00m 00s";
+                    return;
+                }
+
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+                const minutes = Math.floor((diff / 1000 / 60) % 60);
+                const seconds = Math.floor((diff / 1000) % 60);
+
+                const pad = n => n.toString().padStart(2, '0');
+                document.getElementById('billing-countdown').innerText = `${pad(days)}d ${pad(hours)}h ${pad(minutes)}m ${pad(seconds)}s`;
+            }
+
+            updateTimer();
+            setInterval(updateTimer, 1000);
         }
     </script>
 </body>
