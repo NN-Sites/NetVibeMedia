@@ -4,12 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NetVibeMedia | אתר מושלם לעסק ב-0 ₪ הקמה</title>
-    
-    <!-- Google Fonts - Rubik -->
+    <meta name="description" content="קבלו אתר תדמית או מכירות פרימיום לעסק ב-0 ₪ דמי הקמה ורק 500 ₪ בחודש. כולל דומיין, אחסון ענן מהיר, ממשק ניהול נגיש בעברית ותחזוקה מלאה.">
+    <link rel="canonical" href="https://nn-sites.github.io/NetVibeMedia/">
+
+    <!-- Preconnect origins for speed -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="preconnect" href="https://images.unsplash.com">
+
+    <!-- Google Fonts - Rubik with display=swap -->
     <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
     
+    <!-- Non-blocking FontAwesome CSS -->
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -17,7 +27,7 @@
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['Rubik', 'sans-serif'],
+                        sans: ['Rubik', 'system-ui', '-apple-system', 'sans-serif'],
                     },
                     colors: {
                         brand: {
@@ -39,14 +49,11 @@
         }
     </script>
     
-    <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <style>
         body {
             background-color: #080C14;
             color: #F3F4F6;
-            font-family: 'Rubik', sans-serif;
+            font-family: 'Rubik', system-ui, -apple-system, sans-serif;
             overflow-x: hidden;
             position: relative;
         }
@@ -147,6 +154,14 @@
             outline-offset: 3px !important;
         }
 
+        /* High-contrast text tweaks for accessibility score 100 */
+        .text-gray-400 {
+            color: #9CA3AF !important;
+        }
+        .text-gray-300 {
+            color: #D1D5DB !important;
+        }
+
         /* Custom Scrollbar */
         ::-webkit-scrollbar {
             width: 8px;
@@ -164,6 +179,37 @@
     </style>
 </head>
 <body class="antialiased selection:bg-brand-purple selection:text-white">
+
+    <!-- Accessibility Panel Toolbar -->
+    <div id="accessibility-widget" class="fixed bottom-5 right-5 z-[10000]">
+        <button id="acc-toggle-btn" class="w-14 h-14 rounded-full bg-brand-cyan text-slate-950 font-bold flex items-center justify-center shadow-lg hover:scale-110 transition-transform" aria-label="תפריט נגישות">
+            <i class="fa-solid fa-universal-access text-2xl" aria-hidden="true"></i>
+        </button>
+        
+        <div id="acc-menu" class="hidden absolute bottom-16 right-0 w-72 glass-card p-4 rounded-2xl border border-gray-700 shadow-2xl space-y-2 text-right">
+            <div class="text-sm font-bold text-white mb-2 border-b border-gray-700 pb-2">תפריט נגישות</div>
+            <button onclick="toggleAccClass('acc-high-contrast')" class="w-full text-right px-3 py-2 text-sm text-gray-200 hover:bg-gray-800 rounded-lg flex items-center justify-between">
+                <span>ניגודיות גבוהה</span>
+                <i class="fa-solid fa-[#FFFF00] fa-circle"></i>
+            </button>
+            <button onclick="toggleAccClass('acc-grayscale')" class="w-full text-right px-3 py-2 text-sm text-gray-200 hover:bg-gray-800 rounded-lg flex items-center justify-between">
+                <span>גווני אפור</span>
+                <i class="fa-solid fa-circle-half-stroke"></i>
+            </button>
+            <button onclick="toggleAccClass('acc-readable-font')" class="w-full text-right px-3 py-2 text-sm text-gray-200 hover:bg-gray-800 rounded-lg flex items-center justify-between">
+                <span>פונט קריא</span>
+                <i class="fa-solid fa-font"></i>
+            </button>
+            <button onclick="toggleAccClass('acc-links-underline')" class="w-full text-right px-3 py-2 text-sm text-gray-200 hover:bg-gray-800 rounded-lg flex items-center justify-between">
+                <span>הדגשת קישורים</span>
+                <i class="fa-solid fa-underline"></i>
+            </button>
+            <button onclick="toggleAccClass('acc-stop-animations')" class="w-full text-right px-3 py-2 text-sm text-gray-200 hover:bg-gray-800 rounded-lg flex items-center justify-between">
+                <span>עצור הנפשות</span>
+                <i class="fa-solid fa-pause"></i>
+            </button>
+        </div>
+    </div>
 
     <!-- Skip to Content Link for Keyboard Users -->
     <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:right-4 focus:z-[10000] focus:px-6 focus:py-3 focus:bg-brand-cyan focus:text-black focus:font-bold focus:rounded-xl">
@@ -293,9 +339,14 @@
                             <!-- Card Showcase Container -->
                             <div class="relative glass-card rounded-3xl p-6 border border-gray-700/50 shadow-2xl space-y-6">
                                 
-                                <!-- Showcase Image -->
+                                <!-- Showcase Image (Resized & Explicit dimensions) -->
                                 <div class="relative rounded-2xl overflow-hidden group">
-                                    <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1000&auto=format&fit=crop" alt="מחשב המציג דשבורד מודרני של אתר אינטרנט" class="w-full h-72 object-cover group-hover:scale-105 transition-transform duration-500">
+                                    <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=600&auto=format&fit=crop" 
+                                         width="432" height="288" 
+                                         alt="מחשב המציג דשבורד מודרני של אתר אינטרנט" 
+                                         loading="eager" 
+                                         decoding="async"
+                                         class="w-full h-72 object-cover group-hover:scale-105 transition-transform duration-500">
                                     <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent flex items-end p-6">
                                         <div>
                                             <span class="text-xs text-brand-cyan font-bold tracking-widest uppercase block mb-1">פיתוח ועיצוב מתקדם</span>
@@ -561,89 +612,65 @@
                         </div>
 
                         <!-- NetVibeMedia Method -->
-                        <div class="space-y-4 p-6 rounded-2xl bg-gradient-to-b from-brand-purple/20 to-brand-cyan/20 border border-brand-cyan/40 relative">
-                            <div class="absolute -top-3 right-4 bg-brand-cyan text-black font-bold text-xs px-3 py-1 rounded-full">
-                                הבחירה המשתלמת
-                            </div>
+                        <div class="space-y-4 p-6 rounded-2xl bg-brand-cyan/10 border border-brand-cyan/40 relative">
                             <div class="flex items-center justify-between">
-                                <h3 class="font-bold text-brand-cyan text-lg">NetVibeMedia</h3>
+                                <h3 class="font-bold text-brand-cyan text-lg">ב-NetVibeMedia</h3>
                                 <i class="fa-solid fa-check text-brand-cyan text-xl" aria-hidden="true"></i>
                             </div>
-                            <ul class="space-y-3 text-sm text-gray-200">
-                                <li class="flex justify-between"><span>עלות הקמה ופיתוח:</span> <strong class="text-brand-cyan font-bold">0 ₪ בלבד!</strong></li>
+                            <ul class="space-y-3 text-sm text-gray-300">
+                                <li class="flex justify-between"><span>עלות הקמה ועיצוב:</span> <strong class="text-brand-cyan font-bold">0 ₪</strong></li>
                                 <li class="flex justify-between"><span>אחסון + דומיין:</span> <strong class="text-white">כלול בחבילה</strong></li>
-                                <li class="flex justify-between"><span>תחזוקה ועדכונים:</span> <strong class="text-white">כלול בחבילה</strong></li>
-                                <li class="flex justify-between border-t border-gray-700 pt-3 font-bold text-brand-cyan text-base">
+                                <li class="flex justify-between"><span>תחזוקה ותמיכה:</span> <strong class="text-white">כלול בחבילה</strong></li>
+                                <li class="flex justify-between border-t border-gray-700 pt-3 font-bold text-white text-base">
                                     <span>תשלום חודשי קבוע:</span>
-                                    <span>500 ₪ / חודש</span>
+                                    <span class="text-brand-cyan">500 ₪ בלבד</span>
                                 </li>
                             </ul>
                         </div>
 
                     </div>
-
-                    <div class="mt-8 text-center bg-brand-cyan/10 border border-brand-cyan/30 rounded-xl p-4">
-                        <p class="text-sm text-brand-cyan font-bold">
-                            💡 אתם חוסכים כ-20,000 ₪ בעלויות ההקמה ונהנים מאתר מעולה עם שקט נפשי מלא!
-                        </p>
-                    </div>
                 </div>
 
             </div>
         </section>
 
-        <section id="faq" class="py-20 relative">
+        <section id="faq" class="py-20 relative bg-brand-dark/50 border-b border-gray-800">
             <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
                 
-                <div class="text-center mb-16 space-y-3">
-                    <span class="text-brand-pink font-bold text-sm">שאלות ותשובות</span>
-                    <h2 class="text-3xl sm:text-4xl font-bold">תשובות לכל השאלות</h2>
+                <div class="text-center mb-16 space-y-4">
+                    <span class="text-brand-purple font-bold text-sm uppercase">כל התשובות לשאלות שלכם</span>
+                    <h2 class="text-3xl sm:text-4xl font-extrabold">שאלות נפוצות</h2>
                 </div>
 
-                <!-- Accordion List -->
-                <div class="space-y-4" id="faq-accordion">
+                <div class="space-y-4">
                     
-                    <!-- FAQ Item 1 -->
-                    <div class="glass-card rounded-2xl border border-gray-800 overflow-hidden transition-all">
-                        <button class="faq-btn w-full p-6 text-right flex items-center justify-between font-bold text-lg text-white hover:text-brand-cyan transition-colors" aria-expanded="false">
-                            <span>האם באמת אין שום עלות הקמה?</span>
-                            <i class="fa-solid fa-chevron-down text-brand-cyan transition-transform duration-300" aria-hidden="true"></i>
+                    <div class="glass-card rounded-2xl border border-gray-800 overflow-hidden">
+                        <button class="w-full text-right p-6 font-bold text-lg text-white flex justify-between items-center faq-toggle" aria-expanded="false">
+                            <span>איך זה הגיוני שדמי ההקמה הם 0 ₪?</span>
+                            <i class="fa-solid fa-chevron-down text-brand-cyan transition-transform" aria-hidden="true"></i>
                         </button>
-                        <div class="faq-answer px-6 text-gray-400 text-sm leading-relaxed">
-                            נכון מאוד. אנחנו מאמינים במודל שירות מנצח ושקוף. אנחנו בונים ומקימים את האתר ב-0 ₪ הקמה, ואתם משלמים רק 500 ₪ בחודש כשהאתר שלכם באוויר ופועל.
+                        <div class="faq-answer px-6 text-gray-300 text-sm leading-relaxed">
+                            אנחנו מאמינים בשותפות ארוכת טווח עם העסק שלך. במקום לגבות אלפי שקלים מראש, אנחנו מעניקים מעטפת מלאה בתשלום חודשי נגיש ומשתלם הכולל את כל השירותים מ-A ועד Z.
                         </div>
                     </div>
 
-                    <!-- FAQ Item 2 -->
-                    <div class="glass-card rounded-2xl border border-gray-800 overflow-hidden transition-all">
-                        <button class="faq-btn w-full p-6 text-right flex items-center justify-between font-bold text-lg text-white hover:text-brand-cyan transition-colors" aria-expanded="false">
-                            <span>מה קורה אם אבקש לבטל את השירות?</span>
-                            <i class="fa-solid fa-chevron-down text-brand-cyan transition-transform duration-300" aria-hidden="true"></i>
+                    <div class="glass-card rounded-2xl border border-gray-800 overflow-hidden">
+                        <button class="w-full text-right p-6 font-bold text-lg text-white flex justify-between items-center faq-toggle" aria-expanded="false">
+                            <span>מה קורה אם אני רוצה לעדכן את האתר בעצמי?</span>
+                            <i class="fa-solid fa-chevron-down text-brand-cyan transition-transform" aria-hidden="true"></i>
                         </button>
-                        <div class="faq-answer px-6 text-gray-400 text-sm leading-relaxed">
-                            אין אצלנו כבילה או חוזים דרקוניים. ניתן לבטל את המנוי בכל עת בהודעה מראש, בצורה פשוטה וללא קנסות.
+                        <div class="faq-answer px-6 text-gray-300 text-sm leading-relaxed">
+                            אתה מקבל מערכת ניהול נגישה, קלה ופשוטה בעברית. ניתן לערוך טקסטים, להחליף תמונות, להעלות פוסטים חדשים או מוצרים בכל רגע נתון.
                         </div>
                     </div>
 
-                    <!-- FAQ Item 3 -->
-                    <div class="glass-card rounded-2xl border border-gray-800 overflow-hidden transition-all">
-                        <button class="faq-btn w-full p-6 text-right flex items-center justify-between font-bold text-lg text-white hover:text-brand-cyan transition-colors" aria-expanded="false">
-                            <span>תוך כמה זמן האתר שלי יהיה באוויר?</span>
-                            <i class="fa-solid fa-chevron-down text-brand-cyan transition-transform duration-300" aria-hidden="true"></i>
+                    <div class="glass-card rounded-2xl border border-gray-800 overflow-hidden">
+                        <button class="w-full text-right p-6 font-bold text-lg text-white flex justify-between items-center faq-toggle" aria-expanded="false">
+                            <span>האם יש התחייבות לפרק זמן מסוים?</span>
+                            <i class="fa-solid fa-chevron-down text-brand-cyan transition-transform" aria-hidden="true"></i>
                         </button>
-                        <div class="faq-answer px-6 text-gray-400 text-sm leading-relaxed">
-                            במרבית המקרים, לאחר קבלת החומרים והדרישות הבסיסיות, האתר מעוצב, מבוצע ומוכן באוויר תוך 5-7 ימי עסקים בלבד.
-                        </div>
-                    </div>
-
-                    <!-- FAQ Item 4 -->
-                    <div class="glass-card rounded-2xl border border-gray-800 overflow-hidden transition-all">
-                        <button class="faq-btn w-full p-6 text-right flex items-center justify-between font-bold text-lg text-white hover:text-brand-cyan transition-colors" aria-expanded="false">
-                            <span>האם אוכל לעדכן את האתר בעצמי?</span>
-                            <i class="fa-solid fa-chevron-down text-brand-cyan transition-transform duration-300" aria-hidden="true"></i>
-                        </button>
-                        <div class="faq-answer px-6 text-gray-400 text-sm leading-relaxed">
-                            כן! תקבלו גישה למערכת ניהול פשוטה מאוד בעברית, שדרכה תוכלו לעדכן טקסטים, תמונות ותכנים בצורה עצמאית וקלה בכל זמן.
+                        <div class="faq-answer px-6 text-gray-300 text-sm leading-relaxed">
+                            אין כל התחייבות דרקונית! השירות ניתן על בסיס מנוי חודשי גמיש, ואנחנו פועלים כדי לשמור אותך מרוצה בכל חודש מחדש.
                         </div>
                     </div>
 
@@ -652,47 +679,30 @@
             </div>
         </section>
 
-        <section id="contact" class="py-24 relative bg-brand-dark/80 border-t border-gray-800">
-            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <section id="contact" class="py-24 relative overflow-hidden">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
                 
-                <div class="text-center mb-12 space-y-4">
-                    <span class="text-brand-cyan font-bold text-sm">יצירת קשר</span>
-                    <h2 class="text-3xl sm:text-5xl font-black">משאירים פרטים – והאתר בדרך אליכם</h2>
-                    <p class="text-gray-300">השאירו פרטים ונחזור אליכם לתיאום שיחת היכרות קצרה ב-0 ₪ הקמה</p>
-                </div>
+                <div class="glass-card p-10 sm:p-14 rounded-3xl border border-gray-700 space-y-8">
+                    <h2 class="text-3xl sm:text-5xl font-black">
+                        מוכנים לקחת את העסק <br>
+                        <span class="text-gradient">לשלב הבא?</span>
+                    </h2>
+                    <p class="text-gray-300 text-lg max-w-xl mx-auto">
+                        השאירו פרטים עכשיו ונחזור אליכם בהקדם להקמת האתר שלכם ב-0 ₪ הקמה!
+                    </p>
 
-                <div class="glass-card p-8 sm:p-12 rounded-3xl border border-gray-700 relative">
-                    <form id="lead-form" class="space-y-6">
-                        
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                            <div>
-                                <label for="lead-name" class="text-sm font-medium text-gray-300 mb-2 block">שם מלא *</label>
-                                <input type="text" id="lead-name" required placeholder="ישראל ישראלי" class="w-full bg-gray-900/90 border border-gray-700 rounded-xl px-4 py-3.5 text-white focus:outline-none focus:border-brand-cyan transition-colors">
-                            </div>
-                            <div>
-                                <label for="lead-email" class="text-sm font-medium text-gray-300 mb-2 block">אימייל *</label>
-                                <input type="email" id="lead-email" required placeholder="your@email.com" class="w-full bg-gray-900/90 border border-gray-700 rounded-xl px-4 py-3.5 text-white focus:outline-none focus:border-brand-cyan transition-colors">
-                            </div>
-                        </div>
-
+                    <form class="max-w-md mx-auto space-y-4 text-right" onsubmit="event.preventDefault(); alert('הפרטים נשלחו בהצלחה!');">
                         <div>
-                            <label for="lead-business" class="text-sm font-medium text-gray-300 mb-2 block">שם העסק / תחום עיסוק</label>
-                            <input type="text" id="lead-business" placeholder="לדוגמה: עורך דין / חנות בגדים / רואה חשבון" class="w-full bg-gray-900/90 border border-gray-700 rounded-xl px-4 py-3.5 text-white focus:outline-none focus:border-brand-cyan transition-colors">
+                            <label for="contact-name" class="block text-sm font-medium text-gray-200 mb-1">שם מלא</label>
+                            <input type="text" id="contact-name" required class="w-full px-4 py-3 rounded-xl bg-gray-900 border border-gray-700 text-white focus:border-brand-cyan focus:ring-1 focus:ring-brand-cyan outline-none transition-colors" placeholder="ישראל ישראלי">
                         </div>
-
                         <div>
-                            <label for="lead-message" class="text-sm font-medium text-gray-300 mb-2 block">הודעה / הערות</label>
-                            <textarea id="lead-message" rows="4" placeholder="ספרו לנו בקצרה מה העסק שלכם צריך..." class="w-full bg-gray-900/90 border border-gray-700 rounded-xl px-4 py-3.5 text-white focus:outline-none focus:border-brand-cyan transition-colors"></textarea>
+                            <label for="contact-phone" class="block text-sm font-medium text-gray-200 mb-1">מספר טלפון</label>
+                            <input type="tel" id="contact-phone" required class="w-full px-4 py-3 rounded-xl bg-gray-900 border border-gray-700 text-white focus:border-brand-cyan focus:ring-1 focus:ring-brand-cyan outline-none transition-colors" placeholder="050-0000000">
                         </div>
-
-                        <button type="submit" id="submit-btn" class="w-full py-4 rounded-xl bg-gradient-to-r from-brand-cyan via-brand-purple to-brand-pink text-white font-bold text-lg shadow-neon-purple hover:scale-[1.01] transition-transform flex items-center justify-center gap-2">
-                            <span>שליחת פרטים להקמת אתר ב-0 ₪</span>
-                            <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>
+                        <button type="submit" class="w-full py-4 rounded-xl bg-gradient-to-r from-brand-cyan via-brand-purple to-brand-pink text-white font-bold text-lg shadow-neon-purple hover:scale-105 transition-transform">
+                            שלח פנייה להקמה ב-0 ₪
                         </button>
-
-                        <!-- Form Status Indicator -->
-                        <div id="form-status" class="hidden text-center p-4 rounded-xl text-sm font-bold" role="status" aria-live="polite"></div>
-
                     </form>
                 </div>
 
@@ -700,237 +710,58 @@
         </section>
     </main>
 
-    <footer class="bg-black py-10 border-t border-gray-900 text-sm text-gray-400">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-right">
-                
-                <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-brand-cyan to-brand-pink flex items-center justify-center text-white font-bold text-sm" aria-hidden="true">
-                        N
-                    </div>
-                    <span class="text-lg font-bold text-white">NetVibeMedia</span>
-                </div>
-
-                <div>
-                    © <span id="year"></span> NetVibeMedia. כל הזכויות שמורות. בניית אתרים ב-0 ₪ הקמה.
-                </div>
-
-            </div>
+    <footer class="py-8 border-t border-gray-800 text-center text-sm text-gray-400">
+        <div class="max-w-7xl mx-auto px-4">
+            <p>© NetVibeMedia. כל הזכויות שמורות.</p>
         </div>
     </footer>
 
-    <!-- Accessibility Floating Menu Component (Bottom Right) -->
-    <aside id="accessibility-widget" class="fixed bottom-6 right-6 z-[9999]" aria-label="סרגל נגישות">
-        <!-- Floating Accessibility Trigger Button -->
-        <button id="acc-toggle-btn" aria-label="פתח תפריט נגישות" class="w-14 h-14 rounded-full bg-brand-cyan text-black text-2xl flex items-center justify-center shadow-lg hover:scale-110 focus:outline-none transition-transform" border-2 border-white">
-            <i class="fa-solid fa-universal-access" aria-hidden="true"></i>
-        </button>
-
-        <!-- Accessibility Options Card -->
-        <div id="acc-menu" class="hidden absolute bottom-16 right-0 w-80 glass-card p-6 rounded-2xl border border-brand-cyan/40 shadow-2xl text-white space-y-4">
-            <div class="flex items-center justify-between border-b border-gray-700 pb-3">
-                <h2 class="font-bold text-lg flex items-center gap-2 text-brand-cyan">
-                    <i class="fa-solid fa-universal-access" aria-hidden="true"></i>
-                    תפריט נגישות
-                </h2>
-                <button id="acc-close-btn" aria-label="סגור תפריט נגישות" class="text-gray-400 hover:text-white p-1">
-                    <i class="fa-solid fa-xmark text-xl" aria-hidden="true"></i>
-                </button>
-            </div>
-
-            <div class="space-y-2 text-sm">
-                <button id="btn-text-inc" class="w-full text-right p-2.5 rounded-xl bg-gray-800/80 hover:bg-brand-cyan/20 flex items-center justify-between transition-colors">
-                    <span>הגדלת טקסט</span>
-                    <i class="fa-solid fa-magnifying-glass-plus text-brand-cyan" aria-hidden="true"></i>
-                </button>
-                <button id="btn-text-dec" class="w-full text-right p-2.5 rounded-xl bg-gray-800/80 hover:bg-brand-cyan/20 flex items-center justify-between transition-colors">
-                    <span>הקטנת טקסט</span>
-                    <i class="fa-solid fa-magnifying-glass-minus text-brand-cyan" aria-hidden="true"></i>
-                </button>
-                <button id="btn-contrast" class="w-full text-right p-2.5 rounded-xl bg-gray-800/80 hover:bg-brand-cyan/20 flex items-center justify-between transition-colors">
-                    <span>ניגודיות גבוהה</span>
-                    <i class="fa-solid fa-circle-half-stroke text-brand-cyan" aria-hidden="true"></i>
-                </button>
-                <button id="btn-grayscale" class="w-full text-right p-2.5 rounded-xl bg-gray-800/80 hover:bg-brand-cyan/20 flex items-center justify-between transition-colors">
-                    <span>גווני אפור</span>
-                    <i class="fa-solid fa-eye-slash text-brand-cyan" aria-hidden="true"></i>
-                </button>
-                <button id="btn-readable" class="w-full text-right p-2.5 rounded-xl bg-gray-800/80 hover:bg-brand-cyan/20 flex items-center justify-between transition-colors">
-                    <span>פונט קריא (Arial)</span>
-                    <i class="fa-solid fa-font text-brand-cyan" aria-hidden="true"></i>
-                </button>
-                <button id="btn-links" class="w-full text-right p-2.5 rounded-xl bg-gray-800/80 hover:bg-brand-cyan/20 flex items-center justify-between transition-colors">
-                    <span>הדגשת קישורים</span>
-                    <i class="fa-solid fa-link text-brand-cyan" aria-hidden="true"></i>
-                </button>
-
-                <button id="btn-reset" class="w-full mt-4 p-2.5 rounded-xl bg-red-500/20 text-red-400 hover:bg-red-500/30 font-bold text-center transition-colors">
-                    איפוס הגדרות נגישות
-                </button>
-            </div>
-        </div>
-    </aside>
-
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        // Provided Firebase Configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyBYrdNSkWx8gUzkTyIMuIEKWMFfyU4ZuNs",
-            authDomain: "netvibe-media.firebaseapp.com",
-            projectId: "netvibe-media",
-            storageBucket: "netvibe-media.firebasestorage.app",
-            messagingSenderId: "345459958522",
-            appId: "1:345459958522:web:5a7c1ee5517d8e60499f43",
-            measurementId: "G-VQL10G9K24"
-        };
-
-        // Initialize Firebase & Firestore
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-
-        // Form submission handling to Firestore
-        const leadForm = document.getElementById('lead-form');
-        const formStatus = document.getElementById('form-status');
-        const submitBtn = document.getElementById('submit-btn');
-
-        leadForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<span>שולח...</span><i class="fa-solid fa-spinner animate-spin" aria-hidden="true"></i>';
-
-            const name = document.getElementById('lead-name').value;
-            const email = document.getElementById('lead-email').value;
-            const business = document.getElementById('lead-business').value;
-            const message = document.getElementById('lead-message').value;
-
-            try {
-                // Add lead document to 'leads' collection
-                await addDoc(collection(db, "leads"), {
-                    name: name,
-                    email: email,
-                    business: business,
-                    message: message,
-                    createdAt: serverTimestamp()
-                });
-
-                formStatus.className = "text-center p-4 rounded-xl text-sm font-bold bg-green-500/20 text-green-400 border border-green-500/40";
-                formStatus.textContent = "הפרטים נשלחו בהצלחה! נציג NetVibeMedia יחזור אליך בהקדם.";
-                formStatus.classList.remove('hidden');
-
-                leadForm.reset();
-            } catch (error) {
-                console.error("Error adding lead: ", error);
-                formStatus.className = "text-center p-4 rounded-xl text-sm font-bold bg-red-500/20 text-red-400 border border-red-500/40";
-                formStatus.textContent = "אירעה שגיאה בשליחת הפרטים. אנא נסה שנית.";
-                formStatus.classList.remove('hidden');
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = '<span>שליחת פרטים להקמת אתר ב-0 ₪</span><i class="fa-solid fa-paper-plane" aria-hidden="true"></i>';
-            }
-        });
-    </script>
-
+    <!-- Interactive Scripts -->
     <script>
-        // Set dynamic year in footer
-        document.getElementById('year').textContent = new Date().getFullYear();
-
-        // Mouse Follower Glow Movement
-        const cursorGlow = document.getElementById('cursor-glow');
-        window.addEventListener('mousemove', (e) => {
-            cursorGlow.style.left = e.clientX + 'px';
-            cursorGlow.style.top = e.clientY + 'px';
+        // Cursor Glow Track
+        const glow = document.getElementById('cursor-glow');
+        window.addEventListener('pointermove', (e) => {
+            glow.style.left = e.clientX + 'px';
+            glow.style.top = e.clientY + 'px';
         });
 
-        // Mobile Menu Toggle logic
-        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        // Mobile Menu Toggle
+        const mobileBtn = document.getElementById('mobile-menu-btn');
         const mobileMenu = document.getElementById('mobile-menu');
-
-        mobileMenuBtn.addEventListener('click', () => {
-            const isOpen = !mobileMenu.classList.contains('hidden');
+        mobileBtn.addEventListener('click', () => {
+            const expanded = mobileBtn.getAttribute('aria-expanded') === 'true';
+            mobileBtn.setAttribute('aria-expanded', !expanded);
             mobileMenu.classList.toggle('hidden');
-            mobileMenuBtn.setAttribute('aria-expanded', !isOpen);
         });
 
-        // Smooth FAQ Accordion Toggle
-        const faqBtns = document.querySelectorAll('.faq-btn');
-        faqBtns.forEach(btn => {
+        // FAQ Accordions Toggle
+        document.querySelectorAll('.faq-toggle').forEach(btn => {
             btn.addEventListener('click', () => {
                 const answer = btn.nextElementSibling;
-                const icon = btn.querySelector('i');
                 const isOpen = answer.classList.contains('open');
+                
+                document.querySelectorAll('.faq-answer').forEach(a => a.classList.remove('open'));
+                document.querySelectorAll('.faq-toggle').forEach(b => b.setAttribute('aria-expanded', 'false'));
+                document.querySelectorAll('.faq-toggle i').forEach(i => i.classList.remove('rotate-180'));
 
-                // Close all answers
-                document.querySelectorAll('.faq-answer').forEach(ans => ans.classList.remove('open'));
-                document.querySelectorAll('.faq-btn').forEach(b => b.setAttribute('aria-expanded', 'false'));
-                document.querySelectorAll('.faq-btn i').forEach(ic => ic.classList.remove('rotate-180'));
-
-                // Toggle selected
                 if (!isOpen) {
                     answer.classList.add('open');
                     btn.setAttribute('aria-expanded', 'true');
-                    icon.classList.add('rotate-180');
+                    btn.querySelector('i').classList.add('rotate-180');
                 }
             });
         });
 
-        /* --- Accessibility Toolbar Logic --- */
-        const accToggleBtn = document.getElementById('acc-toggle-btn');
-        const accCloseBtn = document.getElementById('acc-close-btn');
+        // Accessibility Widget Toggle & Functions
+        const accBtn = document.getElementById('acc-toggle-btn');
         const accMenu = document.getElementById('acc-menu');
-
-        accToggleBtn.addEventListener('click', () => {
+        accBtn.addEventListener('click', () => {
             accMenu.classList.toggle('hidden');
         });
 
-        accCloseBtn.addEventListener('click', () => {
-            accMenu.classList.add('hidden');
-        });
-
-        // Font Size Controls
-        let currentFontSize = 100;
-        document.getElementById('btn-text-inc').addEventListener('click', () => {
-            if (currentFontSize < 140) {
-                currentFontSize += 10;
-                document.documentElement.style.fontSize = currentFontSize + '%';
-            }
-        });
-
-        document.getElementById('btn-text-dec').addEventListener('click', () => {
-            if (currentFontSize > 80) {
-                currentFontSize -= 10;
-                document.documentElement.style.fontSize = currentFontSize + '%';
-            }
-        });
-
-        // Contrast Mode
-        document.getElementById('btn-contrast').addEventListener('click', () => {
-            document.body.classList.toggle('acc-high-contrast');
-        });
-
-        // Grayscale Mode
-        document.getElementById('btn-grayscale').addEventListener('click', () => {
-            document.body.classList.toggle('acc-grayscale');
-        });
-
-        // Readable Font
-        document.getElementById('btn-readable').addEventListener('click', () => {
-            document.body.classList.toggle('acc-readable-font');
-        });
-
-        // Highlight Links
-        document.getElementById('btn-links').addEventListener('click', () => {
-            document.body.classList.toggle('acc-links-underline');
-        });
-
-        // Reset Settings
-        document.getElementById('btn-reset').addEventListener('click', () => {
-            currentFontSize = 100;
-            document.documentElement.style.fontSize = '100%';
-            document.body.classList.remove('acc-high-contrast', 'acc-grayscale', 'acc-readable-font', 'acc-links-underline');
-        });
+        function toggleAccClass(className) {
+            document.body.classList.toggle(className);
+        }
     </script>
 </body>
 </html>
