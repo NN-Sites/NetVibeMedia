@@ -1,519 +1,1294 @@
 <!DOCTYPE html>
-<html lang="he" dir="rtl">
+<html lang="he" dir="rtl" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NetVibeMedia - Admin Panel</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>NetVibeMedia | לוח בקרה וממשק אדמין</title>
+    <!-- Google Fonts - Rubik -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
     
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
-                    fontFamily: { sans: ['Rubik', 'sans-serif'] },
+                    fontFamily: {
+                        sans: ['Rubik', 'system-ui', 'sans-serif'],
+                    },
                     colors: {
-                        dark: { 900: '#0B0F19', 800: '#111827', 700: '#1F2937' },
-                        brand: { cyan: '#00F2FE', purple: '#9D4EDD', pink: '#F72585', green: '#10B981' }
+                        brand: {
+                            purple: '#8B5CF6',
+                            cyan: '#06B6D4',
+                            pink: '#EC4899',
+                            dark: '#080C14',
+                            card: '#111827',
+                            cardHover: '#1F2937',
+                            border: '#1F2937'
+                        }
+                    },
+                    boxShadow: {
+                        'neon-cyan': '0 0 20px rgba(6, 182, 212, 0.3)',
+                        'neon-purple': '0 0 20px rgba(139, 92, 246, 0.3)',
+                        'neon-pink': '0 0 20px rgba(236, 72, 153, 0.3)',
                     }
                 }
             }
         }
     </script>
     <style>
-        body { background-color: #0B0F19; color: #F3F4F6; font-family: 'Rubik', sans-serif; }
-        .glass-card { background: rgba(17, 24, 39, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
-        .text-glow { text-shadow: 0 0 15px rgba(0, 242, 254, 0.5); }
+        body {
+            background-color: #080C14;
+            color: #F3F4F6;
+            font-family: 'Rubik', sans-serif;
+            min-height: 100vh;
+        }
+
+        .glass-panel {
+            background: rgba(17, 24, 39, 0.75);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .glass-header {
+            background: rgba(8, 12, 20, 0.85);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, #06B6D4 0%, #8B5CF6 50%, #EC4899 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Custom Scrollbars */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #080C14;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1F2937;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #06B6D4;
+        }
+
+        /* Custom Toast Notification Animation */
+        @keyframes slideIn {
+            from { transform: translateY(100%) scale(0.9); opacity: 0; }
+            to { transform: translateY(0) scale(1); opacity: 1; }
+        }
+        .animate-toast {
+            animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
     </style>
 </head>
-<body class="min-h-screen flex flex-col">
+<body class="antialiased selection:bg-brand-cyan selection:text-black">
 
-    <!-- Auth View -->
-    <div id="auth-screen" class="min-h-screen flex items-center justify-center p-4">
-        <div class="glass-card p-8 rounded-2xl max-w-md w-full text-center shadow-2xl">
-            <div class="w-16 h-16 bg-gradient-to-tr from-brand-cyan to-brand-purple rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
-                <i class="fas fa-user-shield text-2xl text-white"></i>
+    <!-- Auth Lock Screen Overlay -->
+    <div id="authOverlay" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/95 backdrop-blur-md p-4">
+        <div class="glass-panel w-full max-w-md rounded-3xl border border-brand-purple/30 p-8 text-center space-y-6 shadow-2xl relative overflow-hidden">
+            <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-brand-cyan via-brand-purple to-brand-pink flex items-center justify-center text-white font-black text-3xl mx-auto shadow-neon-cyan">
+                N
             </div>
-            <h1 class="text-2xl font-bold mb-2">NetVibeMedia Admin</h1>
-            <p class="text-gray-400 text-sm mb-6">כניסה מורשים בלבד</p>
-            <button id="google-login-btn" onclick="loginWithGoogle()" class="w-full bg-gradient-to-r from-brand-cyan to-brand-purple hover:opacity-90 text-slate-900 font-bold py-3 px-6 rounded-xl transition-all flex items-center justify-center gap-3">
-                <i class="fab fa-google text-lg"></i>
-                התחבר עם Google
-            </button>
-            <div id="auth-error" class="text-red-400 text-sm mt-4 hidden"></div>
+            
+            <div class="space-y-2">
+                <h2 class="text-2xl font-black text-white">אזור מנהל בלבד</h2>
+                <p class="text-xs text-gray-400">גישה מורשית אך ורק לחשבון המערכת המוגדר</p>
+            </div>
+
+            <!-- Loading Spinner State -->
+            <div id="authLoadingState" class="py-4 flex flex-col items-center justify-center gap-3">
+                <div class="w-8 h-8 border-4 border-brand-cyan border-t-transparent rounded-full animate-spin"></div>
+                <span class="text-xs text-gray-400">בודק הרשאות גישה...</span>
+            </div>
+
+            <!-- Login Prompt State -->
+            <div id="authLoginState" class="hidden space-y-4">
+                <button id="googleSignInBtn" onclick="handleGoogleLogin()" class="w-full py-3.5 px-4 rounded-xl bg-white hover:bg-gray-100 text-slate-900 font-bold text-sm transition flex items-center justify-center gap-3 shadow-lg">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24">
+                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+                    </svg>
+                    התחבר עם Google
+                </button>
+            </div>
+
+            <!-- Access Denied State -->
+            <div id="authDeniedState" class="hidden space-y-4">
+                <div class="p-3 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-xs">
+                    <i class="fa-solid fa-triangle-exclamation text-base block mb-1"></i>
+                    <span id="authDeniedMessage">אין הרשאה לחשבון זה.</span>
+                </div>
+                <button onclick="handleLogout()" class="w-full py-2.5 px-4 rounded-xl bg-gray-800 hover:bg-gray-700 text-white text-xs font-medium transition">
+                    התנתק והתחבר עם חשבון אחר
+                </button>
+            </div>
         </div>
     </div>
 
-    <!-- Main Admin View -->
-    <div id="admin-view" class="hidden min-h-screen flex flex-col">
-        <!-- Header -->
-        <header class="glass-card sticky top-0 z-50 border-b border-gray-800 px-6 py-4 flex justify-between items-center">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-gradient-to-tr from-brand-cyan to-brand-purple rounded-xl flex items-center justify-center text-slate-900 font-bold text-xl">
-                    N
+    <!-- App Container -->
+    <div id="mainAppWorkspace" class="min-h-screen flex flex-col hidden">
+
+        <!-- Top Header Navigation -->
+        <header class="glass-header sticky top-0 z-40 px-4 lg:px-8 py-4">
+            <div class="max-w-7xl mx-auto flex items-center justify-between">
+                
+                <!-- Brand Title -->
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-cyan via-brand-purple to-brand-pink flex items-center justify-center text-white font-black text-xl shadow-neon-cyan">
+                        N
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xl font-extrabold tracking-tight text-white">NetVibe<span class="text-gradient">Media</span></span>
+                            <span class="text-xs bg-brand-cyan/10 text-brand-cyan border border-brand-cyan/30 px-2 py-0.5 rounded-full font-medium">אדמין</span>
+                        </div>
+                        <p class="text-xs text-gray-400">מערכת ניהול לקוחות, פיננסים ופניות</p>
+                    </div>
                 </div>
-                <div>
-                    <h2 class="font-bold text-lg leading-none">פאנל ניהול - NetVibeMedia</h2>
-                    <span class="text-xs text-brand-cyan">אזור מנהל מערכת</span>
+
+                <!-- Global Action Buttons -->
+                <div class="flex items-center gap-2 sm:gap-3">
+                    <!-- User Info & Logout Button -->
+                    <div id="userInfoHeader" class="hidden sm:flex items-center gap-2 bg-gray-900 border border-gray-800 px-3 py-1.5 rounded-xl text-xs text-gray-300">
+                        <i class="fa-solid fa-user-check text-brand-cyan"></i>
+                        <span id="userEmailSpan" class="font-mono dir-ltr">noamn1047@gmail.com</span>
+                    </div>
+
+                    <button onclick="handleLogout()" class="px-3 py-2 rounded-xl bg-gray-800 hover:bg-gray-700 text-gray-300 text-xs font-medium transition flex items-center gap-1.5" title="התנתק">
+                        <i class="fa-solid fa-right-from-bracket text-red-400"></i>
+                        <span class="hidden sm:inline">יציאה</span>
+                    </button>
+
+                    <button onclick="openModal('addClientModal')" class="px-3 sm:px-4 py-2 rounded-xl bg-gradient-to-r from-brand-cyan to-brand-purple text-slate-950 font-bold text-xs sm:text-sm shadow-neon-cyan hover:opacity-90 transition flex items-center gap-2">
+                        <i class="fa-solid fa-user-plus"></i>
+                        <span class="hidden sm:inline">הוסף לקוח חדש</span>
+                        <span class="sm:hidden">לקוח חדש</span>
+                    </button>
+                    
+                    <button onclick="openModal('addProspectModal')" class="px-3 sm:px-4 py-2 rounded-xl bg-gray-800 hover:bg-gray-700 border border-gray-700 text-white text-xs sm:text-sm font-medium transition flex items-center gap-2">
+                        <i class="fa-solid fa-bullseye text-brand-pink"></i>
+                        <span class="hidden sm:inline">הוסף עסק לפנייה</span>
+                    </button>
                 </div>
-            </div>
-            <div class="flex items-center gap-4">
-                <span id="admin-email" class="text-xs text-gray-400 hidden md:inline"></span>
-                <button onclick="logout()" class="text-gray-400 hover:text-white text-sm bg-gray-800 px-3 py-1.5 rounded-lg border border-gray-700 transition">
-                    התנתק <i class="fas fa-sign-out-alt mr-1"></i>
-                </button>
             </div>
         </header>
 
-        <!-- Revenue Dashboard Banner -->
-        <section class="max-w-7xl w-full mx-auto px-4 pt-6 md:px-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <!-- Total Projected Income Card -->
-                <div class="glass-card p-5 rounded-2xl flex items-center justify-between border-r-4 border-brand-green">
-                    <div>
-                        <span class="text-xs text-gray-400 uppercase tracking-wider block mb-1">הכנסה חודשית צפויה</span>
-                        <div class="flex items-baseline gap-2">
-                            <span id="total-revenue-val" class="text-3xl font-black text-emerald-400">₪0</span>
-                            <span class="text-xs text-gray-400">/ לחודש</span>
+        <!-- Main Workspace -->
+        <main class="flex-1 max-w-7xl w-full mx-auto px-4 lg:px-8 py-6 space-y-6">
+
+            <!-- Dynamic Goal Banner: X/100 לקוחות - X שח / 50,000 שח חודשי -->
+            <section class="glass-panel rounded-3xl p-6 relative overflow-hidden border border-brand-purple/30 bg-gradient-to-r from-gray-900/90 via-slate-900/80 to-slate-900/90">
+                <div class="absolute -top-10 -left-10 w-48 h-48 bg-brand-cyan/10 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="absolute -bottom-10 -right-10 w-48 h-48 bg-brand-pink/10 rounded-full blur-3xl pointer-events-none"></div>
+
+                <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 relative z-10">
+                    <div class="space-y-2">
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-purple/20 text-brand-purple border border-brand-purple/30 text-xs font-bold">
+                            <i class="fa-solid fa-trophy"></i>
+                            יעד צמיחה חודשי
                         </div>
-                    </div>
-                    <div class="w-12 h-12 bg-emerald-500/10 rounded-xl flex items-center justify-center text-emerald-400 text-xl">
-                        <i class="fas fa-shekel-sign"></i>
-                    </div>
-                </div>
-
-                <!-- Billing Countdown Card -->
-                <div class="glass-card p-5 rounded-2xl flex items-center justify-between border-r-4 border-brand-purple">
-                    <div>
-                        <span class="text-xs text-gray-400 uppercase tracking-wider block mb-1">זמן נותר לחיוב החודשי הקרוב (1 בחודש)</span>
-                        <div id="billing-countdown" class="text-2xl font-bold font-mono text-brand-purple">
-                            00d 00h 00m 00s
-                        </div>
-                    </div>
-                    <div class="w-12 h-12 bg-brand-purple/10 rounded-xl flex items-center justify-center text-brand-purple text-xl">
-                        <i class="fas fa-hourglass-half"></i>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Content -->
-        <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
-            
-            <!-- Clients List Sidebar -->
-            <div class="lg:col-span-4 space-y-4">
-                <div class="glass-card p-5 rounded-2xl">
-                    <h3 class="font-bold text-lg mb-4 flex items-center justify-between">
-                        <span><i class="fas fa-users text-brand-cyan ml-2"></i>לקוחות במערכת</span>
-                        <span id="client-count" class="text-xs bg-brand-cyan/20 text-brand-cyan px-2 py-1 rounded-full">0</span>
-                    </h3>
-                    <div id="clients-list" class="space-y-2 max-h-[600px] overflow-y-auto pr-1">
-                        <div class="text-center py-8 text-gray-500 text-sm">טוען לקוחות...</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Client Management Panel -->
-            <div class="lg:col-span-8 space-y-6">
-                
-                <!-- Placeholder when no client selected -->
-                <div id="no-client-selected" class="glass-card p-12 rounded-2xl text-center flex flex-col items-center justify-center min-h-[400px]">
-                    <i class="fas fa-user-cursor text-5xl text-gray-600 mb-4"></i>
-                    <h3 class="text-xl font-bold mb-2">בחר לקוח מהרשימה</h3>
-                    <p class="text-gray-400 text-sm max-w-md">בחר לקוח מהרשימה בצד ימין כדי להגדיר את האתר שלו, לערוך תשלום חודשי, לצפות בשינויים מבוקשים ולהפיק קוד HTML מעודכן.</p>
-                </div>
-
-                <!-- Selected Client Workspace -->
-                <div id="client-workspace" class="hidden space-y-6">
-                    
-                    <!-- Client Header Info -->
-                    <div class="glass-card p-6 rounded-2xl border-l-4 border-brand-cyan flex flex-wrap justify-between items-center gap-4">
-                        <div>
-                            <h2 id="selected-client-name" class="text-xl font-bold"></h2>
-                            <p id="selected-client-email" class="text-sm text-gray-400"></p>
-                            <span id="selected-client-id" class="text-xs text-gray-500 font-mono"></span>
-                        </div>
-                        <div class="flex gap-2">
-                            <span id="edits-badge" class="bg-gray-800 text-xs px-3 py-1.5 rounded-lg border border-gray-700">
-                                שינויים החודש: <strong id="edits-count-val" class="text-brand-cyan">0</strong>
-                            </span>
-                        </div>
-                    </div>
-
-                    <!-- Payment & Subscription Config Section -->
-                    <div class="glass-card p-6 rounded-2xl space-y-4 border-l-4 border-emerald-500">
-                        <h3 class="font-bold text-lg flex items-center gap-2 text-emerald-400">
-                            <i class="fas fa-file-invoice-dollar"></i> הגדרת תשלום חודשי ללקוח
-                        </h3>
-                        <div class="flex flex-col sm:flex-row items-end gap-3">
-                            <div class="flex-1 w-full">
-                                <label class="block text-xs text-gray-400 mb-1">סכום חיוב חודשי (ב-₪)</label>
-                                <input type="number" id="monthly-price-input" placeholder="0" min="0" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
-                            </div>
-                            <button onclick="saveMonthlyPrice()" class="w-full sm:w-auto bg-emerald-500 hover:bg-emerald-600 text-slate-900 font-bold px-5 py-2 rounded-xl text-sm transition flex items-center justify-center gap-2 whitespace-nowrap">
-                                <i class="fas fa-check"></i> עדכן מחיר
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Site Config Section -->
-                    <div class="glass-card p-6 rounded-2xl space-y-4">
-                        <h3 class="font-bold text-lg flex items-center gap-2">
-                            <i class="fas fa-globe text-brand-cyan"></i> הגדרות אתר הלקוח
-                        </h3>
                         
+                        <!-- Requested Explicit String Format -->
+                        <h1 class="text-2xl sm:text-3xl lg:text-4xl font-black text-white">
+                            <span id="targetClientCountText" class="text-brand-cyan">0</span>/100 לקוחות - 
+                            <span id="targetMonthlyRevenueText" class="text-brand-pink">0</span> ₪ / 50,000 ₪ חודשי
+                        </h1>
+                        <p class="text-xs sm:text-sm text-gray-400">
+                            מחשב בזמן אמת את כמות הלקוחות הפעילים וההכנסה החודשית הקבועה מול היעד של 100 לקוחות ו-50,000 ₪ בחודש.
+                        </p>
+                    </div>
+
+                    <!-- Visual Progress Gauges -->
+                    <div class="w-full lg:w-80 space-y-3 bg-black/40 p-4 rounded-2xl border border-gray-800">
                         <div>
-                            <label class="block text-xs text-gray-400 mb-1">כתובת ה-URL של האתר (למשל: https://example.com)</label>
-                            <input type="url" id="site-url-input" placeholder="https://example.com" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-brand-cyan">
+                            <div class="flex justify-between text-xs font-semibold mb-1">
+                                <span class="text-gray-300">התקדמות לקוחות (מתוך 100)</span>
+                                <span id="clientsPercentText" class="text-brand-cyan">0%</span>
+                            </div>
+                            <div class="w-full bg-gray-800 h-2.5 rounded-full overflow-hidden">
+                                <div id="clientsProgressBar" class="bg-gradient-to-r from-brand-cyan to-brand-purple h-full transition-all duration-500" style="width: 0%"></div>
+                            </div>
                         </div>
 
                         <div>
-                            <label class="block text-xs text-gray-400 mb-1">קוד HTML מלא של האתר</label>
-                            <textarea id="site-html-input" rows="8" placeholder="<!DOCTYPE html>..." class="w-full bg-gray-900 border border-gray-700 rounded-xl p-3 text-xs font-mono text-gray-200 focus:outline-none focus:border-brand-cyan dir-ltr"></textarea>
+                            <div class="flex justify-between text-xs font-semibold mb-1">
+                                <span class="text-gray-300">התקדמות יעד חודשי (מתוך ₪50k)</span>
+                                <span id="revenuePercentText" class="text-brand-pink">0%</span>
+                            </div>
+                            <div class="w-full bg-gray-800 h-2.5 rounded-full overflow-hidden">
+                                <div id="revenueProgressBar" class="bg-gradient-to-r from-brand-purple to-brand-pink h-full transition-all duration-500" style="width: 0%"></div>
+                            </div>
                         </div>
+                    </div>
+                </div>
+            </section>
 
-                        <button onclick="saveSiteConfig()" class="bg-brand-cyan hover:bg-cyan-400 text-slate-900 font-bold px-5 py-2.5 rounded-xl text-sm transition flex items-center gap-2">
-                            <i class="fas fa-save"></i> שמור הגדרות אתר ללקוח
+            <!-- Metrics Summary Cards -->
+            <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                
+                <!-- Meter 1: Total Collected All-Time -->
+                <div class="glass-panel p-5 rounded-2xl border border-gray-800 relative overflow-hidden group hover:border-emerald-500/50 transition">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-semibold text-gray-400">הכנסות שנגבו בפועל עד היום</span>
+                        <div class="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 text-sm">
+                            <i class="fa-solid fa-vault"></i>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <div id="totalCollectedMeter" class="text-2xl font-black text-emerald-400">₪0</div>
+                        <div class="text-[11px] text-gray-500 mt-1">מצטבר מכל התשלומים שסומנו כ"שולם"</div>
+                    </div>
+                </div>
+
+                <!-- Meter 2: Expected Next Month Revenue -->
+                <div class="glass-panel p-5 rounded-2xl border border-gray-800 relative overflow-hidden group hover:border-brand-cyan/50 transition">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-semibold text-gray-400">צפי הכנסה בחודש הקרוב</span>
+                        <div class="w-9 h-9 rounded-xl bg-brand-cyan/10 border border-brand-cyan/30 flex items-center justify-center text-brand-cyan text-sm">
+                            <i class="fa-solid fa-calendar-check"></i>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <div id="expectedMonthlyRevenue" class="text-2xl font-black text-brand-cyan">₪0</div>
+                        <div class="text-[11px] text-gray-500 mt-1">סך ברירת מחדל חודשית מלקוחות פעילים</div>
+                    </div>
+                </div>
+
+                <!-- Meter 3: Total Active Clients -->
+                <div class="glass-panel p-5 rounded-2xl border border-gray-800 relative overflow-hidden group hover:border-brand-purple/50 transition">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-semibold text-gray-400">לקוחות פעילים במערכת</span>
+                        <div class="w-9 h-9 rounded-xl bg-brand-purple/10 border border-brand-purple/30 flex items-center justify-center text-brand-purple text-sm">
+                            <i class="fa-solid fa-users"></i>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <div id="activeClientsCount" class="text-2xl font-black text-brand-purple">0</div>
+                        <div class="text-[11px] text-gray-500 mt-1">מתוך <span id="totalClientsCount">0</span> לקוחות שנרשמו</div>
+                    </div>
+                </div>
+
+                <!-- Meter 4: Pending Inbound Leads -->
+                <div class="glass-panel p-5 rounded-2xl border border-gray-800 relative overflow-hidden group hover:border-amber-500/50 transition">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-semibold text-gray-400">פניות וטפסים שהתקבלו</span>
+                        <div class="w-9 h-9 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 text-sm">
+                            <i class="fa-solid fa-inbox"></i>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <div id="inboxLeadsCount" class="text-2xl font-black text-amber-400">0</div>
+                        <div class="text-[11px] text-gray-500 mt-1">פניות חדשות מהאתר (Index) להתקשרות</div>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- Navigation Tabs -->
+            <div class="flex items-center gap-2 border-b border-gray-800 overflow-x-auto pb-2 scrollbar-none">
+                <button onclick="switchTab('clients')" id="tabBtn-clients" class="tab-btn px-4 py-2 rounded-xl font-bold text-xs sm:text-sm bg-brand-cyan/20 text-brand-cyan border border-brand-cyan/40 whitespace-nowrap">
+                    <i class="fa-solid fa-users text-xs ml-1.5"></i>
+                    ניהול לקוחות
+                </button>
+                <button onclick="switchTab('leads')" id="tabBtn-leads" class="tab-btn px-4 py-2 rounded-xl font-medium text-xs sm:text-sm text-gray-400 hover:text-white hover:bg-gray-800 transition whitespace-nowrap">
+                    <i class="fa-solid fa-wpforms text-xs ml-1.5"></i>
+                    טפסים מהאינדקס (<span id="leadsBadge">0</span>)
+                </button>
+                <button onclick="switchTab('prospects')" id="tabBtn-prospects" class="tab-btn px-4 py-2 rounded-xl font-medium text-xs sm:text-sm text-gray-400 hover:text-white hover:bg-gray-800 transition whitespace-nowrap">
+                    <i class="fa-solid fa-bullseye text-xs ml-1.5"></i>
+                    עסקים לפנייה (<span id="prospectsBadge">0</span>)
+                </button>
+                <button onclick="switchTab('notes')" id="tabBtn-notes" class="tab-btn px-4 py-2 rounded-xl font-medium text-xs sm:text-sm text-gray-400 hover:text-white hover:bg-gray-800 transition whitespace-nowrap">
+                    <i class="fa-solid fa-note-sticky text-xs ml-1.5"></i>
+                    תזכורות ופתקים
+                </button>
+            </div>
+
+            <!-- TAB 1: Clients Table Section -->
+            <div id="tab-clients" class="tab-content space-y-4">
+                
+                <!-- Table Controls Header -->
+                <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-gray-900/60 p-4 rounded-2xl border border-gray-800">
+                    <div class="relative flex-1">
+                        <i class="fa-solid fa-magnifying-glass absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 text-xs"></i>
+                        <input type="text" id="clientSearchInput" oninput="renderClientsTable()" placeholder="חפש לקוח לפי שם, עסק או טלפון..." class="w-full pr-9 pl-4 py-2 bg-slate-950 border border-gray-800 rounded-xl text-xs text-white placeholder-gray-500 focus:outline-none focus:border-brand-cyan">
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <select id="clientStatusFilter" onchange="renderClientsTable()" class="bg-slate-950 border border-gray-800 rounded-xl px-3 py-2 text-xs text-gray-300 focus:outline-none focus:border-brand-cyan">
+                            <option value="ALL">כל הסטטוסים</option>
+                            <option value="ACTIVE">פעילים בלבד</option>
+                            <option value="PENDING">בהקמה / טיפול</option>
+                            <option value="PAUSED">מושהה</option>
+                            <option value="CANCELLED">מבוטל</option>
+                        </select>
+
+                        <button onclick="openModal('addClientModal')" class="px-3 py-2 bg-brand-cyan text-slate-950 font-bold text-xs rounded-xl hover:bg-brand-cyan/90 transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-plus"></i>
+                            לקוח
                         </button>
                     </div>
+                </div>
 
-                    <!-- Pending Edits Section -->
-                    <div class="glass-card p-6 rounded-2xl space-y-4">
-                        <h3 class="font-bold text-lg flex items-center justify-between">
-                            <span class="flex items-center gap-2"><i class="fas fa-tasks text-brand-purple"></i> בקשות שינוי להמתנה</span>
-                            <span id="pending-count" class="text-xs bg-brand-purple/20 text-brand-purple px-2 py-0.5 rounded-full">0</span>
-                        </h3>
+                <!-- Main Clients Table (NO Email Column as explicitly required) -->
+                <div class="glass-panel rounded-2xl border border-gray-800 overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-right text-xs text-gray-300">
+                            <thead class="bg-slate-950/90 text-gray-400 font-semibold border-b border-gray-800 uppercase tracking-wider">
+                                <tr>
+                                    <th class="p-4">שם הלקוח והעסק</th>
+                                    <th class="p-4">טלפון</th>
+                                    <th class="p-4">מחיר חודשי</th>
+                                    <th class="p-4">סטטוס מנוי</th>
+                                    <th class="p-4">תשלום חודש נוכחי</th>
+                                    <th class="p-4">הערות</th>
+                                    <th class="p-4 text-center">פעולות</th>
+                                </tr>
+                            </thead>
+                            <tbody id="clientsTableBody" class="divide-y divide-gray-800/60 font-medium">
+                                <!-- Dynamic Render -->
+                            </tbody>
+                        </table>
+                    </div>
 
-                        <div id="pending-edits-container" class="space-y-4">
-                            <p class="text-gray-500 text-sm text-center py-4">אין בקשות שינוי ממתינות ללקוח זה.</p>
+                    <!-- Empty State Placeholder -->
+                    <div id="emptyClientsState" class="hidden p-12 text-center space-y-3">
+                        <div class="w-12 h-12 rounded-2xl bg-gray-800 text-gray-500 flex items-center justify-center mx-auto text-xl">
+                            <i class="fa-solid fa-users-slash"></i>
+                        </div>
+                        <h3 class="text-base font-bold text-gray-300">אין לקוחות במערכת עדיין</h3>
+                        <p class="text-xs text-gray-500 max-w-sm mx-auto">
+                            לא נמצאו לקוחות. לחץ על "הוסף לקוח חדש" או הומר לידים שהתקבלו בטופס באתר.
+                        </p>
+                        <button onclick="openModal('addClientModal')" class="px-4 py-2 bg-brand-cyan text-black font-bold text-xs rounded-xl hover:opacity-90 transition">
+                            + הוסף לקוח ראשון
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: Form Leads (Index Submissions) -->
+            <div id="tab-leads" class="tab-content hidden space-y-4">
+                <div class="flex items-center justify-between bg-gray-900/60 p-4 rounded-2xl border border-gray-800">
+                    <div>
+                        <h2 class="text-sm font-bold text-white">פניות מטופס האתר (Index)</h2>
+                        <p class="text-xs text-gray-400">לידים שהשאירו שם וטלפון בטופס ההרשמה ב-NetVibeMedia</p>
+                    </div>
+                    <button onclick="refreshLeadsFromFirebase()" class="px-3 py-1.5 rounded-xl bg-gray-800 hover:bg-gray-700 text-xs text-gray-300 border border-gray-700 transition flex items-center gap-1">
+                        <i class="fa-solid fa-rotate text-xs"></i>
+                        רענן פניות
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="leadsGrid">
+                    <!-- Dynamic Leads Cards -->
+                </div>
+
+                <div id="emptyLeadsState" class="hidden glass-panel p-12 text-center space-y-3 rounded-2xl border border-gray-800">
+                    <div class="w-12 h-12 rounded-2xl bg-gray-800 text-gray-500 flex items-center justify-center mx-auto text-xl">
+                        <i class="fa-solid fa-inbox"></i>
+                    </div>
+                    <h3 class="text-base font-bold text-gray-300">אין פניות חדשות מהאתר</h3>
+                    <p class="text-xs text-gray-500 max-w-md mx-auto">
+                        כאשר גולשים ימלאו את טופס הפנייה בקישור האתר (`index.html`), הפניות יופיעו כאן בזמן אמת ותוכל להפוך אותן ללקוחות בלחיצה אחת.
+                    </p>
+                </div>
+            </div>
+
+            <!-- TAB 3: Target Prospects Section -->
+            <div id="tab-prospects" class="tab-content hidden space-y-4">
+                <div class="flex items-center justify-between bg-gray-900/60 p-4 rounded-2xl border border-gray-800">
+                    <div>
+                        <h2 class="text-sm font-bold text-white">עסקים מתוכננים לפנייה (Prospects Target)</h2>
+                        <p class="text-xs text-gray-400">רשימת פוטנציאל ויעדי מכירה ליצירת קשר יזום</p>
+                    </div>
+                    <button onclick="openModal('addProspectModal')" class="px-3 py-1.5 rounded-xl bg-brand-pink text-white font-bold text-xs hover:opacity-90 transition flex items-center gap-1">
+                        <i class="fa-solid fa-plus text-xs"></i>
+                        הוסף עסק לרשימה
+                    </button>
+                </div>
+
+                <div class="glass-panel rounded-2xl border border-gray-800 overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-right text-xs text-gray-300">
+                            <thead class="bg-slate-950/90 text-gray-400 font-semibold border-b border-gray-800 uppercase">
+                                <tr>
+                                    <th class="p-4">שם העסק / חברה</th>
+                                    <th class="p-4">איש קשר / טלפון</th>
+                                    <th class="p-4">תחום / נישה</th>
+                                    <th class="p-4">סטטוס פנייה</th>
+                                    <th class="p-4">הערות וטיפים</th>
+                                    <th class="p-4 text-center">פעולות</th>
+                                </tr>
+                            </thead>
+                            <tbody id="prospectsTableBody" class="divide-y divide-gray-800/60 font-medium">
+                                <!-- Dynamic Render -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div id="emptyProspectsState" class="hidden p-12 text-center space-y-3">
+                        <div class="w-12 h-12 rounded-2xl bg-gray-800 text-gray-500 flex items-center justify-center mx-auto text-xl">
+                            <i class="fa-solid fa-bullseye"></i>
+                        </div>
+                        <h3 class="text-base font-bold text-gray-300">הרשימה ריקה</h3>
+                        <p class="text-xs text-gray-500 max-w-sm mx-auto">
+                            תרשום לעצמך שמות של עסקים מקומיים או נישות שברצונך לפנות אליהם בהצעה להקמת אתר ב-0 ₪.
+                        </p>
+                        <button onclick="openModal('addProspectModal')" class="px-4 py-2 bg-brand-pink text-white font-bold text-xs rounded-xl hover:opacity-90 transition">
+                            + רשום עסק לפנייה
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 4: Personal Notes & Reminders -->
+            <div id="tab-notes" class="tab-content hidden space-y-6">
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    
+                    <!-- Reminders / Quick Tasks -->
+                    <div class="glass-panel p-5 rounded-2xl border border-gray-800 space-y-4">
+                        <div class="flex items-center justify-between border-b border-gray-800 pb-3">
+                            <div class="flex items-center gap-2">
+                                <div class="w-8 h-8 rounded-lg bg-brand-cyan/20 text-brand-cyan flex items-center justify-center text-sm font-bold">
+                                    <i class="fa-solid fa-list-check"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-sm font-bold text-white">תזכורות ומשימות לביצוע</h3>
+                                    <p class="text-[11px] text-gray-400">ניהול משימות מהיר עם לוח זמנים</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Add Reminder Input Form -->
+                        <form onsubmit="handleAddReminder(event)" class="flex gap-2">
+                            <input type="text" id="newReminderText" required placeholder="רשום תזכורת חדשה..." class="flex-1 px-3 py-2 bg-slate-950 border border-gray-800 rounded-xl text-xs text-white focus:outline-none focus:border-brand-cyan">
+                            <button type="submit" class="px-4 py-2 bg-brand-cyan text-slate-950 font-bold text-xs rounded-xl hover:opacity-90 transition">
+                                הוסף
+                            </button>
+                        </form>
+
+                        <!-- Reminders List -->
+                        <div id="remindersList" class="space-y-2 max-h-80 overflow-y-auto pr-1">
+                            <!-- Dynamic -->
+                        </div>
+
+                        <div id="emptyRemindersState" class="hidden text-center py-6 text-gray-500 text-xs">
+                            אין תזכורות פתוחות. תוכל להוסיף תזכורת למעלה!
                         </div>
                     </div>
 
+                    <!-- Free Text Notes Scratchpad -->
+                    <div class="glass-panel p-5 rounded-2xl border border-gray-800 space-y-4 flex flex-col">
+                        <div class="flex items-center justify-between border-b border-gray-800 pb-3">
+                            <div class="flex items-center gap-2">
+                                <div class="w-8 h-8 rounded-lg bg-brand-purple/20 text-brand-purple flex items-center justify-center text-sm font-bold">
+                                    <i class="fa-solid fa-note-sticky"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-sm font-bold text-white">פנקס רשימות ואינטואיציות</h3>
+                                    <p class="text-[11px] text-gray-400">פתק חופשי שנשמר אוטומטית בעת הקלדה</p>
+                                </div>
+                            </div>
+                            <span id="notesSavedIndicator" class="text-[10px] text-emerald-400 hidden">
+                                <i class="fa-solid fa-check ml-1"></i>נשמר!
+                            </span>
+                        </div>
+
+                        <textarea id="scratchpadNotes" oninput="handleNotesChange()" placeholder="כתוב כאן הערות חופשיות, רעיונות לשיווק, סיכומי שיחות, תעריפים..." class="w-full flex-1 min-h-[220px] p-4 bg-slate-950/80 border border-gray-800 rounded-xl text-xs text-gray-200 focus:outline-none focus:border-brand-purple leading-relaxed resize-none font-mono"></textarea>
+                    </div>
+
                 </div>
+
             </div>
+
         </main>
     </div>
 
-    <!-- Modal: View Updated HTML Code -->
-    <div id="html-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md hidden z-50 flex items-center justify-center p-4">
-        <div class="glass-card max-w-3xl w-full p-6 rounded-2xl space-y-4 flex flex-col max-h-[90vh]">
-            <div class="flex justify-between items-center border-b border-gray-800 pb-3">
-                <h3 class="font-bold text-lg text-brand-cyan"><i class="fas fa-code ml-2"></i>קוד HTML מעודכן מוכן להעלייה</h3>
-                <button onclick="closeModal()" class="text-gray-400 hover:text-white"><i class="fas fa-times text-lg"></i></button>
-            </div>
-            <p class="text-xs text-gray-400">העתק את הקוד המעודכן המכיל את השינויים שאושרו והדבק אותו בקובץ האתר הראשי שלך:</p>
-            <textarea id="modal-html-code" readonly class="flex-1 w-full bg-gray-900 border border-gray-700 rounded-xl p-3 text-xs font-mono text-cyan-300 dir-ltr min-h-[300px]"></textarea>
-            <div class="flex justify-end gap-3 pt-2">
-                <button onclick="copyModalCode()" class="bg-brand-cyan text-slate-900 font-bold px-4 py-2 rounded-xl text-sm flex items-center gap-2">
-                    <i class="fas fa-copy"></i> העתק קוד
+    <!-- MODAL 1: Add/Edit Client -->
+    <div id="addClientModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm hidden">
+        <div class="glass-panel w-full max-w-lg rounded-3xl border border-gray-700 p-6 space-y-5 relative animate-toast">
+            <div class="flex items-center justify-between border-b border-gray-800 pb-3">
+                <h3 id="clientModalTitle" class="text-base font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-user-plus text-brand-cyan"></i>
+                    הוספת לקוח חדש
+                </h3>
+                <button onclick="closeModal('addClientModal')" class="text-gray-400 hover:text-white p-1">
+                    <i class="fa-solid fa-xmark text-base"></i>
                 </button>
-                <button onclick="closeModal()" class="bg-gray-800 text-gray-300 px-4 py-2 rounded-xl text-sm">סגור</button>
             </div>
+
+            <form onsubmit="handleSaveClient(event)" class="space-y-4">
+                <input type="hidden" id="clientIdInput">
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-medium text-gray-300 mb-1">שם הלקוח *</label>
+                        <input type="text" id="clientNameInput" required placeholder="למשל: ישראל ישראלי" class="w-full px-3 py-2 bg-slate-950 border border-gray-800 rounded-xl text-xs text-white focus:outline-none focus:border-brand-cyan">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-300 mb-1">שם העסק *</label>
+                        <input type="text" id="clientBusinessInput" required placeholder="למשל: פיצרייה אנג'לו" class="w-full px-3 py-2 bg-slate-950 border border-gray-800 rounded-xl text-xs text-white focus:outline-none focus:border-brand-cyan">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-medium text-gray-300 mb-1">מספר טלפון *</label>
+                        <input type="tel" id="clientPhoneInput" required placeholder="050-0000000" class="w-full px-3 py-2 bg-slate-950 border border-gray-800 rounded-xl text-xs text-white focus:outline-none focus:border-brand-cyan">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-300 mb-1">מחיר תשלום חודשי (₪) *</label>
+                        <input type="number" id="clientPriceInput" required min="0" value="500" placeholder="500" class="w-full px-3 py-2 bg-slate-950 border border-gray-800 rounded-xl text-xs text-white focus:outline-none focus:border-brand-cyan">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-medium text-gray-300 mb-1">סטטוס מנוי</label>
+                        <select id="clientStatusInput" class="w-full px-3 py-2 bg-slate-950 border border-gray-800 rounded-xl text-xs text-white focus:outline-none focus:border-brand-cyan">
+                            <option value="ACTIVE">פעיל (משלם קבוע)</option>
+                            <option value="PENDING">בהקמה / בטיפול</option>
+                            <option value="PAUSED">מושהה</option>
+                            <option value="CANCELLED">מבוטל</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-300 mb-1">סטטוס תשלום החודש</label>
+                        <select id="clientPaidStatusInput" class="w-full px-3 py-2 bg-slate-950 border border-gray-800 rounded-xl text-xs text-white focus:outline-none focus:border-brand-cyan">
+                            <option value="UNPAID">טרם שולם החודש</option>
+                            <option value="PAID">שולם כבר החודש</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-gray-300 mb-1">הערות / פרטים נוספים</label>
+                    <textarea id="clientNotesInput" rows="2" placeholder="למשל: דומיין נרכש, האתר באוויר מ-15 בחודש..." class="w-full px-3 py-2 bg-slate-950 border border-gray-800 rounded-xl text-xs text-white focus:outline-none focus:border-brand-cyan resize-none"></textarea>
+                </div>
+
+                <div class="pt-2 flex justify-end gap-2">
+                    <button type="button" onclick="closeModal('addClientModal')" class="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-xs text-gray-300 rounded-xl transition">
+                        ביטול
+                    </button>
+                    <button type="submit" class="px-5 py-2 bg-gradient-to-r from-brand-cyan to-brand-purple text-black font-bold text-xs rounded-xl shadow-neon-cyan hover:opacity-90 transition">
+                        שמור לקוח
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 
-    <script>
-        // Firebase Config
+    <!-- MODAL 2: Add Prospect Target -->
+    <div id="addProspectModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm hidden">
+        <div class="glass-panel w-full max-w-md rounded-3xl border border-gray-700 p-6 space-y-5 relative animate-toast">
+            <div class="flex items-center justify-between border-b border-gray-800 pb-3">
+                <h3 class="text-base font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-bullseye text-brand-pink"></i>
+                    הוספת עסק מתוכנן לפנייה
+                </h3>
+                <button onclick="closeModal('addProspectModal')" class="text-gray-400 hover:text-white p-1">
+                    <i class="fa-solid fa-xmark text-base"></i>
+                </button>
+            </div>
+
+            <form onsubmit="handleSaveProspect(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-medium text-gray-300 mb-1">שם העסק / החברה *</label>
+                    <input type="text" id="prospectBusinessInput" required placeholder="למשל: מספרת דוד, מוסך הצפון" class="w-full px-3 py-2 bg-slate-950 border border-gray-800 rounded-xl text-xs text-white focus:outline-none focus:border-brand-pink">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-medium text-gray-300 mb-1">איש קשר / טלפון</label>
+                        <input type="text" id="prospectContactInput" placeholder="יוסי 052-1234567" class="w-full px-3 py-2 bg-slate-950 border border-gray-800 rounded-xl text-xs text-white focus:outline-none focus:border-brand-pink">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-300 mb-1">תחום / נישה</label>
+                        <input type="text" id="prospectNicheInput" placeholder="למשל: טיפוח, יופי, עורך דין" class="w-full px-3 py-2 bg-slate-950 border border-gray-800 rounded-xl text-xs text-white focus:outline-none focus:border-brand-pink">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-gray-300 mb-1">סטטוס פנייה</label>
+                    <select id="prospectStatusInput" class="w-full px-3 py-2 bg-slate-950 border border-gray-800 rounded-xl text-xs text-white focus:outline-none focus:border-brand-pink">
+                        <option value="NEW">טרם יצרתי קשר</option>
+                        <option value="CONTACTED">בוצעה שיחה ראשונית</option>
+                        <option value="OFFER_SENT">נשלחה הצעה</option>
+                        <option value="CLOSED">נסגר בהצלחה!</option>
+                        <option value="REJECTED">לא רלוונטי</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-gray-300 mb-1">הערות ונקודות לפנייה</label>
+                    <textarea id="prospectNotesInput" rows="2" placeholder="אין להם אתר כרגע, מופיע רק בדף פייסבוק..." class="w-full px-3 py-2 bg-slate-950 border border-gray-800 rounded-xl text-xs text-white focus:outline-none focus:border-brand-pink resize-none"></textarea>
+                </div>
+
+                <div class="pt-2 flex justify-end gap-2">
+                    <button type="button" onclick="closeModal('addProspectModal')" class="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-xs text-gray-300 rounded-xl transition">
+                        ביטול
+                    </button>
+                    <button type="submit" class="px-5 py-2 bg-gradient-to-r from-brand-pink to-brand-purple text-white font-bold text-xs rounded-xl shadow-neon-pink hover:opacity-90 transition">
+                        שמור ברשימה
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Custom Toast Container -->
+    <div id="toastContainer" class="fixed bottom-5 left-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- Firebase SDK & Application Script -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, onSnapshot, query } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        // Firebase Configuration
         const firebaseConfig = {
-            apiKey: "AIzaSyBYrdNSkWx8gUzkTyIMuIEKWMFfyU4ZuNs",
-            authDomain: "netvibe-media.firebaseapp.com",
-            projectId: "netvibe-media",
-            storageBucket: "netvibe-media.firebasestorage.app",
-            messagingSenderId: "345459958522",
-            appId: "1:345459958522:web:5a7c1ee5517d8e60499f43",
-            measurementId: "G-VQL10G9K24"
+          apiKey: "AIzaSyBYrdNSkWx8gUzkTyIMuIEKWMFfyU4ZuNs",
+          authDomain: "netvibe-media.firebaseapp.com",
+          projectId: "netvibe-media",
+          storageBucket: "netvibe-media.firebasestorage.app",
+          messagingSenderId: "345459958522",
+          appId: "1:345459958522:web:5a7c1ee5517d8e60499f43",
+          measurementId: "G-VQL10G9K24"
         };
 
-        const AUTHORIZED_ADMIN_UID = "Y1KvSU1aTPZHETiiIyk0evbgJIq2";
-        const AUTHORIZED_ADMIN_EMAIL = "noamn1047@gmail.com";
+        const ALLOWED_UID = "Y1KvSU1aTPZHETiiIyk0evbgJIq2";
+        const ALLOWED_EMAIL = "noamn1047@gmail.com";
 
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.firestore();
+        try {
+            const app = initializeApp(firebaseConfig);
+            const db = getFirestore(app);
+            const auth = getAuth(app);
 
-        let currentAdmin = null;
-        let selectedClientId = null;
-        let clientsData = [];
-
-        // Auth state listener
-        auth.onAuthStateChanged(user => {
-            if (user) {
-                if (user.email === AUTHORIZED_ADMIN_EMAIL || user.uid === AUTHORIZED_ADMIN_UID) {
-                    currentAdmin = user;
-                    document.getElementById('auth-screen').classList.add('hidden');
-                    document.getElementById('admin-view').classList.remove('hidden');
-                    document.getElementById('admin-email').innerText = user.email;
-                    loadClients();
-                    startBillingCountdown();
-                } else {
-                    showAuthError("גישה נדחתה. חשבון זה אינו מורשה כמנהל מערכת.");
-                    auth.signOut();
+            // Expose auth actions globally
+            window.handleGoogleLogin = async function() {
+                const provider = new GoogleAuthProvider();
+                try {
+                    await signInWithPopup(auth, provider);
+                } catch (err) {
+                    console.error("Login failed:", err);
+                    alert("התחברות נכשלה: " + err.message);
                 }
-            } else {
-                document.getElementById('auth-screen').classList.remove('hidden');
-                document.getElementById('admin-view').classList.add('hidden');
-            }
+            };
+
+            window.handleLogout = async function() {
+                try {
+                    await signOut(auth);
+                } catch (err) {
+                    console.error("Logout failed:", err);
+                }
+            };
+
+            // Monitor Auth State
+            onAuthStateChanged(auth, (user) => {
+                const overlay = document.getElementById('authOverlay');
+                const workspace = document.getElementById('mainAppWorkspace');
+                const loadingState = document.getElementById('authLoadingState');
+                const loginState = document.getElementById('authLoginState');
+                const deniedState = document.getElementById('authDeniedState');
+                const deniedMsg = document.getElementById('authDeniedMessage');
+                const userEmailSpan = document.getElementById('userEmailSpan');
+
+                if (!user) {
+                    // Not logged in
+                    overlay.classList.remove('hidden');
+                    workspace.classList.add('hidden');
+                    loadingState.classList.add('hidden');
+                    loginState.classList.remove('hidden');
+                    deniedState.classList.add('hidden');
+                } else {
+                    // Check UID or Email match
+                    const isAllowed = user.uid === ALLOWED_UID || (user.email && user.email.toLowerCase() === ALLOWED_EMAIL.toLowerCase());
+
+                    if (isAllowed) {
+                        // Access Granted
+                        overlay.classList.add('hidden');
+                        workspace.classList.remove('hidden');
+                        if (userEmailSpan) userEmailSpan.innerText = user.email || ALLOWED_EMAIL;
+                    } else {
+                        // Access Denied
+                        overlay.classList.remove('hidden');
+                        workspace.classList.add('hidden');
+                        loadingState.classList.add('hidden');
+                        loginState.classList.add('hidden');
+                        deniedState.classList.remove('hidden');
+                        deniedMsg.innerText = `החשבון (${user.email || user.uid}) אינו מורשה לגישה ללוח הבקרה.`;
+                    }
+                }
+            });
+
+            // Live listener for inbound leads from landing page (`orders` collection)
+            const ordersQuery = query(collection(db, "orders"));
+            onSnapshot(ordersQuery, (snapshot) => {
+                const firebaseLeads = [];
+                snapshot.forEach((doc) => {
+                    const data = doc.data();
+                    firebaseLeads.push({
+                        id: doc.id,
+                        name: data.name || 'ללא שם',
+                        phone: data.phone || 'ללא טלפון',
+                        createdAt: data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleDateString('he-IL') : 'לאחרונה',
+                        status: data.status || 'new'
+                    });
+                });
+
+                if (firebaseLeads.length > 0) {
+                    window.appState.leads = firebaseLeads;
+                    window.saveData();
+                    window.renderAll();
+                }
+            }, (err) => {
+                console.log('Firebase sync notice:', err.message);
+            });
+        } catch (e) {
+            console.warn('Firebase initialization notice:', e);
+        }
+    </script>
+
+    <!-- Main Logic Script -->
+    <script>
+        // Global Application State (Zero fake data as requested)
+        const STORAGE_KEY = 'netvibe_admin_db_v1';
+
+        window.appState = {
+            clients: [],          // [{id, name, business, phone, price, status, paidThisMonth, totalCollected, notes}]
+            leads: [],            // [{id, name, phone, createdAt, status}]
+            prospects: [],        // [{id, business, contact, niche, status, notes}]
+            reminders: [],        // [{id, text, completed, createdAt}]
+            totalCollectedAllTime: 0, // Sum of collected payments
+            notesText: ""         // Scratchpad
+        };
+
+        // Initialize App & Storage
+        window.addEventListener('DOMContentLoaded', () => {
+            loadData();
+            renderAll();
         });
 
-        function loginWithGoogle() {
-            const provider = new firebase.auth.GoogleAuthProvider();
-            auth.signInWithPopup(provider).catch(err => showAuthError(err.message));
-        }
-
-        function logout() {
-            auth.signOut();
-        }
-
-        function showAuthError(msg) {
-            const errDiv = document.getElementById('auth-error');
-            errDiv.innerText = msg;
-            errDiv.classList.remove('hidden');
-        }
-
-        // Load all registered clients & update revenue gauge
-        function loadClients() {
-            db.collection('users').onSnapshot(snapshot => {
-                clientsData = [];
-                let totalRevenue = 0;
-                const listEl = document.getElementById('clients-list');
-                listEl.innerHTML = '';
-
-                snapshot.forEach(doc => {
-                    const data = doc.data();
-                    data.id = doc.id;
-                    clientsData.push(data);
-                    
-                    const monthlyPrice = Number(data.monthlyPrice) || 0;
-                    totalRevenue += monthlyPrice;
-                });
-
-                document.getElementById('client-count').innerText = clientsData.length;
-                document.getElementById('total-revenue-val').innerText = `₪${totalRevenue.toLocaleString()}`;
-
-                if (clientsData.length === 0) {
-                    listEl.innerHTML = `<div class="text-center py-6 text-gray-500 text-sm">אין לקוחות רשומים עדיין.</div>`;
-                    return;
+        function loadData() {
+            try {
+                const saved = localStorage.getItem(STORAGE_KEY);
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    window.appState = { ...window.appState, ...parsed };
                 }
+            } catch (e) {
+                console.error("Failed to load local storage data:", e);
+            }
+        }
 
-                clientsData.forEach(client => {
-                    const item = document.createElement('div');
-                    const price = client.monthlyPrice ? `₪${client.monthlyPrice}` : 'לא הוגדר';
-                    item.className = `p-3 rounded-xl border transition cursor-pointer flex items-center justify-between ${selectedClientId === client.id ? 'bg-brand-cyan/10 border-brand-cyan' : 'bg-gray-800/50 border-gray-800 hover:border-gray-700'}`;
-                    item.onclick = () => selectClient(client.id);
-                    item.innerHTML = `
-                        <div class="overflow-hidden">
-                            <div class="font-bold text-sm text-white truncate">${client.displayName || client.email || 'לקוח'}</div>
-                            <div class="text-xs text-gray-400 truncate">${client.email}</div>
-                        </div>
-                        <div class="text-left">
-                            <span class="text-xs text-emerald-400 font-bold block">${price}</span>
-                            <i class="fas fa-chevron-left text-xs text-gray-500"></i>
-                        </div>
-                    `;
-                    listEl.appendChild(item);
-                });
+        window.saveData = function() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(window.appState));
+            } catch (e) {
+                console.error("Failed to save data:", e);
+            }
+        };
+
+        // Render Everything
+        window.renderAll = function() {
+            renderMetricsAndBanners();
+            renderClientsTable();
+            renderLeads();
+            renderProspects();
+            renderReminders();
+            
+            const scratchpad = document.getElementById('scratchpadNotes');
+            if (scratchpad && document.activeElement !== scratchpad) {
+                scratchpad.value = window.appState.notesText || "";
+            }
+        };
+
+        // 1. Metrics & Target Banner Calculation
+        function renderMetricsAndBanners() {
+            const activeClients = window.appState.clients.filter(c => c.status === 'ACTIVE');
+            const activeCount = activeClients.length;
+            
+            // Expected monthly revenue based on per-client monthly price setting
+            const monthlyRevenue = activeClients.reduce((sum, c) => sum + (Number(c.price) || 0), 0);
+            
+            // Total collected all time
+            const totalCollected = window.appState.totalCollectedAllTime || 0;
+
+            // Target banner elements (`X/100 לקוחות - X שח / 50,000 שח חודשי`)
+            document.getElementById('targetClientCountText').innerText = activeCount;
+            document.getElementById('targetMonthlyRevenueText').innerText = monthlyRevenue.toLocaleString() + ' ₪';
+
+            // Progress percentages
+            const clientProgress = Math.min(Math.round((activeCount / 100) * 100), 100);
+            const revenueProgress = Math.min(Math.round((monthlyRevenue / 50000) * 100), 100);
+
+            document.getElementById('clientsPercentText').innerText = clientProgress + '%';
+            document.getElementById('clientsProgressBar').style.width = clientProgress + '%';
+
+            document.getElementById('revenuePercentText').innerText = revenueProgress + '%';
+            document.getElementById('revenueProgressBar').style.width = revenueProgress + '%';
+
+            // Meters
+            document.getElementById('totalCollectedMeter').innerText = '₪' + totalCollected.toLocaleString();
+            document.getElementById('expectedMonthlyRevenue').innerText = '₪' + monthlyRevenue.toLocaleString();
+            document.getElementById('activeClientsCount').innerText = activeCount;
+            document.getElementById('totalClientsCount').innerText = window.appState.clients.length;
+            document.getElementById('inboxLeadsCount').innerText = window.appState.leads.length;
+
+            // Badges
+            document.getElementById('leadsBadge').innerText = window.appState.leads.length;
+            document.getElementById('prospectsBadge').innerText = window.appState.prospects.length;
+        }
+
+        // 2. Render Clients Table (NO Email Column)
+        window.renderClientsTable = function() {
+            const tbody = document.getElementById('clientsTableBody');
+            const emptyState = document.getElementById('emptyClientsState');
+            const searchVal = (document.getElementById('clientSearchInput')?.value || '').toLowerCase();
+            const statusFilter = document.getElementById('clientStatusFilter')?.value || 'ALL';
+
+            let filtered = window.appState.clients.filter(c => {
+                const matchSearch = c.name.toLowerCase().includes(searchVal) ||
+                                    c.business.toLowerCase().includes(searchVal) ||
+                                    c.phone.includes(searchVal);
+                const matchStatus = (statusFilter === 'ALL') || (c.status === statusFilter);
+                return matchSearch && matchStatus;
             });
-        }
 
-        // Select client to view and edit details
-        function selectClient(clientId) {
-            selectedClientId = clientId;
-            const client = clientsData.find(c => c.id === clientId);
-            if (!client) return;
-
-            document.getElementById('no-client-selected').classList.add('hidden');
-            document.getElementById('client-workspace').classList.remove('hidden');
-
-            document.getElementById('selected-client-name').innerText = client.displayName || 'לקוח ללא שם';
-            document.getElementById('selected-client-email').innerText = client.email;
-            document.getElementById('selected-client-id').innerText = `ID: ${client.id}`;
-            document.getElementById('edits-count-val').innerText = client.editsThisMonth || 0;
-
-            document.getElementById('monthly-price-input').value = client.monthlyPrice || '';
-            document.getElementById('site-url-input').value = client.siteUrl || '';
-            document.getElementById('site-html-input').value = client.siteHtml || '';
-
-            loadPendingEdits(clientId);
-            loadClients(); // Refresh active UI state
-        }
-
-        // Save Monthly Price for Client
-        function saveMonthlyPrice() {
-            if (!selectedClientId) return;
-            const price = Number(document.getElementById('monthly-price-input').value) || 0;
-
-            db.collection('users').doc(selectedClientId).set({
-                monthlyPrice: price,
-                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-            }, { merge: true }).then(() => {
-                alert("הסכום החודשי עודכן בהצלחה!");
-            }).catch(err => {
-                alert("שגיאה בעדכון המחיר: " + err.message);
-            });
-        }
-
-        // Save URL & HTML Config to user's document
-        function saveSiteConfig() {
-            if (!selectedClientId) return;
-
-            const url = document.getElementById('site-url-input').value.trim();
-            const html = document.getElementById('site-html-input').value.trim();
-
-            db.collection('users').doc(selectedClientId).set({
-                siteUrl: url,
-                siteHtml: html,
-                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-            }, { merge: true }).then(() => {
-                alert("הגדרות האתר נשמרו בהצלחה!");
-            }).catch(err => {
-                alert("שגיאה בשמירה: " + err.message);
-            });
-        }
-
-        // Load Pending Edit Requests for selected client
-        function loadPendingEdits(clientId) {
-            db.collection('users').doc(clientId).collection('editRequests')
-                .orderBy('createdAt', 'desc')
-                .onSnapshot(snapshot => {
-                    const container = document.getElementById('pending-edits-container');
-                    container.innerHTML = '';
-                    
-                    let pendingCount = 0;
-
-                    if (snapshot.empty) {
-                        container.innerHTML = `<p class="text-gray-500 text-sm text-center py-4">אין בקשות שינוי ללקוח זה.</p>`;
-                        document.getElementById('pending-count').innerText = 0;
-                        return;
-                    }
-
-                    snapshot.forEach(doc => {
-                        const edit = doc.data();
-                        edit.id = doc.id;
-
-                        if (edit.status === 'pending') pendingCount++;
-
-                        const dateStr = edit.createdAt ? new Date(edit.createdAt.toDate()).toLocaleString('he-IL') : 'נשלח כעת';
-
-                        const card = document.createElement('div');
-                        card.className = `p-4 rounded-xl border ${edit.status === 'pending' ? 'bg-gray-800/80 border-brand-purple/50' : 'bg-gray-900/50 border-gray-800 opacity-60'}`;
-                        card.innerHTML = `
-                            <div class="flex justify-between items-start mb-2">
-                                <span class="text-xs text-gray-400"><i class="far fa-clock ml-1"></i>${dateStr}</span>
-                                <span class="text-xs px-2 py-0.5 rounded-full ${edit.status === 'pending' ? 'bg-amber-500/20 text-amber-300' : 'bg-green-500/20 text-green-300'}">
-                                    ${edit.status === 'pending' ? 'ממתין לאישור' : 'אושר'}
-                                </span>
-                            </div>
-                            <div class="space-y-2 text-xs font-mono my-3 bg-gray-950 p-3 rounded-lg border border-gray-800">
-                                <div><strong class="text-red-400">טקסט מקורי:</strong> ${escapeHtml(edit.originalText || '')}</div>
-                                <div><strong class="text-green-400">טקסט חדש:</strong> ${escapeHtml(edit.newText || '')}</div>
-                            </div>
-                            ${edit.status === 'pending' ? `
-                                <div class="flex gap-2">
-                                    <button onclick="approveEdit('${edit.id}', \`${escapeQuotes(edit.originalText)}\`, \`${escapeQuotes(edit.newText)}\`)" class="bg-green-500 hover:bg-green-600 text-slate-900 font-bold px-3 py-1.5 rounded-lg text-xs transition flex items-center gap-1">
-                                        <i class="fas fa-check"></i> אישר והפק HTML
-                                    </button>
-                                </div>
-                            ` : ''}
-                        `;
-                        container.appendChild(card);
-                    });
-
-                    document.getElementById('pending-count').innerText = pendingCount;
-                });
-        }
-
-        // Approve edit and generate new HTML
-        function approveEdit(editId, originalText, newText) {
-            if (!selectedClientId) return;
-
-            let currentHtml = document.getElementById('site-html-input').value;
-
-            if (!currentHtml) {
-                alert("אנא הזן תחילה קוד HTML בסיסי בסקציית ההגדרות למעלה.");
+            if (filtered.length === 0) {
+                tbody.innerHTML = '';
+                emptyState.classList.remove('hidden');
                 return;
             }
 
-            // Replace text in HTML
-            let updatedHtml = currentHtml;
-            if (originalText && updatedHtml.includes(originalText)) {
-                updatedHtml = updatedHtml.replace(originalText, newText);
+            emptyState.classList.add('hidden');
+
+            tbody.innerHTML = filtered.map(client => {
+                const isPaid = client.paidThisMonth;
+                const statusBadge = getStatusBadge(client.status);
+
+                return `
+                    <tr class="hover:bg-slate-900/50 transition border-b border-gray-800/40">
+                        <td class="p-4">
+                            <div class="font-bold text-white text-sm">${escapeHtml(client.business)}</div>
+                            <div class="text-xs text-gray-400">${escapeHtml(client.name)}</div>
+                        </td>
+                        <td class="p-4 text-gray-300 font-mono dir-ltr text-right">
+                            <a href="tel:${escapeHtml(client.phone)}" class="hover:text-brand-cyan transition">
+                                ${escapeHtml(client.phone)}
+                            </a>
+                        </td>
+                        <td class="p-4 font-bold text-brand-cyan">
+                            ₪${Number(client.price).toLocaleString()} / חודש
+                        </td>
+                        <td class="p-4">
+                            ${statusBadge}
+                        </td>
+                        <td class="p-4">
+                            ${isPaid 
+                                ? `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                                     <i class="fa-solid fa-check-circle"></i> שולם החודש
+                                   </span>`
+                                : `<button onclick="markClientPaid('${client.id}')" class="px-3 py-1 rounded-xl bg-amber-500/20 text-amber-300 hover:bg-emerald-500 hover:text-black font-bold border border-amber-500/30 transition text-[11px] flex items-center gap-1">
+                                     <i class="fa-solid fa-hand-holding-dollar"></i> לחץ לסימון "שולם"
+                                   </button>`
+                            }
+                        </td>
+                        <td class="p-4 text-xs text-gray-400 max-w-xs truncate">
+                            ${escapeHtml(client.notes || '-')}
+                        </td>
+                        <td class="p-4 text-center">
+                            <div class="flex items-center justify-center gap-2">
+                                <button onclick="editClient('${client.id}')" class="p-1.5 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white transition" title="ערוך">
+                                    <i class="fa-solid fa-pen"></i>
+                                </button>
+                                <button onclick="deleteClient('${client.id}')" class="p-1.5 rounded-lg bg-red-900/30 hover:bg-red-800 text-red-400 hover:text-white transition" title="מחק">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        };
+
+        // 3. Mark Client Paid Action (Updates All-Time Total Gauge)
+        window.markClientPaid = function(id) {
+            const client = window.appState.clients.find(c => c.id === id);
+            if (!client) return;
+
+            const amount = Number(client.price) || 0;
+            client.paidThisMonth = true;
+            client.totalCollected = (Number(client.totalCollected) || 0) + amount;
+            
+            // Increment overall meter
+            window.appState.totalCollectedAllTime = (Number(window.appState.totalCollectedAllTime) || 0) + amount;
+
+            saveData();
+            renderAll();
+            showToast(`בוצע בהצלחה! התווסף ₪${amount.toLocaleString()} למד ההכנסות.`);
+        };
+
+        // 4. Save/Edit Client Modal
+        window.handleSaveClient = function(e) {
+            e.preventDefault();
+            const id = document.getElementById('clientIdInput').value;
+            const name = document.getElementById('clientNameInput').value.trim();
+            const business = document.getElementById('clientBusinessInput').value.trim();
+            const phone = document.getElementById('clientPhoneInput').value.trim();
+            const price = Number(document.getElementById('clientPriceInput').value) || 0;
+            const status = document.getElementById('clientStatusInput').value;
+            const paidThisMonth = document.getElementById('clientPaidStatusInput').value === 'PAID';
+            const notes = document.getElementById('clientNotesInput').value.trim();
+
+            if (id) {
+                // Edit existing
+                const idx = window.appState.clients.findIndex(c => c.id === id);
+                if (idx !== -1) {
+                    window.appState.clients[idx] = {
+                        ...window.appState.clients[idx],
+                        name, business, phone, price, status, paidThisMonth, notes
+                    };
+                }
             } else {
-                alert("אזהרה: הטקסט המקורי לא נמצא באופן מדויק בקוד ה-HTML. נעשה עדכון סטטוס בלבד.");
+                // New Client
+                const newClient = {
+                    id: 'client_' + Date.now(),
+                    name,
+                    business,
+                    phone,
+                    price,
+                    status,
+                    paidThisMonth,
+                    totalCollected: paidThisMonth ? price : 0,
+                    notes,
+                    createdAt: new Date().toISOString()
+                };
+                if (paidThisMonth) {
+                    window.appState.totalCollectedAllTime = (Number(window.appState.totalCollectedAllTime) || 0) + price;
+                }
+                window.appState.clients.unshift(newClient);
             }
 
-            // Update DB
-            const batch = db.batch();
-            const editRef = db.collection('users').doc(selectedClientId).collection('editRequests').doc(editId);
-            const userRef = db.collection('users').doc(selectedClientId);
+            saveData();
+            renderAll();
+            closeModal('addClientModal');
+            showToast(id ? 'פרטי הלקוח עודכנו בהצלחה' : 'לקוח חדש נוסף למערכת!');
+        };
 
-            batch.update(editRef, { status: 'approved', approvedAt: firebase.firestore.FieldValue.serverTimestamp() });
-            batch.update(userRef, { 
-                siteHtml: updatedHtml,
-                editsThisMonth: firebase.firestore.FieldValue.increment(1)
+        window.editClient = function(id) {
+            const client = window.appState.clients.find(c => c.id === id);
+            if (!client) return;
+
+            document.getElementById('clientIdInput').value = client.id;
+            document.getElementById('clientNameInput').value = client.name;
+            document.getElementById('clientBusinessInput').value = client.business;
+            document.getElementById('clientPhoneInput').value = client.phone;
+            document.getElementById('clientPriceInput').value = client.price;
+            document.getElementById('clientStatusInput').value = client.status;
+            document.getElementById('clientPaidStatusInput').value = client.paidThisMonth ? 'PAID' : 'UNPAID';
+            document.getElementById('clientNotesInput').value = client.notes || '';
+
+            document.getElementById('clientModalTitle').innerHTML = `<i class="fa-solid fa-pen text-brand-cyan"></i> עריכת לקוח`;
+            openModal('addClientModal');
+        };
+
+        window.deleteClient = function(id) {
+            if (window.confirm('האם אתה בטוח שברצונך למחוק לקוח זה?')) {
+                window.appState.clients = window.appState.clients.filter(c => c.id !== id);
+                saveData();
+                renderAll();
+                showToast('הלקוח הוסר בהצלחה');
+            }
+        };
+
+        // 5. Render Inbound Form Leads (Index)
+        function renderLeads() {
+            const container = document.getElementById('leadsGrid');
+            const empty = document.getElementById('emptyLeadsState');
+
+            if (window.appState.leads.length === 0) {
+                container.innerHTML = '';
+                empty.classList.remove('hidden');
+                return;
+            }
+
+            empty.classList.add('hidden');
+            container.innerHTML = window.appState.leads.map(lead => `
+                <div class="glass-panel p-4 rounded-2xl border border-gray-800 space-y-3 relative group">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <span class="text-[10px] text-brand-cyan bg-brand-cyan/10 border border-brand-cyan/30 px-2 py-0.5 rounded-full font-bold">פנייה מהאתר</span>
+                            <h3 class="text-sm font-bold text-white mt-1.5">${escapeHtml(lead.name)}</h3>
+                            <div class="text-xs text-gray-400 font-mono">${escapeHtml(lead.phone)}</div>
+                        </div>
+                        <span class="text-[10px] text-gray-500">${escapeHtml(lead.createdAt || '')}</span>
+                    </div>
+
+                    <div class="flex items-center justify-between pt-2 border-t border-gray-800/80">
+                        <a href="tel:${escapeHtml(lead.phone)}" class="px-3 py-1.5 rounded-xl bg-gray-800 hover:bg-gray-700 text-xs text-white transition flex items-center gap-1">
+                            <i class="fa-solid fa-phone text-xs text-emerald-400"></i> חייג
+                        </a>
+
+                        <button onclick="convertLeadToClient('${lead.id}')" class="px-3 py-1.5 rounded-xl bg-gradient-to-r from-brand-cyan to-brand-purple text-black font-bold text-xs hover:opacity-90 transition flex items-center gap-1">
+                            <i class="fa-solid fa-user-plus text-xs"></i> הפוך ללקוח
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        window.convertLeadToClient = function(leadId) {
+            const lead = window.appState.leads.find(l => l.id === leadId);
+            if (!lead) return;
+
+            document.getElementById('clientIdInput').value = '';
+            document.getElementById('clientNameInput').value = lead.name;
+            document.getElementById('clientBusinessInput').value = 'עסק של ' + lead.name;
+            document.getElementById('clientPhoneInput').value = lead.phone;
+            document.getElementById('clientPriceInput').value = 500;
+            document.getElementById('clientNotesInput').value = 'הומר מפניית טופס באתר (' + (lead.createdAt || '') + ')';
+
+            openModal('addClientModal');
+        };
+
+        // 6. Prospects / Businesses to Contact Pipeline
+        function renderProspects() {
+            const tbody = document.getElementById('prospectsTableBody');
+            const empty = document.getElementById('emptyProspectsState');
+
+            if (window.appState.prospects.length === 0) {
+                tbody.innerHTML = '';
+                empty.classList.remove('hidden');
+                return;
+            }
+
+            empty.classList.add('hidden');
+            tbody.innerHTML = window.appState.prospects.map(p => `
+                <tr class="hover:bg-slate-900/50 transition border-b border-gray-800/40">
+                    <td class="p-4 font-bold text-white text-sm">
+                        ${escapeHtml(p.business)}
+                    </td>
+                    <td class="p-4 text-xs text-gray-300">
+                        ${escapeHtml(p.contact || '-')}
+                    </td>
+                    <td class="p-4 text-xs text-brand-pink font-semibold">
+                        ${escapeHtml(p.niche || '-')}
+                    </td>
+                    <td class="p-4">
+                        ${getProspectBadge(p.status)}
+                    </td>
+                    <td class="p-4 text-xs text-gray-400 max-w-xs truncate">
+                        ${escapeHtml(p.notes || '-')}
+                    </td>
+                    <td class="p-4 text-center">
+                        <button onclick="deleteProspect('${p.id}')" class="p-1.5 rounded-lg bg-red-900/30 hover:bg-red-800 text-red-400 hover:text-white transition">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        window.handleSaveProspect = function(e) {
+            e.preventDefault();
+            const business = document.getElementById('prospectBusinessInput').value.trim();
+            const contact = document.getElementById('prospectContactInput').value.trim();
+            const niche = document.getElementById('prospectNicheInput').value.trim();
+            const status = document.getElementById('prospectStatusInput').value;
+            const notes = document.getElementById('prospectNotesInput').value.trim();
+
+            const newP = {
+                id: 'prospect_' + Date.now(),
+                business, contact, niche, status, notes
+            };
+
+            window.appState.prospects.unshift(newP);
+            saveData();
+            renderAll();
+            closeModal('addProspectModal');
+            showToast('עסק נוסף לרשימת היעדים!');
+        };
+
+        window.deleteProspect = function(id) {
+            window.appState.prospects = window.appState.prospects.filter(p => p.id !== id);
+            saveData();
+            renderAll();
+        };
+
+        // 7. Reminders & Notes Scratchpad
+        function renderReminders() {
+            const list = document.getElementById('remindersList');
+            const empty = document.getElementById('emptyRemindersState');
+
+            if (window.appState.reminders.length === 0) {
+                list.innerHTML = '';
+                empty.classList.remove('hidden');
+                return;
+            }
+
+            empty.classList.add('hidden');
+            list.innerHTML = window.appState.reminders.map(r => `
+                <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-950/60 border border-gray-800 text-xs">
+                    <div class="flex items-center gap-2.5">
+                        <input type="checkbox" ${r.completed ? 'checked' : ''} onchange="toggleReminder('${r.id}')" class="rounded bg-gray-800 border-gray-700 text-brand-cyan focus:ring-0">
+                        <span class="${r.completed ? 'line-through text-gray-500' : 'text-gray-200'} font-medium">
+                            ${escapeHtml(r.text)}
+                        </span>
+                    </div>
+                    <button onclick="deleteReminder('${r.id}')" class="text-gray-500 hover:text-red-400 p-1">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        window.handleAddReminder = function(e) {
+            e.preventDefault();
+            const input = document.getElementById('newReminderText');
+            const text = input.value.trim();
+            if (!text) return;
+
+            window.appState.reminders.unshift({
+                id: 'rem_' + Date.now(),
+                text: text,
+                completed: false
             });
 
-            batch.commit().then(() => {
-                document.getElementById('site-html-input').value = updatedHtml;
-                showModal(updatedHtml);
-            }).catch(err => {
-                alert("שגיאה בעדכון: " + err.message);
+            input.value = '';
+            saveData();
+            renderAll();
+        };
+
+        window.toggleReminder = function(id) {
+            const rem = window.appState.reminders.find(r => r.id === id);
+            if (rem) {
+                rem.completed = !rem.completed;
+                saveData();
+                renderAll();
+            }
+        };
+
+        window.deleteReminder = function(id) {
+            window.appState.reminders = window.appState.reminders.filter(r => r.id !== id);
+            saveData();
+            renderAll();
+        };
+
+        let notesDebounce;
+        window.handleNotesChange = function() {
+            const text = document.getElementById('scratchpadNotes').value;
+            window.appState.notesText = text;
+            saveData();
+
+            const indicator = document.getElementById('notesSavedIndicator');
+            indicator.classList.remove('hidden');
+            clearTimeout(notesDebounce);
+            notesDebounce = setTimeout(() => {
+                indicator.classList.add('hidden');
+            }, 1200);
+        };
+
+        // UI Helpers & Tab Switching
+        window.switchTab = function(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.className = 'tab-btn px-4 py-2 rounded-xl font-medium text-xs sm:text-sm text-gray-400 hover:text-white hover:bg-gray-800 transition whitespace-nowrap';
             });
+
+            document.getElementById('tab-' + tabName).classList.remove('hidden');
+            const activeBtn = document.getElementById('tabBtn-' + tabName);
+            if (activeBtn) {
+                activeBtn.className = 'tab-btn px-4 py-2 rounded-xl font-bold text-xs sm:text-sm bg-brand-cyan/20 text-brand-cyan border border-brand-cyan/40 whitespace-nowrap';
+            }
+        };
+
+        window.openModal = function(modalId) {
+            if (modalId === 'addClientModal' && !document.getElementById('clientIdInput').value) {
+                document.getElementById('clientModalTitle').innerHTML = `<i class="fa-solid fa-user-plus text-brand-cyan"></i> הוספת לקוח חדש`;
+            }
+            document.getElementById(modalId).classList.remove('hidden');
+        };
+
+        window.closeModal = function(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+            if (modalId === 'addClientModal') {
+                document.getElementById('clientIdInput').value = '';
+                document.getElementById('clientNameInput').value = '';
+                document.getElementById('clientBusinessInput').value = '';
+                document.getElementById('clientPhoneInput').value = '';
+                document.getElementById('clientPriceInput').value = 500;
+                document.getElementById('clientNotesInput').value = '';
+            }
+        };
+
+        function getStatusBadge(status) {
+            switch (status) {
+                case 'ACTIVE':
+                    return `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">פעיל</span>`;
+                case 'PENDING':
+                    return `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/30">בהקמה</span>`;
+                case 'PAUSED':
+                    return `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-gray-500/10 text-gray-400 border border-gray-500/30">מושהה</span>`;
+                case 'CANCELLED':
+                    return `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-500/10 text-red-400 border border-red-500/30">מבוטל</span>`;
+                default:
+                    return `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-gray-800 text-gray-400">כללי</span>`;
+            }
         }
 
-        function showModal(htmlCode) {
-            document.getElementById('modal-html-code').value = htmlCode;
-            document.getElementById('html-modal').classList.remove('hidden');
+        function getProspectBadge(status) {
+            switch (status) {
+                case 'NEW':
+                    return `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-gray-800 text-gray-300">טרם פניתי</span>`;
+                case 'CONTACTED':
+                    return `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-brand-cyan/20 text-brand-cyan border border-brand-cyan/30">שוחחנו</span>`;
+                case 'OFFER_SENT':
+                    return `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-brand-purple/20 text-brand-purple border border-brand-purple/30">נשלחה הצעה</span>`;
+                case 'CLOSED':
+                    return `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">נסגר!</span>`;
+                default:
+                    return `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-gray-800 text-gray-400">לא רלוונטי</span>`;
+            }
         }
 
-        function closeModal() {
-            document.getElementById('html-modal').classList.add('hidden');
-        }
-
-        function copyModalCode() {
-            const textarea = document.getElementById('modal-html-code');
-            textarea.select();
-            document.execCommand('copy');
-            alert("הקוד הועתק ללוח!");
+        function showToast(message) {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = 'glass-panel px-4 py-3 rounded-2xl border border-brand-cyan/50 text-white text-xs font-bold shadow-2xl flex items-center gap-2 pointer-events-auto animate-toast bg-slate-900';
+            toast.innerHTML = `<i class="fa-solid fa-circle-check text-brand-cyan text-sm"></i> ${escapeHtml(message)}`;
+            
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
         }
 
         function escapeHtml(str) {
-            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
-        }
-
-        function escapeQuotes(str) {
-            return (str || '').replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\$/g, '\\$');
-        }
-
-        // Countdown timer to the 1st of next month
-        function startBillingCountdown() {
-            function updateTimer() {
-                const now = new Date();
-                let nextBilling = new Date(now.getFullYear(), now.getMonth() + 1, 1, 0, 0, 0);
-                const diff = nextBilling - now;
-
-                if (diff <= 0) {
-                    document.getElementById('billing-countdown').innerText = "00d 00h 00m 00s";
-                    return;
-                }
-
-                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-                const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-                const minutes = Math.floor((diff / 1000 / 60) % 60);
-                const seconds = Math.floor((diff / 1000) % 60);
-
-                const pad = n => n.toString().padStart(2, '0');
-                document.getElementById('billing-countdown').innerText = `${pad(days)}d ${pad(hours)}h ${pad(minutes)}m ${pad(seconds)}s`;
-            }
-
-            updateTimer();
-            setInterval(updateTimer, 1000);
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
         }
     </script>
 </body>
