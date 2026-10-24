@@ -1,9 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://nn-sites.github.io/NetVibeMedia/</loc>
-    <lastmod>2026-10-03</lastmod>
-    <changefreq>monthly</changefreq>
+    <lastmod>2026-10-24</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="he" href="https://nn-sites.github.io/NetVibeMedia/"/>
+    <image:image>
+      <image:loc>https://nn-sites.github.io/NetVibeMedia/og-image.png</image:loc>
+      <image:title>NetVibeMedia – נועם נפתלי, בניית אתרים ודפי נחיתה</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://nn-sites.github.io/NetVibeMedia/accessibility.html</loc>
+    <lastmod>2026-10-24</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
   </url>
 </urlset>
