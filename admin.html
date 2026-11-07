@@ -7,6 +7,7 @@
 <meta name="robots" content="noindex, nofollow, noarchive">
 <meta name="theme-color" content="#0f172a">
 <meta name="color-scheme" content="light">
+<link rel="icon" type="image/svg+xml" href="brand/logo-icon.svg">
 <link rel="icon" type="image/png" href="favicon-48.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -50,6 +51,7 @@ a{color:var(--accent)}
 
 .auth{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:1rem;background:var(--bg)}
 .auth-card{width:min(400px,100%);background:#fff;border:1px solid var(--line);border-radius:14px;padding:2.2rem 2rem;text-align:center;box-shadow:var(--shadow-lg);display:grid;gap:1.2rem;justify-items:center}
+img.mark{background:none!important;border-radius:0!important;object-fit:contain}
 .mark{width:44px;height:44px;border-radius:10px;background:var(--side);color:#fff;display:grid;place-items:center;font-weight:700;font-size:1.3rem}
 .auth-card h1{font-size:1.3rem;font-weight:600}
 .auth-card p{color:var(--muted);font-size:.9rem}
@@ -236,7 +238,7 @@ dialog::backdrop{background:rgba(15,23,42,.5)}
 <!-- AUTH -->
 <div class="auth" id="auth">
   <div class="auth-card">
-    <div class="mark" aria-hidden="true">N</div>
+    <img class="mark" src="brand/logo-icon.svg" alt="" width="56" height="56">
     <div>
       <h1>אזור מנהל</h1>
       <p>הגישה מורשית לחשבון המערכת בלבד</p>
@@ -261,7 +263,7 @@ dialog::backdrop{background:rgba(15,23,42,.5)}
 <div class="app" id="app" hidden>
   <aside class="side">
     <div class="brand">
-      <span class="mark" aria-hidden="true">N</span>
+      <img class="mark" src="brand/logo-icon.svg" alt="" width="40" height="40">
       <span>NetVibe<span class="grad-text">Media</span><small>לוח בקרה</small></span>
     </div>
     <nav class="nav" aria-label="ניווט ראשי" id="nav">

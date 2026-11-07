@@ -67,20 +67,17 @@
   function loadWorks(){if(!worksReq){worksReq=fetch('assets/works.json',{cache:'no-cache'}).then(function(r){return r.ok?r.json():{}}).catch(function(){return {}})}return worksReq}
   function el(tag,cls,html){var e=d.createElement(tag);if(cls)e.className=cls;if(html!=null)e.textContent=html;return e}
   var track=d.getElementById('logo-track');
+  var MIN_LOGOS=10; /* the "עובדים איתנו" carousel only appears from 10 client logos */
   if(track){
     loadWorks().then(function(w){
       var logos=(w.logos||[]).filter(function(x){return x&&x.file});
-      var items=[];
-      if(logos.length){
-        var base=logos.slice();while(base.length<8)base=base.concat(logos);
-        base.forEach(function(l){var img=el('img','logo-img');img.src='client-logos/'+l.file;img.alt=l.name||'';img.height=48;img.loading='lazy';img.decoding='async';items.push(img)});
-      }else{
-        for(var i=0;i<8;i++)items.push(el('span','logo-ph','העסק שלך כאן'));
-        var note=d.getElementById('logos-note');if(note)note.hidden=false;
-      }
-      function fill(parent,hidden){items.forEach(function(n){var c=n.cloneNode(true);parent.appendChild(c)});if(hidden)parent.setAttribute('aria-hidden','true')}
-      var a=el('div','logo-set'),b=el('div','logo-set');fill(a,false);fill(b,true);
-      if(!logos.length){a.setAttribute('aria-hidden','true')}
+      if(logos.length<MIN_LOGOS)return;
+      var sec=d.getElementById('clients');if(sec)sec.hidden=false;
+      d.querySelectorAll('a[href="#clients"]').forEach(function(a){if(a.parentNode)a.parentNode.hidden=false});
+      var items=logos.map(function(l){var img=el('img','logo-img');img.src='client-logos/'+l.file;img.alt=l.name||'';img.height=48;img.loading='lazy';img.decoding='async';return img});
+      var a=el('div','logo-set'),b=el('div','logo-set');
+      items.forEach(function(n){a.appendChild(n.cloneNode(true));b.appendChild(n.cloneNode(true))});
+      b.setAttribute('aria-hidden','true');
       track.appendChild(a);track.appendChild(b);
     });
   }
