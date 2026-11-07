@@ -460,3 +460,8 @@ body.acc-still .logo-track{animation:none}
   .tiers.compact{gap:1rem}
 }
 @media (min-width:1100px){.gallery.masonry{column-count:4}}
+
+/* sale price */
+.was{color:var(--muted);font-weight:600;font-size:1.05rem;text-decoration:line-through;text-decoration-thickness:2px}
+.sale-tag{background:#fee2e2;color:#b91c1c;font-weight:800;font-size:.72rem;padding:.12rem .55rem;border-radius:99px}
+.tiers.compact .amount{align-items:center}

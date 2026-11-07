@@ -30,7 +30,7 @@
   /* ---------- WhatsApp orders (everything except websites / landing pages) ---------- */
   var WA='972533752747';
   var WA_SERVICES={
-    video1:{label:'סרטון פרסומת',price:'250 ₪'},
+    video1:{label:'סרטון פרסומת',price:'250 ₪ (מבצע, במקום 500 ₪)'},
     video2:{label:'2 סרטוני פרסומת',price:'400 ₪'},
     card:{label:'כרטיס ביקור',price:'50 ₪'},
     logo:{label:'עיצוב לוגו',price:'30 ₪'},
