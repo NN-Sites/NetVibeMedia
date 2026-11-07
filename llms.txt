@@ -1,6 +1,6 @@
-# NetVibeMedia – נועם נפתלי
+# NetVibeMedia
 
-> NetVibeMedia הוא סטודיו דיגיטלי ישראלי לבניית אתרים, דפי נחיתה, סרטוני פרסומת ועיצוב כרטיסי ביקור לעסקים. הוקם על ידי נועם נפתלי (Noam Naftali).
+> NetVibeMedia הוא סטודיו דיגיטלי ישראלי לבניית אתרים, דפי נחיתה, סרטוני פרסומת ועיצוב כרטיסי ביקור לעסקים.
 
 ## שירותים ומחירים
 - סרטוני פרסומת: סרטון אחד 250 ₪, שני סרטונים 400 ₪
@@ -15,5 +15,5 @@
 - [אתרים ודפי נחיתה](https://nn-sites.github.io/NetVibeMedia/websites.html)
 - [עיצוב לוגו](https://nn-sites.github.io/NetVibeMedia/logo-design.html)
 - [כרטיסי ביקור](https://nn-sites.github.io/NetVibeMedia/business-cards.html)
-- [אודות נועם נפתלי](https://nn-sites.github.io/NetVibeMedia/#about)
+- [מי אנחנו](https://nn-sites.github.io/NetVibeMedia/#about)
 - [הצהרת נגישות](https://nn-sites.github.io/NetVibeMedia/accessibility.html)

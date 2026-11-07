@@ -152,7 +152,7 @@
       });
     }).then(function(){
       form.reset();
-      setStatus('ok','תודה! הפרטים התקבלו בהצלחה. נועם יחזור אליכם בהקדם.');
+      setStatus('ok','תודה! הפרטים התקבלו בהצלחה. נחזור אליכם בהקדם.');
     }).catch(function(){
       fbPromise=null;
       setStatus('bad','אירעה שגיאה בשליחה. נסו שוב בעוד רגע.');
