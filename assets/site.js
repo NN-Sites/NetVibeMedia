@@ -132,13 +132,14 @@
     loadWorks().then(function(w){
       var list=(w[kind]||[]).filter(function(x){return x&&x.file||x&&x.url});
       if(!list.length){box.appendChild(el('p','works-empty','העבודות יעלו לכאן בקרוב. רוצים לראות דוגמאות מתאימות לעסק שלכם? השאירו פרטים ונשלח.'));return}
+      if(kind==='videos')box.classList.add('masonry');
       list.forEach(function(it){
         var card=el('article','work');
         if(kind==='videos'){
           var v=d.createElement('video');
           /* GIF-style: silent, looping, no player chrome. Loads and plays only while on screen. */
           v.muted=true;v.defaultMuted=true;v.loop=true;v.playsInline=true;v.setAttribute('playsinline','');v.setAttribute('muted','');
-          v.preload='none';v.dataset.src='commercial-videos/'+encodeURIComponent(it.file);
+          v.preload='metadata';v.dataset.src='commercial-videos/'+encodeURIComponent(it.file);v.src=v.dataset.src;v.addEventListener('loadedmetadata',function(){if(v.videoWidth&&v.videoHeight)v.style.aspectRatio=v.videoWidth+' / '+v.videoHeight});
           if(it.poster)v.poster='commercial-videos/'+encodeURIComponent(it.poster);
           v.tabIndex=0;v.setAttribute('role','button');v.setAttribute('aria-label',(it.title||'סרטון פרסומת')+' – לחיצה להפעלה או עצירה');
           v.addEventListener('click',function(){if(v.paused)v.play().catch(function(){});else v.pause()});
@@ -153,7 +154,7 @@
         if(it.title)body.appendChild(el('h3',null,it.title));
         if(it.desc)body.appendChild(el('p',null,it.desc));
         if(kind==='sites'&&it.url){var l=el('a','work-link','לצפייה באתר');l.href=it.url;l.target='_blank';l.rel='noopener';body.appendChild(l)}
-        card.appendChild(body);box.appendChild(card);
+        if(body.children.length)card.appendChild(body);box.appendChild(card);
       });
     });
   });
