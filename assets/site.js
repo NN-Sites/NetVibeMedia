@@ -27,6 +27,33 @@
   d.querySelectorAll('[data-service]').forEach(function(a){a.addEventListener('click',function(){if(sel)sel.value=a.getAttribute('data-service')})});
   d.getElementById('year').textContent=new Date().getFullYear();
 
+  /* ---------- WhatsApp orders (everything except websites / landing pages) ---------- */
+  var WA='972533752747';
+  var WA_SERVICES={
+    video1:{label:'סרטון פרסומת',price:'250 ₪'},
+    video2:{label:'2 סרטוני פרסומת',price:'400 ₪'},
+    card:{label:'כרטיס ביקור',price:'50 ₪'},
+    logo:{label:'עיצוב לוגו',price:'30 ₪'},
+    logoanim:{label:'לוגו + אנימציה',price:'50 ₪ (30 ₪ לוגו + 20 ₪ אנימציה)'}
+  };
+  function waLink(key,info){
+    var sv=WA_SERVICES[key];if(!sv)return null;
+    info=info||{};
+    var L=['👋 *הזמנה חדשה – NetVibeMedia*','','📦 *שירות:* '+sv.label,'💰 *מחיר:* '+sv.price];
+    if(info.name)L.push('👤 *שם:* '+info.name);
+    if(info.phone)L.push('📞 *טלפון:* '+info.phone);
+    if(info.message)L.push('📝 *הערות:* '+info.message);
+    L.push('');
+    L.push(info.name?'_נשלח מטופס ההזמנה באתר_':'היי, אשמח לפרטים ולהתחיל 🙂');
+    return 'https://wa.me/'+WA+'?text='+encodeURIComponent(L.join('%0A'.replace('%0A',String.fromCharCode(10))));
+  }
+  d.querySelectorAll('a[data-service],a[href*="service="]').forEach(function(a){
+    var key=a.getAttribute('data-service');
+    if(!key){var m=/[?&]service=([a-z0-9]+)/.exec(a.getAttribute('href')||'');key=m&&m[1]}
+    var url=key&&waLink(key);
+    if(url){a.href=url;a.target='_blank';a.rel='noopener';a.removeAttribute('data-service')}
+  });
+
   /* mobile-first sticky call-to-action (hidden on desktop by CSS, and while the contact form is on screen) */
   var cta=d.createElement('div');cta.className='m-cta';
   cta.innerHTML='<a class="btn btn-primary" href="./#contact">קבלו הצעה בחינם</a>';
@@ -189,6 +216,8 @@
     if(bad){bad.focus();return}
 
     var service=sel.value, message=d.getElementById('f-msg').value.trim();
+    var waUrl=waLink(service,{name:name,phone:phone,message:message});
+    if(waUrl){var w=window.open(waUrl,'_blank');if(!w){window.location.href=waUrl;}}
     submitBtn.disabled=true;submitBtn.textContent='שולח...';
     loadFirebase().then(function(f){
       var col=f.fs.collection(f.db,'orders');
