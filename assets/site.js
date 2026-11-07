@@ -30,6 +30,9 @@
   /* ---------- WhatsApp orders (everything except websites / landing pages) ---------- */
   var WA='972533752747';
   var WA_SERVICES={
+    landing:{label:'דף נחיתה',intent:'בדף נחיתה',price:'500 ₪ לחודש'},
+    website:{label:'אתר תדמית',intent:'באתר תדמית',price:'700 ₪ לחודש'},
+    other:{label:'',intent:'בשירותים שלכם',price:''},
     video1:{label:'סרטון פרסומת',intent:'ביצירת סרטון פרסומת',price:'250 ₪ (מבצע, במקום 500 ₪)'},
     video2:{label:'2 סרטוני פרסומת',intent:'ביצירת 2 סרטוני פרסומת',price:'400 ₪'},
     card:{label:'כרטיס ביקור',intent:'בעיצוב כרטיס ביקור',price:'50 ₪'},
@@ -41,7 +44,7 @@
     info=info||{};
     var NL=String.fromCharCode(10);
     var L=['היי, אני מתעניין '+sv.intent+' 🙂','',
-      'ראיתי באתר ש'+sv.label+' עולה *'+sv.price+'*, ואשמח לשמוע עוד פרטים, לתאם ולהתחיל.'];
+      (sv.price?'ראיתי באתר ש'+sv.label+' עולה *'+sv.price+'*, ואשמח לשמוע עוד פרטים, לתאם ולהתחיל.':'ראיתי את האתר ואשמח לשמוע עוד על השירותים והמחירים.')];
     var det=[];
     if(info.name)det.push('👤 *שם:* '+info.name);
     if(info.phone)det.push('📞 *טלפון:* '+info.phone);
@@ -220,7 +223,7 @@
     if(bad){bad.focus();return}
 
     var service=sel.value, message=d.getElementById('f-msg').value.trim();
-    var waUrl=waLink(service,{name:name,phone:phone,message:message});
+    var waUrl=waLink(service||'other',{name:name,phone:phone,message:message});
     if(waUrl){var w=window.open(waUrl,'_blank');if(!w){window.location.href=waUrl;}}
     submitBtn.disabled=true;submitBtn.textContent='שולח...';
     loadFirebase().then(function(f){
