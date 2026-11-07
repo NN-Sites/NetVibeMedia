@@ -64,7 +64,37 @@
   /* ---------- contact form (Firebase loaded on demand) ---------- */
   /* ---------- works / logos (assets/works.json) ---------- */
   var worksReq=null;
-  function loadWorks(){if(!worksReq){worksReq=fetch('assets/works.json',{cache:'no-cache'}).then(function(r){return r.ok?r.json():{}}).catch(function(){return {}})}return worksReq}
+  function getJSON(u){return fetch(u,{cache:'no-cache'}).then(function(r){return r.ok?r.json():null}).catch(function(){return null})}
+  function stem(f){return f.replace(/\.[^.]+$/,'')}
+  function clean(f){return stem(f).replace(/[-_]+/g,' ').trim()}
+  /* every file found in a media folder (assets/manifest.json, built automatically) is shown;
+     assets/works.json is optional and only adds titles/descriptions/links or custom ordering */
+  function loadWorks(){
+    if(!worksReq){worksReq=Promise.all([getJSON('assets/manifest.json'),getJSON('assets/works.json')]).then(function(r){
+      var man=r[0]||{},meta=r[1]||{},out={};
+      ['videos','sites','cards','brand','logos'].forEach(function(k){
+        var files=man[k],res=[],seen={};
+        (meta[k]||[]).forEach(function(m){
+          var f=m.file||m.image;if(!f)return;
+          if(files&&files.indexOf(f)<0&&!m.url)return;
+          var o={};for(var p in m)o[p]=m[p];o.file=f;if(k==='sites'&&!o.image)o.image=f;
+          if(k==='videos'&&!o.poster&&man.videoPosters&&man.videoPosters[f])o.poster=man.videoPosters[f];
+          res.push(o);seen[f]=1;
+        });
+        (files||[]).forEach(function(f){
+          if(seen[f])return;
+          var o={file:f};
+          if(k==='sites')o.image=f;
+          if(k==='videos'&&man.videoPosters&&man.videoPosters[f])o.poster=man.videoPosters[f];
+          if(k==='logos')o.name=clean(f);
+          res.push(o);
+        });
+        out[k]=res;
+      });
+      return out;
+    })}
+    return worksReq;
+  }
   function el(tag,cls,html){var e=d.createElement(tag);if(cls)e.className=cls;if(html!=null)e.textContent=html;return e}
   var track=d.getElementById('logo-track');
   var MIN_LOGOS=10; /* the "עובדים איתנו" carousel only appears from 10 client logos */
@@ -74,7 +104,7 @@
       if(logos.length<MIN_LOGOS)return;
       var sec=d.getElementById('clients');if(sec)sec.hidden=false;
       d.querySelectorAll('a[href="#clients"]').forEach(function(a){if(a.parentNode)a.parentNode.hidden=false});
-      var items=logos.map(function(l){var img=el('img','logo-img');img.src='client-logos/'+l.file;img.alt=l.name||'';img.height=48;img.loading='lazy';img.decoding='async';return img});
+      var items=logos.map(function(l){var img=el('img','logo-img');img.src='client-logos/'+encodeURIComponent(l.file);img.alt=l.name||'';img.height=48;img.loading='lazy';img.decoding='async';return img});
       var a=el('div','logo-set'),b=el('div','logo-set');
       items.forEach(function(n){a.appendChild(n.cloneNode(true));b.appendChild(n.cloneNode(true))});
       b.setAttribute('aria-hidden','true');
@@ -90,12 +120,12 @@
       list.forEach(function(it){
         var card=el('article','work');
         if(kind==='videos'){
-          var v=d.createElement('video');v.controls=true;v.preload='metadata';v.playsInline=true;v.src='commercial-videos/'+it.file;
-          if(it.poster)v.poster='commercial-videos/'+it.poster;
+          var v=d.createElement('video');v.controls=true;v.preload='metadata';v.playsInline=true;v.src='commercial-videos/'+encodeURIComponent(it.file);
+          if(it.poster)v.poster='commercial-videos/'+encodeURIComponent(it.poster);
           v.setAttribute('aria-label',it.title||'סרטון פרסומת');card.appendChild(v);
         }else{
           var folder={sites:'websites-landing/',cards:'business-cards/',brand:'logo-design/'}[kind]||'business-cards/';
-          var img=el('img');img.src=folder+(it.image||it.file);img.alt=it.title||'';img.loading='lazy';img.decoding='async';
+          var img=el('img');img.src=folder+encodeURIComponent(it.image||it.file);img.alt=it.title||'';img.loading='lazy';img.decoding='async';
           if(kind==='sites'&&it.url){var a=d.createElement('a');a.href=it.url;a.target='_blank';a.rel='noopener';a.appendChild(img);card.appendChild(a)}else card.appendChild(img);
         }
         var body=el('div','work-body');

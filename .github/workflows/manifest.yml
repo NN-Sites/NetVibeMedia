@@ -1,0 +1,24 @@
+name: Update media manifest
+on:
+  push:
+    paths:
+      - 'commercial-videos/**'
+      - 'websites-landing/**'
+      - 'business-cards/**'
+      - 'client-logos/**'
+      - 'logo-design/**'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  manifest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 tools/build_manifest.py
+      - name: Commit manifest if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/manifest.json
+          git diff --staged --quiet || (git commit -m "Update media manifest" && git push)
