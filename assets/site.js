@@ -30,22 +30,26 @@
   /* ---------- WhatsApp orders (everything except websites / landing pages) ---------- */
   var WA='972533752747';
   var WA_SERVICES={
-    video1:{label:'סרטון פרסומת',price:'250 ₪ (מבצע, במקום 500 ₪)'},
-    video2:{label:'2 סרטוני פרסומת',price:'400 ₪'},
-    card:{label:'כרטיס ביקור',price:'50 ₪'},
-    logo:{label:'עיצוב לוגו',price:'30 ₪'},
-    logoanim:{label:'לוגו + אנימציה',price:'50 ₪ (30 ₪ לוגו + 20 ₪ אנימציה)'}
+    video1:{label:'סרטון פרסומת',intent:'ביצירת סרטון פרסומת',price:'250 ₪ (מבצע, במקום 500 ₪)'},
+    video2:{label:'2 סרטוני פרסומת',intent:'ביצירת 2 סרטוני פרסומת',price:'400 ₪'},
+    card:{label:'כרטיס ביקור',intent:'בעיצוב כרטיס ביקור',price:'50 ₪'},
+    logo:{label:'עיצוב לוגו',intent:'בעיצוב לוגו',price:'30 ₪'},
+    logoanim:{label:'לוגו עם אנימציה',intent:'בעיצוב לוגו עם אנימציה',price:'50 ₪ (30 ₪ לוגו + 20 ₪ אנימציה)'}
   };
   function waLink(key,info){
     var sv=WA_SERVICES[key];if(!sv)return null;
     info=info||{};
-    var L=['👋 *הזמנה חדשה – NetVibeMedia*','','📦 *שירות:* '+sv.label,'💰 *מחיר:* '+sv.price];
-    if(info.name)L.push('👤 *שם:* '+info.name);
-    if(info.phone)L.push('📞 *טלפון:* '+info.phone);
-    if(info.message)L.push('📝 *הערות:* '+info.message);
+    var NL=String.fromCharCode(10);
+    var L=['היי, אני מתעניין '+sv.intent+' 🙂','',
+      'ראיתי באתר ש'+sv.label+' עולה *'+sv.price+'*, ואשמח לשמוע עוד פרטים, לתאם ולהתחיל.'];
+    var det=[];
+    if(info.name)det.push('👤 *שם:* '+info.name);
+    if(info.phone)det.push('📞 *טלפון:* '+info.phone);
+    if(info.message)det.push('📝 *על העסק / מה חשוב לי:* '+info.message);
+    if(det.length){L.push('');L=L.concat(det)}
     L.push('');
-    L.push(info.name?'_נשלח מטופס ההזמנה באתר_':'היי, אשמח לפרטים ולהתחיל 🙂');
-    return 'https://wa.me/'+WA+'?text='+encodeURIComponent(L.join('%0A'.replace('%0A',String.fromCharCode(10))));
+    L.push(info.name?'תודה רבה, אשמח שתחזרו אליי 🙏':'אשמח שתחזרו אליי, תודה! 🙏');
+    return 'https://wa.me/'+WA+'?text='+encodeURIComponent(L.join(NL));
   }
   d.querySelectorAll('a[data-service],a[href*="service="]').forEach(function(a){
     var key=a.getAttribute('data-service');
