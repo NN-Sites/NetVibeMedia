@@ -27,6 +27,14 @@
   d.querySelectorAll('[data-service]').forEach(function(a){a.addEventListener('click',function(){if(sel)sel.value=a.getAttribute('data-service')})});
   d.getElementById('year').textContent=new Date().getFullYear();
 
+  /* mobile-first sticky call-to-action (hidden on desktop by CSS, and while the contact form is on screen) */
+  var cta=d.createElement('div');cta.className='m-cta';
+  cta.innerHTML='<a class="btn btn-primary" href="./#contact">קבלו הצעה בחינם</a>';
+  d.body.appendChild(cta);
+  var contactSec=d.getElementById('contact');
+  if(contactSec&&'IntersectionObserver' in window){new IntersectionObserver(function(es){cta.classList.toggle('off',es[0].isIntersecting)}).observe(contactSec)}
+  d.addEventListener('keydown',function(e){if(e.key==='Escape'&&burger.getAttribute('aria-expanded')==='true'){setMenu(false);burger.focus()}});
+
   /* ---------- accessibility widget ---------- */
   var btn=d.getElementById('acc-btn'), panel=d.getElementById('acc-panel'), closeBtn=d.getElementById('acc-close');
   var st=store(true); st.fs=st.fs||0; st.cls=st.cls||[];
@@ -89,7 +97,7 @@
           if(it.poster)v.poster='commercial-videos/'+it.poster;
           v.setAttribute('aria-label',it.title||'סרטון פרסומת');card.appendChild(v);
         }else{
-          var folder=kind==='sites'?'websites-landing/':'business-cards/';
+          var folder={sites:'websites-landing/',cards:'business-cards/',brand:'logo-design/'}[kind]||'business-cards/';
           var img=el('img');img.src=folder+(it.image||it.file);img.alt=it.title||'';img.loading='lazy';img.decoding='async';
           if(kind==='sites'&&it.url){var a=d.createElement('a');a.href=it.url;a.target='_blank';a.rel='noopener';a.appendChild(img);card.appendChild(a)}else card.appendChild(img);
         }

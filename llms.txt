@@ -7,11 +7,13 @@
 - דף נחיתה: 500 ₪ לחודש (ללא דמי הקמה, ללא התחייבות)
 - אתר תדמית (כמה עמודים, מחשבונים, קישור לוואטסאפ): 700 ₪ לחודש
 - עיצוב כרטיס ביקור: 50 ₪
+- עיצוב לוגו: 30 ₪; אנימציה ללוגו: 20 ₪ נוספים (50 ₪ בסך הכול)
 
 ## קישורים
 - [דף הבית](https://nn-sites.github.io/NetVibeMedia/)
 - [סרטוני פרסומת](https://nn-sites.github.io/NetVibeMedia/videos.html)
 - [אתרים ודפי נחיתה](https://nn-sites.github.io/NetVibeMedia/websites.html)
+- [עיצוב לוגו](https://nn-sites.github.io/NetVibeMedia/logo-design.html)
 - [כרטיסי ביקור](https://nn-sites.github.io/NetVibeMedia/business-cards.html)
 - [אודות נועם נפתלי](https://nn-sites.github.io/NetVibeMedia/#about)
 - [הצהרת נגישות](https://nn-sites.github.io/NetVibeMedia/accessibility.html)

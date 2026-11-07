@@ -515,15 +515,17 @@ const SERVICES={
   VIDEO:{label:'סרטון פרסומת',price:250,billing:'ONCE',tone:'sky'},
   VIDEO2:{label:'2 סרטוני פרסומת',price:400,billing:'ONCE',tone:'sky'},
   CARD:{label:'כרטיס ביקור',price:50,billing:'ONCE',tone:'amber'},
+  LOGO:{label:'עיצוב לוגו',price:30,billing:'ONCE',tone:'pink'},
+  LOGO_ANIM:{label:'לוגו + אנימציה',price:50,billing:'ONCE',tone:'pink'},
   DESIGN:{label:'פוסטר / באנר / פלאייר',price:30,billing:'ONCE',tone:'gray',legacy:true},
   OTHER:{label:'אחר',price:0,billing:'ONCE',tone:'gray'}
 };
 const CLIENT_STATUS={ACTIVE:['פעיל','green'],PENDING:['בהקמה / בעבודה','amber'],DONE:['הושלם','sky'],PAUSED:['מושהה','gray'],CANCELLED:['מבוטל','red']};
 const PROSPECT_STATUS={NEW:['טרם יצרתי קשר','gray'],CONTACTED:['שוחחנו','sky'],OFFER_SENT:['נשלחה הצעה','indigo'],CLOSED:['נסגר בהצלחה','green'],REJECTED:['לא רלוונטי','red']};
-const LEAD_SERVICE={landing:'LANDING',website:'WEBSITE',video:'VIDEO',video1:'VIDEO',video2:'VIDEO2',card:'CARD',design:'DESIGN',other:'OTHER'};
+const LEAD_SERVICE={landing:'LANDING',website:'WEBSITE',video:'VIDEO',video1:'VIDEO',video2:'VIDEO2',card:'CARD',logo:'LOGO',logoanim:'LOGO_ANIM',design:'DESIGN',other:'OTHER'};
 
 function defaults(){return{clients:[],payments:[],legacyCollected:0,leadMeta:{},prospects:[],reminders:[],notesText:'',lastBackup:null,
-  settings:{goalClients:100,goalRevenue:50000,prices:{LANDING:500,WEBSITE:700,VIDEO:250,VIDEO2:400,CARD:50,DESIGN:30,OTHER:0},pv:2}}}
+  settings:{goalClients:100,goalRevenue:50000,prices:{LANDING:500,WEBSITE:700,VIDEO:250,VIDEO2:400,CARD:50,LOGO:30,LOGO_ANIM:50,DESIGN:30,OTHER:0},pv:3}}}
 let S=defaults();
 let LEADS=[]; const leadSources={};
 const $=id=>document.getElementById(id);
@@ -541,7 +543,7 @@ const telHref=p=>'tel:'+String(p||'').replace(/[^\d+]/g,'');
 function load(){
   try{
     const raw=localStorage.getItem(KEY);
-    if(raw){S=Object.assign(defaults(),JSON.parse(raw));S.settings=Object.assign(defaults().settings,S.settings||{});S.settings.prices=Object.assign(defaults().settings.prices,S.settings.prices||{});if((S.settings.pv||0)<2){S.settings.prices=defaults().settings.prices;S.settings.pv=2;save()}return}
+    if(raw){S=Object.assign(defaults(),JSON.parse(raw));S.settings=Object.assign(defaults().settings,S.settings||{});S.settings.prices=Object.assign(defaults().settings.prices,S.settings.prices||{});if((S.settings.pv||0)<3){S.settings.prices=defaults().settings.prices;S.settings.pv=3;save()}return}
     const old=localStorage.getItem(OLD_KEY);
     if(old)migrate(JSON.parse(old));
   }catch(e){console.error('load failed',e)}
