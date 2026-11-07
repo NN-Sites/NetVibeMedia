@@ -111,6 +111,21 @@
       track.appendChild(a);track.appendChild(b);
     });
   }
+  /* lazy GIF-like videos */
+  var motionOK=!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);
+  var vio='IntersectionObserver' in window?new IntersectionObserver(function(es){es.forEach(function(x){
+    var v=x.target;v._vis=x.isIntersecting;
+    if(x.isIntersecting){
+      if(!v.src){v.src=v.dataset.src;v.load()}
+      tryPlay(v);
+    }else if(!v.paused){v.pause()}
+  })},{rootMargin:'150px 0px',threshold:.2}):null;
+  function tryPlay(v){if(v._vis&&motionOK&&!d.body.classList.contains('acc-still')&&v.paused&&!v._manual){var p=v.play();if(p&&p.catch)p.catch(function(){})}}
+  function gifVideo(v){
+    v.addEventListener('canplay',function(){tryPlay(v)});
+    v.addEventListener('click',function(){v._manual=v.paused?false:true});
+    if(vio)vio.observe(v);else{v.src=v.dataset.src;v.controls=true}
+  }
   var gal=d.querySelectorAll('[data-gallery]');
   gal.forEach(function(box){
     var kind=box.getAttribute('data-gallery');
@@ -120,9 +135,15 @@
       list.forEach(function(it){
         var card=el('article','work');
         if(kind==='videos'){
-          var v=d.createElement('video');v.controls=true;v.preload='metadata';v.playsInline=true;v.src='commercial-videos/'+encodeURIComponent(it.file);
+          var v=d.createElement('video');
+          /* GIF-style: silent, looping, no player chrome. Loads and plays only while on screen. */
+          v.muted=true;v.defaultMuted=true;v.loop=true;v.playsInline=true;v.setAttribute('playsinline','');v.setAttribute('muted','');
+          v.preload='none';v.dataset.src='commercial-videos/'+encodeURIComponent(it.file);
           if(it.poster)v.poster='commercial-videos/'+encodeURIComponent(it.poster);
-          v.setAttribute('aria-label',it.title||'סרטון פרסומת');card.appendChild(v);
+          v.tabIndex=0;v.setAttribute('role','button');v.setAttribute('aria-label',(it.title||'סרטון פרסומת')+' – לחיצה להפעלה או עצירה');
+          v.addEventListener('click',function(){if(v.paused)v.play().catch(function(){});else v.pause()});
+          v.addEventListener('keydown',function(e){if(e.key===' '||e.key==='Enter'){e.preventDefault();v.click()}});
+          card.appendChild(v);gifVideo(v);
         }else{
           var folder={sites:'websites-landing/',cards:'business-cards/',brand:'logo-design/'}[kind]||'business-cards/';
           var img=el('img');img.src=folder+encodeURIComponent(it.image||it.file);img.alt=it.title||'';img.loading='lazy';img.decoding='async';
