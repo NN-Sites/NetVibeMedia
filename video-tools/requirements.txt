@@ -1,0 +1,4 @@
+edge-tts>=7.0
+Pillow>=10.0
+numpy>=1.26
+# ffmpeg + ffprobe must be installed and available on PATH

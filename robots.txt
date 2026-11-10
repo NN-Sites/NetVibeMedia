@@ -1,6 +1,8 @@
 User-agent: *
 Allow: /
-Disallow: /admin.html
-Disallow: /dashboard.html
+
+# admin.html and dashboard.html carry a noindex meta tag. They are intentionally
+# NOT disallowed here, because a blocked page can't be crawled and Google would
+# never see its noindex directive (the bare URL could still be indexed).
 
 Sitemap: https://nn-sites.github.io/NetVibeMedia/sitemap.xml
