@@ -171,14 +171,16 @@
         var card=el('article','work');
         if(kind==='videos'){
           var v=d.createElement('video');
-          /* GIF-style: silent, looping, no player chrome. Loads and plays only while on screen. */
-          v.muted=true;v.defaultMuted=true;v.loop=true;v.playsInline=true;v.setAttribute('playsinline','');v.setAttribute('muted','');
-          v.preload='metadata';v.dataset.src='commercial-videos/'+encodeURIComponent(it.file);v.src=v.dataset.src;v.addEventListener('loadedmetadata',function(){if(v.videoWidth&&v.videoHeight)v.style.aspectRatio=v.videoWidth+' / '+v.videoHeight});
+          /* Regular media player: controls, sound, fullscreen. Plays only on user action. */
+          v.controls=true;v.playsInline=true;v.setAttribute('playsinline','');
+          v.setAttribute('controlslist','nodownload');
+          v.preload='metadata';v.src='commercial-videos/'+encodeURIComponent(it.file);
+          v.addEventListener('loadedmetadata',function(){if(v.videoWidth&&v.videoHeight)v.style.aspectRatio=v.videoWidth+' / '+v.videoHeight});
           if(it.poster)v.poster='commercial-videos/'+encodeURIComponent(it.poster);
-          v.tabIndex=0;v.setAttribute('role','button');v.setAttribute('aria-label',(it.title||'סרטון פרסומת')+' – לחיצה להפעלה או עצירה');
-          v.addEventListener('click',function(){if(v.paused)v.play().catch(function(){});else v.pause()});
-          v.addEventListener('keydown',function(e){if(e.key===' '||e.key==='Enter'){e.preventDefault();v.click()}});
-          card.appendChild(v);gifVideo(v);
+          v.setAttribute('aria-label',it.title||'סרטון פרסומת');
+          /* only one video plays at a time */
+          v.addEventListener('play',function(){d.querySelectorAll('.work video').forEach(function(o){if(o!==v&&!o.paused)o.pause()})});
+          card.appendChild(v);
         }else{
           var folder={sites:'websites-landing/',cards:'business-cards/',brand:'logo-design/'}[kind]||'business-cards/';
           var img=el('img');img.src=folder+encodeURIComponent(it.image||it.file);img.alt=it.title||'';img.loading='lazy';img.decoding='async';

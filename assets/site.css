@@ -452,7 +452,7 @@ body.acc-still .logo-track{animation:none}
 .sec-title{font-size:clamp(1.3rem,5vw,1.9rem);font-weight:800;margin-bottom:1rem}
 .gallery.masonry{display:block;column-count:2;column-gap:.7rem}
 .masonry .work{break-inside:avoid;-webkit-column-break-inside:avoid;margin:0 0 .7rem;display:block;border-radius:16px}
-.masonry .work video{width:100%;height:auto;aspect-ratio:9/16;max-height:none;object-fit:cover;background:#0b1020;display:block;cursor:pointer}
+.masonry .work video{width:100%;height:auto;aspect-ratio:9/16;max-height:none;object-fit:contain;background:#0b1020;display:block}
 .masonry .works-empty{column-span:all}
 @media (min-width:900px){
   .gallery.masonry{column-count:3;column-gap:1rem}
