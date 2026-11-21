@@ -216,16 +216,17 @@ h2{font-size:clamp(1.7rem,7vw,2.7rem);font-weight:900}
 .works li .icon{color:var(--wa);margin-top:.25rem}
 .more-works{display:flex;flex-wrap:wrap;gap:.7rem;margin-top:1.6rem;justify-content:center}
 
-/* calc */
-.calc{display:grid;gap:1.2rem;background:linear-gradient(145deg,#1a1f2d,#11141c);border:1px solid var(--line);border-radius:26px;padding:1.4rem}
-.field label{display:flex;justify-content:space-between;font-weight:700;margin-bottom:.4rem}
-.field label b{color:var(--y);font-size:1.15rem}
-input[type=range]{width:100%;accent-color:var(--y);height:34px}
-.out{display:grid;gap:.8rem}
-.out .box{background:var(--bg);border:1px solid var(--line);border-radius:18px;padding:1rem 1.2rem}
-.out .box small{color:var(--muted);display:block}
-.out .box b{font-size:2.1rem;color:var(--y);font-weight:900;line-height:1.1}
-.out .box.g b{color:var(--wa)}
+/* compare */
+.cmp{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--card)}
+.cmp table{width:100%;border-collapse:collapse;min-width:520px}
+.cmp th,.cmp td{padding:1rem 1.1rem;text-align:start;border-bottom:1px solid var(--line);vertical-align:top}
+.cmp thead th{font-size:1.05rem;background:rgba(255,255,255,.03)}
+.cmp thead th.good{color:var(--y)}
+.cmp tbody th{font-weight:800;white-space:nowrap}
+.cmp tbody tr:last-child>*{border-bottom:0}
+.cmp td .icon{display:inline-block;vertical-align:-.2em;margin-inline-end:.35rem}
+.cmp td.bad{color:#c4c9d8}.cmp td.bad .icon{color:var(--red);stroke-width:3}
+.cmp td.good{color:var(--ink);font-weight:600;background:rgba(255,199,0,.05)}.cmp td.good .icon{color:var(--wa);stroke-width:3}
 .disc{color:var(--muted);font-size:.8rem;margin-top:.4rem}
 
 /* pricing */
@@ -326,7 +327,6 @@ body.acc-still{scroll-behavior:auto}
 @media (min-width:640px){
   .grid.c2{grid-template-columns:repeat(2,1fr)}
   .hero-cta{grid-template-columns:auto auto;justify-content:start}
-  .out{grid-template-columns:repeat(2,1fr)}
   .contact .chips{flex-direction:row}
 }
 @media (min-width:900px){
@@ -335,7 +335,6 @@ body.acc-still{scroll-behavior:auto}
   .hero-grid{grid-template-columns:1.15fr .85fr}
   .grid.c3{grid-template-columns:repeat(3,1fr)}
   .works{grid-template-columns:.8fr 1.2fr;gap:3rem}
-  .calc{grid-template-columns:1fr 1fr;padding:2rem;gap:2rem}
   .steps{grid-template-columns:repeat(4,1fr)}
   .contact{grid-template-columns:1fr 1fr;padding:2.4rem;gap:2.4rem}
   .m-bar{display:none}
@@ -387,7 +386,7 @@ body.acc-still{scroll-behavior:auto}
     <nav class="menu" aria-label="ניווט ראשי">
       <a href="#why">למה לכם</a>
       <a href="#works">עבודות</a>
-      <a href="#calc">מחשבון</a>
+      <a href="#compare">ההבדל</a>
       <a href="#pricing">מחירים</a>
       <a href="#faq">שאלות</a>
     </nav>
@@ -538,28 +537,24 @@ body.acc-still{scroll-behavior:auto}
     </div>
   </section>
 
-  <!-- CALCULATOR -->
-  <section id="calc" aria-labelledby="calc-t">
+  <!-- COMPARE -->
+  <section id="compare" aria-labelledby="cmp-t">
     <div class="wrap">
       <div class="sec-head reveal">
-        <span class="kicker">תחשבו בעצמכם</span>
-        <h2 id="calc-t">כמה נסיעות ישירות <span class="hl">מחזירות את ההשקעה?</span></h2>
-        <p>הזיזו את הסליידרים למספרים שלכם ותראו בעצמכם.</p>
+        <span class="kicker">ההבדל</span>
+        <h2 id="cmp-t">אותה נסיעה. <span class="hl">כסף ולקוח אחרים.</span></h2>
+        <p>כשהלקוח מזמין דרככם, הנסיעה והקשר איתו נשארים אצלכם.</p>
       </div>
-      <div class="calc reveal">
-        <div style="display:grid;gap:1.2rem;align-content:start">
-          <div class="field"><label for="c-fare">מחיר נסיעה ממוצע <b id="v-fare">120 ₪</b></label><input id="c-fare" type="range" min="40" max="500" step="10" value="120"></div>
-          <div class="field"><label for="c-rides">נסיעות ישירות בחודש <b id="v-rides">15</b></label><input id="c-rides" type="range" min="1" max="100" step="1" value="15"></div>
-          <div class="field"><label for="c-comm">עמלה שאתם משלמים היום <b id="v-comm">15%</b></label><input id="c-comm" type="range" min="0" max="30" step="1" value="15"></div>
-          <p class="disc">חישוב להמחשה בלבד, לפי המספרים שהזנתם. התוצאה בפועל תלויה בעסק שלכם.</p>
-        </div>
-        <div class="out" aria-live="polite">
-          <div class="box"><small>נסיעות ישירות שמכסות את מסלול ישיר (600 ₪)</small><b id="o-be">5</b> <span>נסיעות</span><p id="o-msg" class="disc" style="color:var(--ink);margin-top:.5rem"></p></div>
-          <div class="box g"><small>עמלות שלא משלמים על הנסיעות הישירות</small><b id="o-save">270 ₪</b> <span>בחודש</span></div>
-          <div class="box" style="grid-column:1/-1"><small>הכנסה מנסיעות ישירות</small><b id="o-rev">1,800 ₪</b> <span>בחודש</span></div>
-          <a class="btn btn-wa btn-block" style="grid-column:1/-1" href="#" data-wa="calc" target="_blank" rel="noopener"><svg class="icon" aria-hidden="true"><use href="#i-wa"/></svg> אני רוצה להתחיל</a>
-        </div>
+      <div class="cmp reveal">
+        <table>
+          <caption class="sr-only">השוואה בין נסיעה דרך אפליקציה לנסיעה ישירה דרך האתר שלכם</caption>
+          <thead><tr><th scope="col"><span class="sr-only">נושא</span></th><th scope="col">דרך אפליקציה</th><th scope="col" class="good">דרך האתר שלכם</th></tr></thead>
+          <tbody><tr><th scope="row">העמלה</th><td class="bad"><svg class="icon" aria-hidden="true"><use href="#i-x"/></svg> חלק מכל נסיעה הולך למתווך</td><td class="good"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg> כל המחיר נשאר אצלכם</td></tr><tr><th scope="row">הלקוח</th><td class="bad"><svg class="icon" aria-hidden="true"><use href="#i-x"/></svg> הלקוח שייך לאפליקציה</td><td class="good"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg> הלקוח שלכם, עם הטלפון שלו</td></tr><tr><th scope="row">הנראות</th><td class="bad"><svg class="icon" aria-hidden="true"><use href="#i-x"/></svg> אתם אחד מתוך רבים</td><td class="good"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg> מותג משלכם, עם שם ופנים</td></tr><tr><th scope="row">הלקוח החוזר</th><td class="bad"><svg class="icon" aria-hidden="true"><use href="#i-x"/></svg> קשה לשמור על קשר</td><td class="good"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg> הזמנה חוזרת בהודעה אחת</td></tr><tr><th scope="row">השליטה</th><td class="bad"><svg class="icon" aria-hidden="true"><use href="#i-x"/></svg> אתם עובדים לפי הכללים שלהם</td><td class="good"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg> אתם קובעים מחיר ושירות</td></tr></tbody>
+        </table>
       </div>
+      <p class="vs reveal"><span>כל נסיעה ישירה היא נסיעה שנשארת שלכם.</span></p>
+      <p style="text-align:center;margin-top:1rem" class="reveal"><a class="btn btn-wa" href="#" data-wa="calc" target="_blank" rel="noopener"><svg class="icon" aria-hidden="true"><use href="#i-wa"/></svg> אני רוצה נסיעות ישירות</a></p>
+      <p class="disc" style="text-align:center">השוואה כללית. התנאים משתנים בין אפליקציות ומתווכים.</p>
     </div>
   </section>
 
@@ -782,7 +777,7 @@ body.acc-still{scroll-behavior:auto}
     hero:'היי, ראיתי את הדף לבעלי מוניות והסעות ואשמח לשמוע עוד פרטים 🙂',
     contact:'היי, אני נהג/בעל הסעות ומעוניין באתר או בדף נחיתה. אשמח שתחזרו אליי 🙏',
     sticky:'היי, ראיתי את הדף לבעלי מוניות והסעות ואשמח לשמוע עוד פרטים 🙂',
-    calc:'היי, בדקתי במחשבון ואשמח להתחיל עם מסלול ישיר (600 ₪ לחודש) לעסק ההסעות שלי 🙂',
+    calc:'היי, ראיתי את ההשוואה ואשמח להתחיל לקבל נסיעות ישירות לעסק ההסעות שלי 🙂',
     direct:'היי, אני מעוניין במסלול ישיר (600 ₪ לחודש): דף נחיתה ו-3 סרטונים בחודש 🙂',
     vip:'היי, אני מעוניין במסלול VIP (1,000 ₪ לחודש): אתר עד 3 דפים ו-7 סרטונים בחודש 🙂',
     video:'היי, ראיתי את הסרטון של Taxi VIP ואשמח לסרטון פרסומת כזה לעסק שלי 🙂',
@@ -802,18 +797,7 @@ body.acc-still{scroll-behavior:auto}
   var bar=d.getElementById('mbar'),ct=d.getElementById('contact');
   if(ct&&'IntersectionObserver' in window)new IntersectionObserver(function(es){bar.classList.toggle('off',es[0].isIntersecting)}).observe(ct);
 
-  /* ---- calculator ---- */
   function $(i){return d.getElementById(i)}
-  var fare=$('c-fare'),rides=$('c-rides'),comm=$('c-comm');
-  function nf(n){return Math.round(n).toLocaleString('he-IL')}
-  function calc(){
-    var f=+fare.value,r=+rides.value,c=+comm.value;
-    $('v-fare').textContent=f+' ₪';$('v-rides').textContent=r;$('v-comm').textContent=c+'%';
-    var be=Math.ceil(600/f);$('o-be').textContent=be;$('o-msg').textContent=r>=be?'ב-'+r+' נסיעות בחודש, כבר מהנסיעה ה-'+(be+1)+' האתר מרוויח לכם.':'צריך עוד '+(be-r)+' נסיעות ישירות בחודש כדי שהאתר יחזיר את עצמו.';
-    $('o-save').textContent=nf(f*r*c/100)+' ₪';
-    $('o-rev').textContent=nf(f*r)+' ₪';
-  }
-  [fare,rides,comm].forEach(function(e){e.addEventListener('input',calc)});calc();
 
   /* ---- lead form: WhatsApp + Firebase (same "orders" collection as the main site) ---- */
   var FB={apiKey:"AIzaSyBYrdNSkWx8gUzkTyIMuIEKWMFfyU4ZuNs",authDomain:"netvibe-media.firebaseapp.com",projectId:"netvibe-media",storageBucket:"netvibe-media.firebasestorage.app",messagingSenderId:"345459958522",appId:"1:345459958522:web:5a7c1ee5517d8e60499f43",measurementId:"G-VQL10G9K24"};
