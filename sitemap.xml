@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
   <url>
     <loc>https://nn-sites.github.io/NetVibeMedia/</loc>
     <lastmod>2026-11-10</lastmod>
@@ -46,6 +46,13 @@
   </url>
   <url>
     <loc>https://nn-sites.github.io/NetVibeMedia/taxis/</loc>
+    <video:video>
+      <video:thumbnail_loc>https://nn-sites.github.io/NetVibeMedia/taxis/taxi-vip-poster.jpg</video:thumbnail_loc>
+      <video:title>Eyal Van &amp; Taxi VIP – סרטון פרסומת לעסק הסעות</video:title>
+      <video:description>סרטון פרסומת אנכי לטיקטוק ולרשתות לעסק הסעות ו-VIP.</video:description>
+      <video:content_loc>https://nn-sites.github.io/NetVibeMedia/commercial-videos/EyalVan_TaxiVIP_TikTok_1080x1920.mp4</video:content_loc>
+      <video:duration>55</video:duration>
+    </video:video>
     <lastmod>2026-11-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
