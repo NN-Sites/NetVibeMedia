@@ -229,6 +229,7 @@ input[type=range]{width:100%;accent-color:var(--y);height:34px}
 .disc{color:var(--muted);font-size:.8rem;margin-top:.4rem}
 
 /* pricing */
+.worth{color:var(--y);font-weight:700;font-size:.9rem;margin:-.4rem 0 1rem}
 .pk-sub{color:var(--muted);margin-bottom:.2rem}
 .plan{display:flex;flex-direction:column;position:relative}
 .plan.feat-p{border-color:var(--y);box-shadow:0 0 0 1px var(--y),0 24px 60px -30px rgba(255,199,0,.5)}
@@ -240,6 +241,9 @@ input[type=range]{width:100%;accent-color:var(--y);height:34px}
 .plan ul{display:grid;gap:.5rem;margin-bottom:1.3rem;flex:1}
 .plan li{display:flex;gap:.5rem;align-items:flex-start;color:#dfe3ef}
 .plan li .icon{color:var(--wa);margin-top:.25rem}
+.plan li.no{color:#9aa1b5;text-decoration:line-through;text-decoration-color:rgba(255,93,93,.55)}
+.plan li.no .icon{color:var(--red);stroke-width:3}
+.plan li.no .sr-only{text-decoration:none}
 .note{text-align:center;color:var(--muted);margin-top:1.4rem;font-size:.92rem}
 .kit{margin-top:1.2rem;display:flex;flex-wrap:wrap;gap:.8rem;align-items:center;justify-content:space-between;background:rgba(255,199,0,.07);border:1px dashed rgba(255,199,0,.45);border-radius:var(--r);padding:1.1rem 1.3rem}
 .kit b{color:var(--y)}
@@ -367,6 +371,7 @@ body.acc-still{scroll-behavior:auto}
     <symbol id="i-chat" viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-11.600 7.100L4 20l1-4.600A8 8 0 1 1 21 12z"/></symbol>
     <symbol id="i-access" viewBox="0 0 24 24"><circle cx="12" cy="4.5" r="2"/><path d="M5 8.5c4.7 1.3 9.3 1.3 14 0M12 8.5v5M12 13.5l-3.5 7M12 13.5l3.5 7"/></symbol>
     <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
     <symbol id="i-bus" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="15" rx="3"/><path d="M4 11h16M8 21v-3M16 21v-3M8 15h.01M16 15h.01"/></symbol>
   </defs>
 </svg>
@@ -398,10 +403,10 @@ body.acc-still{scroll-behavior:auto}
       <div>
         <p class="tag"><i aria-hidden="true"></i> מיוחד לנהגי מוניות, הסעות ו-VIP</p>
         <h1 id="h1">הלקוחות שלכם מחפשים מונית בגוגל. <span class="hl">שימצאו אתכם.</span></h1>
-        <p class="lead">אתר או דף נחיתה שמביא <strong>נסיעות ישירות</strong> ישר לוואטסאפ שלכם, בלי לחלוק עמלה עם אף אחד. <strong>מ-600 ₪ לחודש</strong>, בלי דמי הקמה ובלי התחייבות.</p>
+        <p class="lead">כל נסיעה ישירה היא כסף שנשאר אצלכם. אנחנו בונים לכם אתר שמעביר לקוחות ישר לוואטסאפ, <strong>בלי עמלה לאף אחד</strong>. מ-600 ₪ לחודש (כ-20 ₪ ליום), <strong>בלי דמי הקמה ובלי התחייבות</strong>.</p>
         <div class="hero-cta">
-          <a class="btn btn-wa" href="#" data-wa="hero" target="_blank" rel="noopener"><svg class="icon" aria-hidden="true"><use href="#i-wa"/></svg> דברו איתי בוואטסאפ</a>
-          <a class="btn btn-ghost" href="#works">ראו עבודות</a>
+          <a class="btn btn-wa" href="#" data-wa="hero" target="_blank" rel="noopener"><svg class="icon" aria-hidden="true"><use href="#i-wa"/></svg> קבלו הצעה בוואטסאפ, בחינם</a>
+          <a class="btn btn-ghost" href="#works">ראו דוגמה</a>
         </div>
         <ul class="chips" aria-label="יתרונות">
           <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg> 0 ₪ דמי הקמה</li>
@@ -429,30 +434,46 @@ body.acc-still{scroll-behavior:auto}
     <p class="eg wrap" aria-hidden="true">איור להמחשה בלבד</p>
   </section>
 
+  <!-- WHO -->
+  <section class="alt" aria-labelledby="who-t" style="padding:3rem 0" id="who">
+    <div class="wrap">
+      <div class="sec-head reveal" style="margin-bottom:1.4rem"><h2 id="who-t">אם אתם מסיעים אנשים, <span class="hl">זה בשבילכם</span></h2></div>
+      <ul class="who reveal">
+        <li><svg class="icon" aria-hidden="true"><use href="#i-car"/></svg> נהג מונית עצמאי</li>
+        <li><svg class="icon" aria-hidden="true"><use href="#i-star"/></svg> הסעות VIP</li>
+        <li><svg class="icon" aria-hidden="true"><use href="#i-bus"/></svg> ואנים ומיניבוסים</li>
+        <li><svg class="icon" aria-hidden="true"><use href="#i-plane"/></svg> הסעות לנתב"ג</li>
+        <li><svg class="icon" aria-hidden="true"><use href="#i-users"/></svg> הסעות עובדים וקבוצות</li>
+        <li><svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg> תיירים וטיולים</li>
+        <li><svg class="icon" aria-hidden="true"><use href="#i-car"/></svg> חברות עם כמה רכבים</li>
+      </ul>
+    </div>
+  </section>
+
   <!-- PAINS -->
-  <section class="alt" id="why" aria-labelledby="why-t">
+  <section id="why" aria-labelledby="why-t">
     <div class="wrap">
       <div class="sec-head reveal">
-        <span class="kicker">הבעיה</span>
-        <h2 id="why-t">אתם נוהגים. <span class="hl">מישהו אחר לוקח את הלקוח.</span></h2>
-        <p>רוב הנהגים תלויים באפליקציות ובתחנות. זה עובד, עד שמבינים כמה זה עולה.</p>
+        <span class="kicker">כמה זה עולה לכם היום</span>
+        <h2 id="why-t">אתם עושים את העבודה. <span class="hl">מישהו אחר לוקח חלק מהכסף.</span></h2>
+        <p>כל נסיעה שמגיעה דרך אפליקציה או מתווך משאירה אצלם חלק מהמחיר, ועוד את הקשר עם הלקוח. כל חודש. כל נסיעה.</p>
       </div>
       <div class="grid c3">
-        <article class="card pain reveal"><div class="ico"><svg class="icon" aria-hidden="true"><use href="#i-coin-out"/></svg></div><h3>עמלות על כל נסיעה</h3><p>כל נסיעה דרך אפליקציה משאירה חלק מהכסף אצל מישהו אחר. נסיעה ישירה היא כולה שלכם.</p></article>
-        <article class="card pain reveal"><div class="ico"><svg class="icon" aria-hidden="true"><use href="#i-eye-off"/></svg></div><h3>הלקוח לא יודע שאתם קיימים</h3><p>מי שמחפש בגוגל "מונית לנתב"ג" או "הסעה VIP" מוצא את מי שיש לו אתר. בלי אתר אתם לא שם.</p></article>
-        <article class="card pain reveal"><div class="ico"><svg class="icon" aria-hidden="true"><use href="#i-users" /></svg></div><h3>אין לקוחות קבועים</h3><p>לקוח שהיה מרוצה לא זוכר את השם שלכם. אתר, כרטיס ביקור ולוגו הופכים נסיעה חד-פעמית ללקוח חוזר.</p></article>
+        <article class="card pain reveal"><div class="ico"><svg class="icon" aria-hidden="true"><use href="#i-coin-out"/></svg></div><h3>משלמים על כל נסיעה</h3><p>נסיעה ישירה היא כולה שלכם. כל נסיעה שלא עוברת דרככם היא כסף שנשאר אצל מישהו אחר.</p></article>
+        <article class="card pain reveal"><div class="ico"><svg class="icon" aria-hidden="true"><use href="#i-eye-off"/></svg></div><h3>הלקוח מוצא את המתחרים</h3><p>מי שמחפש בגוגל "מונית לנתב"ג" או "הסעה VIP" מגיע למי שיש לו אתר. בלי אתר, הוא פשוט לא רואה אתכם.</p></article>
+        <article class="card pain reveal"><div class="ico"><svg class="icon" aria-hidden="true"><use href="#i-users" /></svg></div><h3>לקוח מרוצה נעלם</h3><p>הוא היה מרוצה, אבל אין לו איך לחזור אליכם. אתר, כרטיס ביקור ולוגו הופכים נסיעה חד-פעמית ללקוח קבוע.</p></article>
       </div>
-      <p class="vs reveal">הפתרון: <span>אתר אחד שמעביר הזמנות ישר לוואטסאפ שלכם.</span></p>
+      <p class="vs reveal">יש דרך להחזיר את הלקוחות אליכם: <span>אתר אחד שמעביר הזמנות ישר לוואטסאפ שלכם.</span></p>
     </div>
   </section>
 
   <!-- WHAT YOU GET -->
-  <section id="features" aria-labelledby="feat-t">
+  <section class="alt" id="features" aria-labelledby="feat-t">
     <div class="wrap">
       <div class="sec-head reveal">
-        <span class="kicker">מה מקבלים</span>
-        <h2 id="feat-t">אתר שנבנה <span class="hl">בשביל נהגים</span></h2>
-        <p>לא תבנית כללית. מבנה שמתאים לעסק של הסעות: אזורי שירות, רכבים, ומחיר שברור ללקוח לפני שהוא מתקשר.</p>
+        <span class="kicker">מה תקבלו</span>
+        <h2 id="feat-t">אתר שנבנה <span class="hl">להביא לכם נסיעות</span></h2>
+        <p>לא תבנית כללית. מבנה שבנוי לעסק הסעות: אזורי שירות, רכבים ומחיר ברור, כדי שהלקוח יגיע אליכם כבר מוכן להזמין.</p>
       </div>
       <div class="grid c3 feat">
         <article class="card reveal"><div class="ico"><svg class="icon" aria-hidden="true"><use href="#i-wa"/></svg></div><h3>הזמנה בלחיצה אחת</h3><p>כפתור וואטסאפ וכפתור חיוג בכל מסך. ההודעה מגיעה אליכם כבר עם הפרטים.</p></article>
@@ -469,9 +490,9 @@ body.acc-still{scroll-behavior:auto}
   <section id="seo" aria-labelledby="seo-t">
     <div class="wrap">
       <div class="sec-head reveal">
-        <span class="kicker">קידום בגוגל</span>
-        <h2 id="seo-t">אתר למונית או להסעות <span class="hl">שגוגל מציג</span></h2>
-        <p>לקוחות מחפשים בגוגל לפי יעד וסוג שירות. אנחנו בונים לכם עמודים שעונים בדיוק על החיפושים האלה.</p>
+        <span class="kicker">איך הלקוחות ימצאו אתכם</span>
+        <h2 id="seo-t">שיחפשו בגוגל, <span class="hl">וימצאו אתכם</span></h2>
+        <p>לקוחות מחפשים לפי יעד וסוג שירות. אנחנו בונים עמודים שעונים בדיוק על החיפושים האלה, כדי שהם יגיעו אליכם ולא למתחרים.</p>
       </div>
       <div class="grid c2 seo-grid">
         <article class="card reveal"><h3>עמוד לכל יעד</h3><p>עמוד ייעודי לכל מסלול מרכזי: מונית לנתב"ג, הסעות לירושלים, הסעות לאילת, מונית בעיר שלכם. כל עמוד עם כותרת, תיאור ומחיר.</p></article>
@@ -483,29 +504,13 @@ body.acc-still{scroll-behavior:auto}
     </div>
   </section>
 
-  <!-- WHO -->
-  <section class="alt" aria-labelledby="who-t" style="padding:3rem 0" id="who">
-    <div class="wrap">
-      <div class="sec-head reveal" style="margin-bottom:1.4rem"><h2 id="who-t">מתאים ל<span class="hl">כל מי שמסיע אנשים</span></h2></div>
-      <ul class="who reveal">
-        <li><svg class="icon" aria-hidden="true"><use href="#i-car"/></svg> נהג מונית עצמאי</li>
-        <li><svg class="icon" aria-hidden="true"><use href="#i-star"/></svg> הסעות VIP</li>
-        <li><svg class="icon" aria-hidden="true"><use href="#i-bus"/></svg> ואנים ומיניבוסים</li>
-        <li><svg class="icon" aria-hidden="true"><use href="#i-plane"/></svg> הסעות לנתב"ג</li>
-        <li><svg class="icon" aria-hidden="true"><use href="#i-users"/></svg> הסעות עובדים וקבוצות</li>
-        <li><svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg> תיירים וטיולים</li>
-        <li><svg class="icon" aria-hidden="true"><use href="#i-car"/></svg> חברות עם כמה רכבים</li>
-      </ul>
-    </div>
-  </section>
-
   <!-- WORKS -->
-  <section id="works" aria-labelledby="works-t">
+  <section class="alt" id="works" aria-labelledby="works-t">
     <div class="wrap">
       <div class="sec-head reveal">
-        <span class="kicker">עבודות</span>
-        <h2 id="works-t">ככה זה נראה <span class="hl">בפועל</span></h2>
-        <p>סרטון פרסומת שיצרנו לעסק הסעות. אותה גישה תקבלו לעסק שלכם.</p>
+        <span class="kicker">עבודות אמיתיות</span>
+        <h2 id="works-t">ככה נראה עסק הסעות <span class="hl">שמשקיע במיתוג</span></h2>
+        <p>סרטון שיצרנו לעסק הסעות. אותה רמה, בדיוק לעסק שלכם.</p>
       </div>
       <div class="works reveal">
         <div class="vid">
@@ -521,7 +526,7 @@ body.acc-still{scroll-behavior:auto}
             <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg> מיתוג שמתאים לעולם ההסעות</li>
             <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg> אפשר לשלב באתר, בסטטוס ובקמפיינים</li>
           </ul>
-          <a class="btn btn-y" href="#" data-wa="video" target="_blank" rel="noopener">אני רוצה סרטון כזה <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+          <a class="btn btn-y" href="#" data-wa="video" target="_blank" rel="noopener">אני רוצה סרטון כזה לעסק שלי <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a>
         </div>
       </div>
       <div class="more-works reveal">
@@ -534,12 +539,12 @@ body.acc-still{scroll-behavior:auto}
   </section>
 
   <!-- CALCULATOR -->
-  <section class="alt" id="calc" aria-labelledby="calc-t">
+  <section id="calc" aria-labelledby="calc-t">
     <div class="wrap">
       <div class="sec-head reveal">
-        <span class="kicker">חשבו בעצמכם</span>
-        <h2 id="calc-t">כמה נסיעות <span class="hl">מחזירות את האתר?</span></h2>
-        <p>הזיזו את הסליידרים והתאימו למספרים שלכם.</p>
+        <span class="kicker">תחשבו בעצמכם</span>
+        <h2 id="calc-t">כמה נסיעות ישירות <span class="hl">מחזירות את ההשקעה?</span></h2>
+        <p>הזיזו את הסליידרים למספרים שלכם ותראו בעצמכם.</p>
       </div>
       <div class="calc reveal">
         <div style="display:grid;gap:1.2rem;align-content:start">
@@ -549,28 +554,29 @@ body.acc-still{scroll-behavior:auto}
           <p class="disc">חישוב להמחשה בלבד, לפי המספרים שהזנתם. התוצאה בפועל תלויה בעסק שלכם.</p>
         </div>
         <div class="out" aria-live="polite">
-          <div class="box"><small>נסיעות שמכסות את מסלול ישיר (600 ₪ לחודש)</small><b id="o-be">5</b> <span>נסיעות</span></div>
+          <div class="box"><small>נסיעות ישירות שמכסות את מסלול ישיר (600 ₪)</small><b id="o-be">5</b> <span>נסיעות</span><p id="o-msg" class="disc" style="color:var(--ink);margin-top:.5rem"></p></div>
           <div class="box g"><small>עמלות שלא משלמים על הנסיעות הישירות</small><b id="o-save">270 ₪</b> <span>בחודש</span></div>
           <div class="box" style="grid-column:1/-1"><small>הכנסה מנסיעות ישירות</small><b id="o-rev">1,800 ₪</b> <span>בחודש</span></div>
-          <a class="btn btn-wa btn-block" style="grid-column:1/-1" href="#" data-wa="calc" target="_blank" rel="noopener"><svg class="icon" aria-hidden="true"><use href="#i-wa"/></svg> בואו נתחיל</a>
+          <a class="btn btn-wa btn-block" style="grid-column:1/-1" href="#" data-wa="calc" target="_blank" rel="noopener"><svg class="icon" aria-hidden="true"><use href="#i-wa"/></svg> אני רוצה להתחיל</a>
         </div>
       </div>
     </div>
   </section>
 
   <!-- PRICING -->
-  <section id="pricing" aria-labelledby="pr-t">
+  <section class="alt" id="pricing" aria-labelledby="pr-t">
     <div class="wrap">
       <div class="sec-head reveal">
         <span class="kicker">מחירים</span>
-        <h2 id="pr-t">מחירים <span class="hl">שקופים</span>, בלי הפתעות</h2>
-        <p>שתי חבילות חודשיות, בלי דמי הקמה ובלי התחייבות.</p>
+        <h2 id="pr-t">בחרו מסלול, <span class="hl">והנסיעות הישירות מתחילות</span></h2>
+        <p>פחות מ-35 ₪ ליום. בלי דמי הקמה, בלי התחייבות, בלי הפתעות.</p>
       </div>
       <div class="grid c2 pk">
         <article class="card plan reveal" aria-labelledby="pk1">
           <h3 id="pk1">מסלול ישיר</h3>
           <p class="pk-sub">דף נחיתה ממוקד שמביא הזמנות, ועוד סרטונים כל חודש</p>
-          <div class="amount"><b>600 ₪</b><span>/ לחודש</span></div>
+          <div class="amount"><b>600 ₪</b><span>/ לחודש · כ-20 ₪ ליום</span></div>
+          <p class="worth">כולל 3 סרטונים בשווי 1,500 ₪ במחיר הרגיל</p>
           <ul>
             <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg> <strong>דף נחיתה אחד</strong> עם חיבור לוואטסאפ</li>
             <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg> <strong>3 סרטוני פרסומת בחודש</strong></li>
@@ -580,14 +586,19 @@ body.acc-still{scroll-behavior:auto}
             <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg> קידום SEO ונגישות לפי ת"י 5568</li>
             <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg> מותאם לנייד, תחזוקה ותמיכה שוטפת</li>
             <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg> 0 ₪ דמי הקמה, ללא התחייבות</li>
+            <li class="no"><svg class="icon" aria-hidden="true"><use href="#i-x"/></svg> <span><span class="sr-only">לא כלול: </span>אתר מלא עד 3 דפים</span></li>
+            <li class="no"><svg class="icon" aria-hidden="true"><use href="#i-x"/></svg> <span><span class="sr-only">לא כלול: </span>מחשבון מחיר נסיעה</span></li>
+            <li class="no"><svg class="icon" aria-hidden="true"><use href="#i-x"/></svg> <span><span class="sr-only">לא כלול: </span>7 סרטונים בחודש (במסלול VIP)</span></li>
+            <li class="no"><svg class="icon" aria-hidden="true"><use href="#i-x"/></svg> <span><span class="sr-only">לא כלול: </span>סרטון נוסף ב-100 ₪ בלבד (במסלול VIP)</span></li>
           </ul>
-          <a class="btn btn-ghost btn-block" href="#" data-wa="direct" target="_blank" rel="noopener">אני רוצה את מסלול ישיר</a>
+          <a class="btn btn-ghost btn-block" href="#" data-wa="direct" target="_blank" rel="noopener">התחלה במסלול ישיר</a>
         </article>
         <article class="card plan feat-p reveal" aria-labelledby="pk2">
-          <span class="badge">הכי הרבה סרטונים</span>
+          <span class="badge">הכי מקיף</span>
           <h3 id="pk2">מסלול VIP</h3>
           <p class="pk-sub">אתר מלא ותוכן וידאו שוטף לרשתות</p>
-          <div class="amount"><b>1,000 ₪</b><span>/ לחודש</span></div>
+          <div class="amount"><b>1,000 ₪</b><span>/ לחודש · כ-33 ₪ ליום</span></div>
+          <p class="worth">כולל 7 סרטונים בשווי 3,500 ₪ במחיר הרגיל</p>
           <ul>
             <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg> <strong>אתר מלא עד 3 דפים</strong> עם חיבור לוואטסאפ</li>
             <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg> <strong>7 סרטוני פרסומת בחודש</strong></li>
@@ -598,38 +609,39 @@ body.acc-still{scroll-behavior:auto}
             <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg> מותאם לנייד, תחזוקה ותמיכה שוטפת</li>
             <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg> 0 ₪ דמי הקמה, ללא התחייבות</li>
           </ul>
-          <a class="btn btn-y btn-block" href="#" data-wa="vip" target="_blank" rel="noopener">אני רוצה את מסלול VIP</a>
+          <a class="btn btn-y btn-block" href="#" data-wa="vip" target="_blank" rel="noopener">התחלה במסלול VIP</a>
         </article>
       </div>
       <div class="kit reveal">
         <p><b>ערכת נהג:</b> לוגו (30 ₪) + כרטיס ביקור (50 ₪) = <b>80 ₪ בסך הכול</b>. אנימציה ללוגו: 20 ₪ נוספים.</p>
         <a class="btn btn-ghost btn-sm" href="#" data-wa="kit" target="_blank" rel="noopener">אני רוצה את הערכה</a>
       </div>
-      <p class="note">תשלום בהעברה בנקאית, ביט או פייבוקס. הפרטים נשלחים בוואטסאפ אחרי תיאום.</p>
+      <p class="note"><strong>בלי סיכון:</strong> אין דמי הקמה ואין התחייבות לתקופה. אם זה לא מתאים, מפסיקים.<br>תשלום בהעברה בנקאית, ביט או פייבוקס. הפרטים נשלחים בוואטסאפ אחרי תיאום.</p>
     </div>
   </section>
 
   <!-- HOW -->
-  <section class="alt" id="how" aria-labelledby="how-t">
+  <section id="how" aria-labelledby="how-t">
     <div class="wrap">
       <div class="sec-head reveal">
         <span class="kicker">איך זה עובד</span>
-        <h2 id="how-t">מהודעה אחת <span class="hl">ללקוחות ישירים</span></h2>
+        <h2 id="how-t">ארבעה צעדים, <span class="hl">ורק הראשון עליכם</span></h2>
       </div>
       <ol class="steps">
-        <li class="step reveal"><h3>שולחים הודעה</h3><p>כותבים לנו בוואטסאפ או משאירים פרטים בטופס.</p></li>
+        <li class="step reveal"><h3>שולחים הודעה</h3><p>הודעה אחת בוואטסאפ או טופס קצר. זה כל מה שתצטרכו לעשות.</p></li>
         <li class="step reveal"><h3>מספרים על העסק</h3><p>רכב, אזורי שירות, סוגי נסיעות ומה חשוב לכם שהלקוח יראה.</p></li>
-        <li class="step reveal"><h3>מאשרים עיצוב</h3><p>מקבלים עיצוב מותאם ומאשרים אותו לפני העלייה לאוויר.</p></li>
+        <li class="step reveal"><h3>מאשרים עיצוב</h3><p>רואים את העיצוב ומאשרים אותו לפני שהוא עולה. אין הפתעות.</p></li>
         <li class="step reveal"><h3>מקבלים הזמנות</h3><p>האתר עולה, ההזמנות מגיעות לוואטסאפ, ואנחנו ממשיכים לתחזק.</p></li>
       </ol>
     </div>
   </section>
 
   <!-- FAQ -->
-  <section id="faq" aria-labelledby="faq-t">
+  <section class="alt" id="faq" aria-labelledby="faq-t">
     <div class="wrap">
-      <div class="sec-head reveal"><span class="kicker">שאלות נפוצות</span><h2 id="faq-t">שאלות שנהגים <span class="hl">שואלים</span></h2></div>
+      <div class="sec-head reveal"><span class="kicker">לפני שמחליטים</span><h2 id="faq-t">מה שנהגים <span class="hl">שואלים אותנו</span></h2></div>
       <div class="faq">
+        <details class="reveal"><summary>ומה אם זה לא יתאים לי? <svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg></summary><div class="ans">אין התחייבות לתקופה ואין דמי הקמה. אם זה לא מתאים, מפסיקים. אתם לא נקשרים לשום דבר.</div></details>
         <details class="reveal"><summary>אני נהג עצמאי עם רכב אחד, זה מתאים לי? <svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg></summary><div class="ans">כן. מסלול ישיר (600 ₪ לחודש) מתאים בדיוק לנהג עצמאי: דף נחיתה עם רכב, אזורי שירות וכפתור הזמנה בוואטסאפ, ועוד 3 סרטונים בחודש.</div></details>
         <details class="reveal"><summary>יש דמי הקמה או התחייבות? <svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg></summary><div class="ans">לא. אתרים ודפי נחיתה ניתנים כמנוי חודשי, בלי דמי הקמה ובלי התחייבות לתקופה.</div></details>
         <details class="reveal"><summary>אפשר מחשבון מחיר נסיעה באתר? <svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg></summary><div class="ans">כן. במסלול VIP (1,000 ₪ לחודש) אפשר לשלב מחשבון מחיר לפי יעד, וכפתור שמעביר את ההזמנה לוואטסאפ.</div></details>
@@ -645,8 +657,8 @@ body.acc-still{scroll-behavior:auto}
     <div class="wrap">
       <div class="contact reveal">
         <div>
-          <h2 id="ct-t">מוכנים לנסיעות <span class="hl">ישירות?</span></h2>
-          <p class="lead">השאירו שם וטלפון ונחזור אליכם עם הצעה מותאמת לעסק ההסעות שלכם. או כתבו לנו ישר בוואטסאפ.</p>
+          <h2 id="ct-t">הלקוח הבא שלכם מחפש עכשיו. <span class="hl">שיגיע אליכם.</span></h2>
+          <p class="lead">השאירו שם וטלפון, ונחזור אליכם עם הצעה מותאמת לעסק שלכם. זה לוקח חצי דקה ולא מחייב אתכם בכלום.</p>
           <ul class="chips">
             <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg> הצעה ללא התחייבות</li>
             <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg> 0 ₪ דמי הקמה</li>
@@ -675,12 +687,13 @@ body.acc-still{scroll-behavior:auto}
             </select></div>
           <div class="hp" aria-hidden="true"><label>אל תמלאו<input type="text" id="f-website" tabindex="-1" autocomplete="off"></label></div>
           <div id="status" class="status" role="status" aria-live="polite"></div>
-          <button class="btn btn-y btn-block" type="submit" id="send">שלחו לי הצעה</button>
+          <button class="btn btn-y btn-block" type="submit" id="send">אני רוצה הצעה בחינם</button>
           <p class="legal" id="legal">הפרטים ישמשו ליצירת קשר בלבד ולא יועברו לצד שלישי.</p>
         </form>
       </div>
     </div>
   </section>
+
 </main>
 
 <footer>
@@ -796,7 +809,7 @@ body.acc-still{scroll-behavior:auto}
   function calc(){
     var f=+fare.value,r=+rides.value,c=+comm.value;
     $('v-fare').textContent=f+' ₪';$('v-rides').textContent=r;$('v-comm').textContent=c+'%';
-    $('o-be').textContent=Math.ceil(600/f);
+    var be=Math.ceil(600/f);$('o-be').textContent=be;$('o-msg').textContent=r>=be?'ב-'+r+' נסיעות בחודש, כבר מהנסיעה ה-'+(be+1)+' האתר מרוויח לכם.':'צריך עוד '+(be-r)+' נסיעות ישירות בחודש כדי שהאתר יחזיר את עצמו.';
     $('o-save').textContent=nf(f*r*c/100)+' ₪';
     $('o-rev').textContent=nf(f*r)+' ₪';
   }
