@@ -7,7 +7,9 @@
     {"file": "tigerman-plus.webp", "name": "TigerManPlus"},
     {"file": "maayan-nagar.webp", "name": "מעין נגר"},
     {"file": "walkie.webp", "name": "Walkie"},
-    {"file": "ping.webp", "name": "Ping"}
+    {"file": "ping.webp", "name": "Ping"},
+    {"file": "logo1.webp", "name": "לוגו1"},
+    {"file": "logo2.webp", "name": "לוגו2"}
   ],
   "videos": [],
   "sites": [
