@@ -125,6 +125,7 @@
         });
         out[k]=res;
       });
+      out.previews=man.videoPreviews||[];
       return out;
     })}
     return worksReq;
@@ -145,20 +146,99 @@
       track.appendChild(a);track.appendChild(b);
     });
   }
-  /* lazy GIF-like videos */
-  var motionOK=!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);
-  var vio='IntersectionObserver' in window?new IntersectionObserver(function(es){es.forEach(function(x){
-    var v=x.target;v._vis=x.isIntersecting;
-    if(x.isIntersecting){
-      if(!v.src){v.src=v.dataset.src;v.load()}
-      tryPlay(v);
-    }else if(!v.paused){v.pause()}
-  })},{rootMargin:'150px 0px',threshold:.2}):null;
-  function tryPlay(v){if(v._vis&&motionOK&&!d.body.classList.contains('acc-still')&&v.paused&&!v._manual){var p=v.play();if(p&&p.catch)p.catch(function(){})}}
-  function gifVideo(v){
-    v.addEventListener('canplay',function(){tryPlay(v)});
-    v.addEventListener('click',function(){v._manual=v.paused?false:true});
-    if(vio)vio.observe(v);else{v.src=v.dataset.src;v.controls=true}
+  /* ---------- moving video gallery: rows of silent loops, click opens the full video ---------- */
+  var REEL_ROWS=4, REEL_SPEED=38; /* number of rows, pixels per second */
+  function vurl(f){return 'commercial-videos/'+encodeURIComponent(f)}
+  function purl(f){return 'commercial-videos/previews/'+encodeURIComponent(f)}
+  function buildReel(box,list,previews){
+    var reduce=window.matchMedia?matchMedia('(prefers-reduced-motion: reduce)'):{matches:false};
+    var userPaused=false, player=null, loops=[];
+    box.className='reel';
+    function still(){return userPaused||reduce.matches||d.body.classList.contains('acc-still')}
+    /* a loop plays only while it is on screen and motion is allowed */
+    function sync(v){
+      var on=v._vis&&!still()&&!(player&&player.open)&&!d.hidden;
+      if(on){
+        if(!v.getAttribute('src'))v.src=v._loop;
+        if(v.paused){var p=v.play();if(p&&p.catch)p.catch(function(){})}
+      }else if(!v.paused)v.pause();
+    }
+    function syncAll(){loops.forEach(sync)}
+    var io='IntersectionObserver' in window?new IntersectionObserver(function(es){
+      es.forEach(function(x){x.target._vis=x.isIntersecting;sync(x.target)});
+    }):null;
+
+    function openPlayer(it){
+      if(!player){
+        player=el('dialog','reel-player');
+        var x=el('button','reel-close','✕');x.type='button';x.setAttribute('aria-label','סגירת הסרטון');
+        var full=d.createElement('video');full.controls=true;full.playsInline=true;full.setAttribute('playsinline','');full.setAttribute('controlslist','nodownload');
+        player.appendChild(x);player.appendChild(full);player.appendChild(el('div','reel-caption'));
+        x.addEventListener('click',function(){player.close()});
+        player.addEventListener('click',function(e){if(e.target===player)player.close()});
+        player.addEventListener('close',function(){full.pause();full.removeAttribute('src');full.load();syncAll()});
+        d.body.appendChild(player);
+      }
+      if(!player.showModal){window.location.href=vurl(it.file);return}
+      var v=player.querySelector('video'),cap=player.querySelector('.reel-caption');
+      cap.textContent='';
+      if(it.title)cap.appendChild(el('h3',null,it.title));
+      if(it.desc)cap.appendChild(el('p',null,it.desc));
+      v.setAttribute('aria-label',it.title||'סרטון פרסומת');
+      v.src=vurl(it.file);
+      player.showModal();syncAll();
+      var p=v.play();if(p&&p.catch)p.catch(function(){});
+    }
+
+    function tile(it,real){
+      var b=el('button','reel-tile'),v=d.createElement('video');
+      b.type='button';
+      b.setAttribute('aria-label','צפייה בסרטון: '+(it.title||clean(it.file)));
+      if(!real){b.tabIndex=-1;b.setAttribute('aria-hidden','true')}
+      v.muted=true;v.defaultMuted=true;v.loop=true;v.playsInline=true;v.setAttribute('playsinline','');v.setAttribute('muted','');
+      v.tabIndex=-1;v.setAttribute('aria-hidden','true');v.disablePictureInPicture=true;
+      if(previews.indexOf(it.file)>-1){
+        v.preload='none';v.poster=purl(it.file+'.jpg');v._loop=purl(it.file+'.mp4');
+        loops.push(v);if(io)io.observe(v);
+      }else{ /* no preview yet: show a still frame of the original */
+        v.preload='metadata';v.src=vurl(it.file)+'#t=1';
+        if(it.poster)v.poster=vurl(it.poster);
+      }
+      b.appendChild(v);b.appendChild(el('span','reel-play'));
+      b.addEventListener('click',function(){openPlayer(it)});
+      return b;
+    }
+
+    /* each half of a row must be at least as wide as the screen, so the loop has no gaps */
+    var wide=Math.max(window.innerWidth,(window.screen&&screen.width)||0,1280);
+    var perSet=Math.max(list.length,Math.ceil(wide/110)+1);
+    var tracks=[];
+    for(var r=0;r<REEL_ROWS;r++){
+      var row=el('div','reel-row'),track=el('div','reel-track '+(r%2?'to-left':'to-right'));
+      var shift=Math.round(r*list.length/REEL_ROWS);
+      for(var half=0;half<2;half++){
+        var set=el('div','reel-set');
+        for(var i=0;i<perSet;i++)set.appendChild(tile(list[(i+shift)%list.length],r===0&&half===0&&i<list.length));
+        track.appendChild(set);
+      }
+      row.appendChild(track);box.appendChild(row);tracks.push(track);
+    }
+
+    var toggle=el('button','reel-toggle','עצירת התנועה');toggle.type='button';
+    toggle.addEventListener('click',function(){
+      userPaused=!userPaused;
+      box.classList.toggle('is-paused',userPaused);
+      toggle.textContent=userPaused?'המשך תנועה':'עצירת התנועה';
+      syncAll();
+    });
+    box.appendChild(toggle);
+
+    function setSpeed(){tracks.forEach(function(t){t.style.animationDuration=(t.firstChild.offsetWidth/REEL_SPEED)+'s'})}
+    setSpeed();window.addEventListener('resize',setSpeed);
+    if(!io){loops.forEach(function(v){v._vis=true});syncAll()}
+    d.addEventListener('visibilitychange',syncAll);
+    if(reduce.addEventListener)reduce.addEventListener('change',syncAll);
+    if('MutationObserver' in window)new MutationObserver(syncAll).observe(d.body,{attributes:true,attributeFilter:['class']});
   }
   var gal=d.querySelectorAll('[data-gallery]');
   gal.forEach(function(box){
@@ -166,26 +246,12 @@
     loadWorks().then(function(w){
       var list=(w[kind]||[]).filter(function(x){return x&&x.file||x&&x.url});
       if(!list.length){box.appendChild(el('p','works-empty','העבודות יעלו לכאן בקרוב. רוצים לראות דוגמאות מתאימות לעסק שלכם? השאירו פרטים ונשלח.'));return}
-      if(kind==='videos')box.classList.add('masonry');
+      if(kind==='videos'){buildReel(box,list,w.previews||[]);return}
       list.forEach(function(it){
         var card=el('article','work');
-        if(kind==='videos'){
-          var v=d.createElement('video');
-          /* Regular media player: controls, sound, fullscreen. Plays only on user action. */
-          v.controls=true;v.playsInline=true;v.setAttribute('playsinline','');
-          v.setAttribute('controlslist','nodownload');
-          v.preload='metadata';v.src='commercial-videos/'+encodeURIComponent(it.file);
-          v.addEventListener('loadedmetadata',function(){if(v.videoWidth&&v.videoHeight)v.style.aspectRatio=v.videoWidth+' / '+v.videoHeight});
-          if(it.poster)v.poster='commercial-videos/'+encodeURIComponent(it.poster);
-          v.setAttribute('aria-label',it.title||'סרטון פרסומת');
-          /* only one video plays at a time */
-          v.addEventListener('play',function(){d.querySelectorAll('.work video').forEach(function(o){if(o!==v&&!o.paused)o.pause()})});
-          card.appendChild(v);
-        }else{
-          var folder={sites:'websites-landing/',cards:'business-cards/',brand:'logo-design/'}[kind]||'business-cards/';
-          var img=el('img');img.src=folder+encodeURIComponent(it.image||it.file);img.alt=it.title||'';img.loading='lazy';img.decoding='async';
-          if(kind==='sites'&&it.url){var a=d.createElement('a');a.href=it.url;a.target='_blank';a.rel='noopener';a.appendChild(img);card.appendChild(a)}else card.appendChild(img);
-        }
+        var folder={sites:'websites-landing/',cards:'business-cards/',brand:'logo-design/'}[kind]||'business-cards/';
+        var img=el('img');img.src=folder+encodeURIComponent(it.image||it.file);img.alt=it.title||'';img.loading='lazy';img.decoding='async';
+        if(kind==='sites'&&it.url){var a=d.createElement('a');a.href=it.url;a.target='_blank';a.rel='noopener';a.appendChild(img);card.appendChild(a)}else card.appendChild(img);
         var body=el('div','work-body');
         if(it.title)body.appendChild(el('h3',null,it.title));
         if(it.desc)body.appendChild(el('p',null,it.desc));
