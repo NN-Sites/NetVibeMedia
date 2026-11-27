@@ -11,6 +11,7 @@
 
 ## קישורים
 - [דף הבית](https://nn-sites.github.io/NetVibeMedia/)
+- [תיק עבודות](https://nn-sites.github.io/NetVibeMedia/portfolio.html)
 - [סרטוני פרסומת](https://nn-sites.github.io/NetVibeMedia/videos.html)
 - [אתרים ודפי נחיתה](https://nn-sites.github.io/NetVibeMedia/websites.html)
 - [עיצוב לוגו](https://nn-sites.github.io/NetVibeMedia/logo-design.html)

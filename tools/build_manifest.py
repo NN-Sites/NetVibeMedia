@@ -6,7 +6,7 @@ from build_previews import build as build_previews
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 VIDEO = {'.mp4', '.webm', '.mov', '.m4v'}
 IMG = {'.png', '.jpg', '.jpeg', '.webp', '.svg', '.gif', '.avif'}
-FOLDERS = {'videos': ('commercial-videos', VIDEO), 'sites': ('websites-landing', IMG),
+FOLDERS = {'videos': ('commercial-videos', VIDEO), 'sites': ('websites-landing', IMG), 'apps': ('apps-showcase', IMG),
            'cards': ('business-cards', IMG), 'brand': ('logo-design', IMG), 'logos': ('client-logos', IMG)}
 def files(folder, exts):
     p = os.path.join(ROOT, folder)

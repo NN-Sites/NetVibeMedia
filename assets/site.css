@@ -136,8 +136,8 @@ h2{font-size:clamp(1.65rem,7vw,2.4rem);font-weight:900}
 .logos .sub{text-align:center;color:var(--muted);margin-bottom:1.4rem}
 .logo-view{position:relative;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
 .logo-track{display:flex;width:max-content;animation:logo-scroll 26s linear infinite}
-.logo-set{display:flex;align-items:center;gap:2.2rem;padding-inline-end:2.2rem}
-.logo-img{height:42px;width:auto;max-width:140px;object-fit:contain;flex:none}
+.logo-set{display:flex;align-items:center;gap:1.4rem;padding-inline-end:1.4rem;padding-block:4px}
+.logo-img{width:92px;height:92px;border-radius:20px;object-fit:cover;flex:none}
 .logo-ph{flex:none;display:grid;place-items:center;height:48px;min-width:130px;padding:0 1.1rem;border:2px dashed #c7d2fe;border-radius:14px;color:#6b74a0;font-weight:600;font-size:.92rem;white-space:nowrap}
 @keyframes logo-scroll{to{transform:translateX(50%)}}
 .logos-note{text-align:center;color:var(--muted);font-size:.88rem;margin-top:1rem}
@@ -266,7 +266,12 @@ footer p{margin-top:.8rem;max-width:30em}
 .work-body{padding:.9rem 1.1rem 1.2rem}
 .work-body h3{font-size:1.08rem;margin-bottom:.3rem}
 .work-body p{color:var(--muted);font-size:.95rem}
-.work-link{display:inline-block;margin-top:.5rem;font-weight:700;padding:.3rem 0}
+.work-media{position:relative}
+.work-media img{height:auto}
+.work-media::after{content:"";position:absolute;inset:auto 0 0;height:55%;background:linear-gradient(transparent,rgba(11,16,32,.72));pointer-events:none}
+.work-visit{position:absolute;z-index:1;bottom:.7rem;left:50%;transform:translateX(-50%);display:inline-flex;align-items:center;min-height:44px;padding:.45rem 1.4rem;border-radius:99px;background:#fff;color:var(--indigo);font-weight:800;font-size:.95rem;white-space:nowrap;text-decoration:none;box-shadow:0 4px 14px rgba(11,16,32,.35);transition:background-color .2s,color .2s}
+.work-visit:hover{background:var(--indigo);color:#fff}
+.work-visit:focus-visible{outline:3px solid #fff;outline-offset:3px}
 .works-empty{grid-column:1/-1;text-align:center;color:var(--muted);background:#fff;border:2px dashed #c7d2fe;border-radius:var(--r);padding:2rem 1.2rem}
 .cta-band{background:var(--ink);color:#fff;border-radius:24px;padding:2rem 1.3rem;text-align:center;display:grid;gap:1rem;justify-items:center}
 .cta-band h2{color:#fff}.cta-band p{color:#c7cdf0;max-width:36rem}
@@ -387,8 +392,8 @@ body.acc-contrast :focus-visible{outline-color:#ffea00!important;box-shadow:none
   .amount b{font-size:2.7rem}
   .logos{padding:4rem 0}
   .logo-track{animation-duration:32s}
-  .logo-set{gap:4rem;padding-inline-end:4rem}
-  .logo-img{height:48px;max-width:170px}
+  .logo-set{gap:2.4rem;padding-inline-end:2.4rem}
+  .logo-img{width:120px;height:120px;border-radius:24px}
   .logo-ph{height:52px;min-width:150px}
   .steps{grid-template-columns:repeat(4,1fr);gap:1.4rem}
   .step{padding:1.8rem 1.5rem}
@@ -490,6 +495,28 @@ body.acc-still .reel-toggle{display:none}
   .tiers.compact{gap:1rem}
 }
 @media (min-width:1100px){.reel{--tile:168px;--gap:1rem}}
+
+/* portfolio page */
+.pf-filters{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:1.3rem}
+.pf-filter{min-height:46px;padding:.55rem 1.3rem;border-radius:99px;border:1px solid #c7d2fe;background:#fff;font:inherit;font-weight:700;font-size:.95rem;color:var(--indigo);cursor:pointer;touch-action:manipulation;transition:background-color .2s,border-color .2s}
+.pf-filter:hover{border-color:var(--indigo)}
+.pf-filter[aria-pressed="true"]{background:var(--indigo);border-color:var(--indigo);color:#fff}
+.pf-filter:focus-visible{outline:3px solid var(--indigo);outline-offset:3px}
+/* "all" lists only the categories that already have work in them */
+[data-view="all"] .pf-sec:has(.works-empty){display:none}
+.pf-cta{text-align:center}
+.menu a.menu-pf{background:rgba(79,70,229,.1);color:var(--indigo);font-weight:700}
+.mobile a.menu-pf{color:var(--indigo);font-weight:800}
+.menu a{white-space:nowrap}
+/* six menu items: tighten them on narrow desktops, and drop the header button where there is no room */
+@media (min-width:900px) and (max-width:1199px){
+  .menu{gap:0}
+  .menu a{padding:.5rem .5rem;font-size:.9rem}
+}
+@media (min-width:900px) and (max-width:1039px){
+  .nav-cta{display:none}
+}
+@media (min-width:640px){.hero-cta{display:flex;flex-wrap:wrap}}
 
 /* sale price */
 .was{color:var(--muted);font-weight:600;font-size:1.05rem;text-decoration:line-through;text-decoration-thickness:2px}

@@ -5,4 +5,4 @@
 
   { "image": "pizza-danny.jpg", "title": "פיצה דני", "desc": "דף נחיתה", "url": "https://example.com" }
 
-(url אופציונלי - קישור לאתר החי). יופיעו בדף websites.html.
+(url אופציונלי - קישור לאתר החי). יופיעו בדף portfolio.html.

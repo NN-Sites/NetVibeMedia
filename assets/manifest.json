@@ -8,13 +8,29 @@
     "promo-1080p.mp4",
     "ג'וני תור - פרסומת.mp4"
   ],
-  "sites": [],
+  "sites": [
+    "b-burger.jpg",
+    "ella-events.jpg",
+    "eyal-naftali.jpg",
+    "johnny-tour.jpg",
+    "maayan-nagar.jpg",
+    "tigerman-plus.jpg"
+  ],
+  "apps": [
+    "ping.jpg",
+    "walkie.jpg"
+  ],
   "cards": [],
   "brand": [],
   "logos": [
-    "bburgerlogo.png",
-    "ellaeventslogo.png",
-    "tigermanpluslogo.png"
+    "b-burger.webp",
+    "ella-events.webp",
+    "eyal-naftali.webp",
+    "johnny-tour.webp",
+    "maayan-nagar.webp",
+    "ping.webp",
+    "tigerman-plus.webp",
+    "walkie.webp"
   ],
   "videoPosters": {
     "promo-1080p.mp4": "promo-1080p.jpg"

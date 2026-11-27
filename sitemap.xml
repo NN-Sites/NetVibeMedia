@@ -15,6 +15,12 @@
     </image:image>
   </url>
   <url>
+    <loc>https://nn-sites.github.io/NetVibeMedia/portfolio.html</loc>
+    <lastmod>2026-11-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://nn-sites.github.io/NetVibeMedia/videos.html</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>

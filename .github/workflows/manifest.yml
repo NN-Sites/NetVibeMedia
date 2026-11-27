@@ -4,6 +4,7 @@ on:
     paths:
       - 'commercial-videos/**'
       - 'websites-landing/**'
+      - 'apps-showcase/**'
       - 'business-cards/**'
       - 'client-logos/**'
       - 'logo-design/**'

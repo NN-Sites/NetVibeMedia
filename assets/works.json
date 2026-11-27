@@ -1,7 +1,27 @@
 {
-  "logos": [],
+  "logos": [
+    {"file": "ella-events.webp", "name": "אלה איוונטס"},
+    {"file": "johnny-tour.webp", "name": "ג׳וני תור"},
+    {"file": "eyal-naftali.webp", "name": "אייל נפתלי"},
+    {"file": "b-burger.webp", "name": "B Burger"},
+    {"file": "tigerman-plus.webp", "name": "TigerManPlus"},
+    {"file": "maayan-nagar.webp", "name": "מעין נגר"},
+    {"file": "walkie.webp", "name": "Walkie"},
+    {"file": "ping.webp", "name": "Ping"}
+  ],
   "videos": [],
-  "sites": [],
+  "sites": [
+    {"image": "ella-events.jpg", "title": "אלה איוונטס", "desc": "אתר לקייטרינג חלבי", "url": "https://nn-sites.github.io/ella-events/"},
+    {"image": "johnny-tour.jpg", "title": "ג׳וני תור", "desc": "אתר לחברת הסעות ו-VIP", "url": "https://nn-sites.github.io/JonnyTour/"},
+    {"image": "eyal-naftali.jpg", "title": "אייל נפתלי VIP", "desc": "אתר לפתרונות נסיעה", "url": "https://nn-sites.github.io/EyalNaftaliTS/"},
+    {"image": "b-burger.jpg", "title": "B Burger", "desc": "אתר למסעדת המבורגרים", "url": "https://nn-sites.github.io/BBurger/"},
+    {"image": "tigerman-plus.jpg", "title": "TigerManPlus", "desc": "אתר קליפים ומדריכים לעורכים", "url": "https://nn-sites.github.io/TigerManPlus/"},
+    {"image": "maayan-nagar.jpg", "title": "מעין נגר", "desc": "אתר ליועצת חינוכית ומטפלת LICBT", "url": "https://nn-sites.github.io/MaayanNagar/"}
+  ],
+  "apps": [
+    {"image": "walkie.jpg", "title": "Walkie", "desc": "אפליקציה לתחבורה ציבורית בזמן אמת", "url": "https://nn-sites.github.io/walkie/"},
+    {"image": "ping.jpg", "title": "Ping", "desc": "אפליקציה חברתית לשיתוף מיקום עם חברים", "url": "https://nn-sites.github.io/ping-site/"}
+  ],
   "cards": [],
   "brand": []
 }
