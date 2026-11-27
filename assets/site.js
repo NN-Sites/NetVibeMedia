@@ -140,7 +140,8 @@
       d.querySelectorAll('a[href="#clients"]').forEach(function(a){if(a.parentNode)a.parentNode.hidden=false});
       /* each half of the track must be wider than the screen, so the loop has no gaps */
       var wide=Math.max(window.innerWidth,(window.screen&&screen.width)||0,1280);
-      var count=Math.max(logos.length,Math.ceil(wide/110)+1);
+      /* whole rounds only: a cut-off round would put the same logo twice in a row where the halves meet */
+      var count=logos.length*Math.ceil((Math.ceil(wide/110)+1)/logos.length);
       for(var half=0;half<2;half++){
         var set=el('div','logo-set');
         for(var i=0;i<count;i++){
@@ -222,7 +223,8 @@
 
     /* each half of a row must be at least as wide as the screen, so the loop has no gaps */
     var wide=Math.max(window.innerWidth,(window.screen&&screen.width)||0,1280);
-    var perSet=Math.max(list.length,Math.ceil(wide/110)+1);
+    /* whole rounds only, so the same video never appears twice in a row where the halves meet */
+    var perSet=list.length*Math.ceil((Math.ceil(wide/110)+1)/list.length);
     var tracks=[];
     for(var r=0;r<REEL_ROWS;r++){
       var row=el('div','reel-row'),track=el('div','reel-track '+(r%2?'to-left':'to-right'));
